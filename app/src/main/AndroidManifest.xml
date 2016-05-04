@@ -6,9 +6,13 @@
       android:allowBackup="true"
       android:icon="@mipmap/ic_launcher"
       android:label="@string/app_name"
+      android:name=".KoloroApplication"
       android:supportsRtl="true"
       android:theme="@style/AppTheme">
-    <activity android:name=".KoloroActivity">
+    <activity
+        android:name=".ui.KoloroActivity"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme.NoActionBar">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 
