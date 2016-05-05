@@ -1,16 +1,20 @@
 package com.jameskelly.koloro;
 
 import com.jameskelly.koloro.preferences.PreferencesModule;
+import com.jameskelly.koloro.ui.CaptureActivity;
 import com.jameskelly.koloro.ui.KoloroActivity;
+import com.jameskelly.koloro.ui.presenters.PresenterModule;
 import dagger.Component;
 import javax.inject.Singleton;
 
 @Singleton @Component(modules = {
     ApplicationModule.class,
-    PreferencesModule.class
+    PreferencesModule.class,
+    PresenterModule.class
 })
 public interface ApplicationComponent {
 
   void inject(KoloroApplication koloroApplication);
   void inject(KoloroActivity koloroActivity);
+  void inject(CaptureActivity captureActivity);
 }

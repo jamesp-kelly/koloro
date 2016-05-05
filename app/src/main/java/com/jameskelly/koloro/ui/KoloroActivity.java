@@ -1,11 +1,14 @@
 package com.jameskelly.koloro.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.Switch;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
+import butterknife.OnClick;
 import com.jameskelly.koloro.KoloroApplication;
 import com.jameskelly.koloro.R;
 import com.jameskelly.koloro.preferences.BooleanPreference;
@@ -23,6 +26,7 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
 
   @BindView(R.id.switch_show_notification) Switch showNotificationSwitch;
   @BindView(R.id.switch_capture_button_visible) Switch captureButtonVisibleSwitch;
+  @BindView(R.id.start_capture) Button startCaptureButton;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -60,4 +64,9 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
     }
   }
 
+  @OnClick(R.id.start_capture)
+  void onStartCaptureClicked() {
+    Intent intent = CaptureActivity.intent(this);
+    startActivity(intent);
+  }
 }
