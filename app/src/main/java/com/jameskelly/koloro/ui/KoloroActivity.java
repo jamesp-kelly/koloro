@@ -29,10 +29,13 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
   BooleanPreference showNotificationPreference;
   @Inject @Named(PreferencesModule.CAPTURE_BUTTON_VISIBLE_KEY)
   BooleanPreference captureButtonVisiblePreference;
+  @Inject @Named(PreferencesModule.STORE_CAPTURES_IN_GALLERY_KEY)
+  BooleanPreference storeCapturesInGalleryPreference;
   @Inject MediaProjectionManager mediaProjectionManager;
 
   @BindView(R.id.switch_show_notification) Switch showNotificationSwitch;
   @BindView(R.id.switch_capture_button_visible) Switch captureButtonVisibleSwitch;
+  @BindView(R.id.switch_store_captures) Switch storeCapturesSwitch;
   @BindView(R.id.start_capture) Button startCaptureButton;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +50,7 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
   @Override public void bindSharedPreferences() {
     showNotificationSwitch.setChecked(showNotificationPreference.get());
     captureButtonVisibleSwitch.setChecked(captureButtonVisiblePreference.get());
+    storeCapturesSwitch.setChecked(storeCapturesInGalleryPreference.get());
   }
 
   @OnCheckedChanged(R.id.switch_show_notification)
@@ -68,6 +72,17 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
     if (newValue != oldValue) {
       Log.d(TAG, String.format("Updating 'capture button visible' preference to %s", newValue));
       captureButtonVisiblePreference.set(newValue);
+    }
+  }
+
+  @OnCheckedChanged(R.id.switch_store_captures)
+  void onStoreCapturesChanged() {
+    boolean newValue = storeCapturesSwitch.isChecked();
+    boolean oldValue = storeCapturesInGalleryPreference.get();
+
+    if (newValue != oldValue) {
+      Log.d(TAG, String.format("Updating 'store captures' preference to %s", newValue));
+      showNotificationPreference.set(newValue);
     }
   }
 

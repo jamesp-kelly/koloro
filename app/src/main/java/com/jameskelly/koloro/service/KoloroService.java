@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.view.WindowManager;
 import android.widget.Toast;
 import com.jameskelly.koloro.KoloroApplication;
+import com.jameskelly.koloro.ScreenCaptureManager;
 import com.jameskelly.koloro.ui.OverlayFrameLayout;
 import javax.inject.Inject;
 
@@ -38,17 +39,11 @@ public class KoloroService extends Service {
 
     KoloroApplication.get(this).applicationComponent().inject(this);
 
-    overlayFrameLayout = new OverlayFrameLayout(this, new OverlayFrameLayout.Listener() {
-      @Override public void onCapture() {
-        Toast.makeText(KoloroService.this, "capture clicked", Toast.LENGTH_SHORT).show();
-      }
-
-      @Override public void onCancel() {
-        removeOverlayView();
-      }
-    });
-
+    overlayFrameLayout = new OverlayFrameLayout(this, layoutOverlayClickListener);
     windowManager.addView(overlayFrameLayout, overlayFrameLayout.setupCaptureWindowLayoutParams());
+
+    ScreenCaptureManager screenCaptureManager = new ScreenCaptureManager(this, imageCaptureListener);
+    screenCaptureManager.captureScreen();
 
     return START_NOT_STICKY;
   }
@@ -67,4 +62,27 @@ public class KoloroService extends Service {
   @Nullable @Override public IBinder onBind(Intent intent) {
     return null;
   }
+
+  private OverlayFrameLayout.OverlayClickListener
+      layoutOverlayClickListener = new OverlayFrameLayout.OverlayClickListener() {
+    @Override public void onCaptureClicked() {
+      Toast.makeText(KoloroService.this, "capture clicked", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override public void onCancelClicked() {
+      removeOverlayView();
+    }
+  };
+
+  private ScreenCaptureManager.ImageCaptureListener imageCaptureListener =
+      new ScreenCaptureManager.ImageCaptureListener() {
+        @Override public void onImageCaptured(String imageUri) {
+            Toast.makeText(KoloroService.this, "hello", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override public void onImageCaptureError() {
+          Toast.makeText(KoloroService.this, "error", Toast.LENGTH_SHORT).show();
+        }
+      };
+
 }

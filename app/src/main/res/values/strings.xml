@@ -4,4 +4,5 @@
   <string name="show_notification_label">Show notification</string>
   <string name="capture_button_visible_label">Capture button visible</string>
   <string name="start_capture_button">Start Capture</string>
+  <string name="store_captures_label">Store screen captures in device gallery</string>
 </resources>

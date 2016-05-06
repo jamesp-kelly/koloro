@@ -21,12 +21,12 @@ import static android.view.WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
 public class OverlayFrameLayout extends FrameLayout implements CaptureView {
 
   private final Context context;
-  private Listener listener;
+  private OverlayClickListener overlayClickListener;
 
-  public OverlayFrameLayout(Context context, Listener listener) {
+  public OverlayFrameLayout(Context context, OverlayClickListener overlayClickListener) {
     super(context);
     this.context = context;
-    this.listener = listener;
+    this.overlayClickListener = overlayClickListener;
     inflate(context, R.layout.activity_capture, this);
 
     ButterKnife.bind(this);
@@ -34,12 +34,12 @@ public class OverlayFrameLayout extends FrameLayout implements CaptureView {
 
   @OnClick(R.id.captureButton)
   void captureClicked() {
-    listener.onCapture();
+    overlayClickListener.onCaptureClicked();
   }
 
   @OnClick(R.id.cancelButton)
   void cancelClicked() {
-    listener.onCancel();
+    overlayClickListener.onCancelClicked();
   }
 
   @Override public WindowManager.LayoutParams setupCaptureWindowLayoutParams() {
@@ -60,8 +60,8 @@ public class OverlayFrameLayout extends FrameLayout implements CaptureView {
   @Override public void displayCaptureOverLay() {
   }
 
-  public interface Listener {
-    void onCapture();
-    void onCancel();
+  public interface OverlayClickListener {
+    void onCaptureClicked();
+    void onCancelClicked();
   }
 }

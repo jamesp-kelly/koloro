@@ -14,6 +14,8 @@ public class PreferencesModule {
   private static final boolean DEFAULT_SHOW_NOTIFICATION = true;
   public static final String CAPTURE_BUTTON_VISIBLE_KEY = "capture_button_visible";
   private static final boolean DEFAULT_CAPTURE_BUTTON_VISIBLE = true;
+  public static final String STORE_CAPTURES_IN_GALLERY_KEY = "store_captures_in_gallery";
+  private static final boolean DEFAULT_CAPTURES_IN_GALLEY = true;
 
   @Provides @Singleton
   SharedPreferences provideSharedPreferences(Application app) {
@@ -37,6 +39,17 @@ public class PreferencesModule {
 
   @Provides @Named(CAPTURE_BUTTON_VISIBLE_KEY)
   Boolean provideCaptureButtonVisible(@Named(CAPTURE_BUTTON_VISIBLE_KEY) BooleanPreference booleanPreference) {
+    return booleanPreference.get();
+  }
+
+  @Provides @Singleton @Named(STORE_CAPTURES_IN_GALLERY_KEY)
+  BooleanPreference provideStoreCaptureInGalleryPreference(SharedPreferences preferences) {
+    return new BooleanPreference(preferences, STORE_CAPTURES_IN_GALLERY_KEY,
+        DEFAULT_CAPTURES_IN_GALLEY);
+  }
+
+  @Provides @Named(STORE_CAPTURES_IN_GALLERY_KEY)
+  Boolean provideStoreCaptureInGallery(@Named(STORE_CAPTURES_IN_GALLERY_KEY) BooleanPreference booleanPreference) {
     return booleanPreference.get();
   }
 

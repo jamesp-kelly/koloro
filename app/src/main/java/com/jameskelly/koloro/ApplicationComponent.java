@@ -17,4 +17,5 @@ public interface ApplicationComponent {
   void inject(KoloroApplication koloroApplication);
   void inject(KoloroActivity koloroActivity);
   void inject(KoloroService koloroService);
+  void inject(ScreenCaptureManager screenCaptureManager);
 }
