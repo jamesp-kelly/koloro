@@ -52,9 +52,9 @@ public class KoloroService extends Service {
 
   @Override public int onStartCommand(Intent intent, int flags, int startId) {
     int resultCode = intent.getIntExtra(EXTRA_RESULT_CODE, 0);
-    Intent dataIntent = intent.getParcelableExtra(EXTRA_DATA);
+    Intent resultData = intent.getParcelableExtra(EXTRA_DATA);
 
-    if (resultCode == 0 || dataIntent == null) {
+    if (resultCode == 0 || resultData == null) {
       throw new IllegalStateException();
     }
 
@@ -63,7 +63,7 @@ public class KoloroService extends Service {
     overlayFrameLayout = new OverlayFrameLayout(this, layoutOverlayClickListener);
     windowManager.addView(overlayFrameLayout, overlayFrameLayout.setupCaptureWindowLayoutParams());
 
-    screenCaptureManager = new ScreenCaptureManager(this, imageCaptureListener);
+    screenCaptureManager = new ScreenCaptureManager(this, resultCode, resultData, imageCaptureListener);
 
     if (showNotificationPref.get()) {
       sendNotification();

@@ -109,7 +109,8 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
 
       } else {
         Log.d(TAG, "Couldn't get permission to screen capture");
-        onBackPressed(); //todo add message to confirm why user was sent back to the homescreen
+        //show message to user
+
       }
     }
   }
