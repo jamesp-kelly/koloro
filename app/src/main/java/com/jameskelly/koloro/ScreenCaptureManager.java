@@ -58,7 +58,7 @@ public class ScreenCaptureManager {
     File galleryRoot = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
     File koloroDir = new File(galleryRoot, "Koloro");
 
-    if (!koloroDir.mkdir()) {
+    if (!koloroDir.exists() && !koloroDir.mkdir()) {
       Log.e(TAG, "Unable to create directory");
     }
 
