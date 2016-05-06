@@ -1,6 +1,8 @@
 package com.jameskelly.koloro;
 
 import android.content.Context;
+import android.os.Environment;
+import java.io.File;
 
 public class ScreenCaptureManager {
 
@@ -15,9 +17,11 @@ public class ScreenCaptureManager {
 
   public void captureScreen() {
 
+    File galleryRoot = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+    File koloroDir = new File(galleryRoot, "Koloro");
 
 
-    //imageCaptureListener.onImageCaptured();
+    imageCaptureListener.onImageCaptured("farts");
   }
 
   public interface ImageCaptureListener {

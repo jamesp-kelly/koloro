@@ -1,6 +1,7 @@
 package com.jameskelly.koloro;
 
 import android.app.Application;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.media.projection.MediaProjectionManager;
 import android.view.LayoutInflater;
@@ -31,6 +32,11 @@ public class ApplicationModule {
   @Provides @Singleton
   public WindowManager provideWindowManager() {
     return (WindowManager) application.getSystemService(Context.WINDOW_SERVICE);
+  }
+
+  @Provides @Singleton
+  public NotificationManager provideNotificationManager() {
+    return (NotificationManager) application.getSystemService(Context.NOTIFICATION_SERVICE);
   }
 
   @Provides @Singleton
