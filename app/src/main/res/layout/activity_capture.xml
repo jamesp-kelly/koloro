@@ -8,6 +8,7 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:text="what up what up"
+      android:background="@android:color/holo_green_dark"
       />
 
 </LinearLayout>

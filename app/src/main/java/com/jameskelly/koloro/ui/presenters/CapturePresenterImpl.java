@@ -1,5 +1,6 @@
 package com.jameskelly.koloro.ui.presenters;
 
+import android.content.Intent;
 import com.jameskelly.koloro.ui.views.CaptureView;
 
 public class CapturePresenterImpl implements CapturePresenter {
@@ -10,7 +11,7 @@ public class CapturePresenterImpl implements CapturePresenter {
     this.view = view;
   }
 
-  @Override public void startScreenCapture() {
-    
+  @Override public void startScreenCapture(Intent data) {
+
   }
 }

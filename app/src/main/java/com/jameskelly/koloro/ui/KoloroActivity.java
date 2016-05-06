@@ -1,10 +1,13 @@
 package com.jameskelly.koloro.ui;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.Switch;
+import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
@@ -19,10 +22,13 @@ import javax.inject.Named;
 
 public class KoloroActivity extends BaseActivity implements KoloroView {
 
+  private static final int CREATE_SCREEN_CAPTURE = 1255;
+
   @Inject @Named(PreferencesModule.SHOW_NOTIFICATION_KEY)
   BooleanPreference showNotificationPreference;
   @Inject @Named(PreferencesModule.CAPTURE_BUTTON_VISIBLE_KEY)
   BooleanPreference captureButtonVisiblePreference;
+  @Inject MediaProjectionManager mediaProjectionManager;
 
   @BindView(R.id.switch_show_notification) Switch showNotificationSwitch;
   @BindView(R.id.switch_capture_button_visible) Switch captureButtonVisibleSwitch;
@@ -66,7 +72,20 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
 
   @OnClick(R.id.start_capture)
   void onStartCaptureClicked() {
-    Intent intent = CaptureActivity.intent(this);
-    startActivity(intent);
+    Intent mediaCaptureIntent = mediaProjectionManager.createScreenCaptureIntent();
+    startActivityForResult(mediaCaptureIntent, CREATE_SCREEN_CAPTURE);
+  }
+
+  @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+    if (requestCode == CREATE_SCREEN_CAPTURE) {
+      if (resultCode == Activity.RESULT_OK) {
+        //todo start service
+        Toast.makeText(this, "start service", Toast.LENGTH_SHORT).show();
+      } else {
+        Log.d(TAG, "Couldn't get permission to screen capture");
+        onBackPressed(); //todo add message to confirm why user was sent back to the homescreen
+      }
+    }
   }
 }
