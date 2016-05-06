@@ -16,6 +16,7 @@ import com.jameskelly.koloro.KoloroApplication;
 import com.jameskelly.koloro.R;
 import com.jameskelly.koloro.preferences.BooleanPreference;
 import com.jameskelly.koloro.preferences.PreferencesModule;
+import com.jameskelly.koloro.service.KoloroService;
 import com.jameskelly.koloro.ui.views.KoloroView;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -82,6 +83,15 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
       if (resultCode == Activity.RESULT_OK) {
         //todo start service
         Toast.makeText(this, "start service", Toast.LENGTH_SHORT).show();
+
+        Intent intent = KoloroService.intent(this, resultCode, data);
+        startService(intent);
+
+        ////temp
+        //OverlayFrameLayout overlayFrameLayout = new OverlayFrameLayout(this, resultCode, data);
+        //this.getWindowManager().addView(overlayFrameLayout, overlayFrameLayout.setupCaptureWindowLayoutParams());
+
+
       } else {
         Log.d(TAG, "Couldn't get permission to screen capture");
         onBackPressed(); //todo add message to confirm why user was sent back to the homescreen

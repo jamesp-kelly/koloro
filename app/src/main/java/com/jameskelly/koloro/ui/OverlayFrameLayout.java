@@ -5,21 +5,41 @@ import android.content.res.Resources;
 import android.view.Gravity;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.jameskelly.koloro.R;
 import com.jameskelly.koloro.ui.views.CaptureView;
 
 import static android.graphics.PixelFormat.TRANSLUCENT;
-import static android.view.WindowManager.LayoutParams.*;
+import static android.view.WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR;
+import static android.view.WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
+import static android.view.WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS;
+import static android.view.WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+import static android.view.WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
+import static android.view.WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
 
 public class OverlayFrameLayout extends FrameLayout implements CaptureView {
 
   private final Context context;
+  private Listener listener;
 
-  public OverlayFrameLayout(Context context) {
+  public OverlayFrameLayout(Context context, Listener listener) {
     super(context);
     this.context = context;
-
+    this.listener = listener;
     inflate(context, R.layout.activity_capture, this);
+
+    ButterKnife.bind(this);
+  }
+
+  @OnClick(R.id.captureButton)
+  void captureClicked() {
+    listener.onCapture();
+  }
+
+  @OnClick(R.id.cancelButton)
+  void cancelClicked() {
+    listener.onCancel();
   }
 
   @Override public WindowManager.LayoutParams setupCaptureWindowLayoutParams() {
@@ -38,5 +58,10 @@ public class OverlayFrameLayout extends FrameLayout implements CaptureView {
   }
 
   @Override public void displayCaptureOverLay() {
+  }
+
+  public interface Listener {
+    void onCapture();
+    void onCancel();
   }
 }
