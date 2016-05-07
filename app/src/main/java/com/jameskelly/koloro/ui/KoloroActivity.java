@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.Switch;
-import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
@@ -111,17 +110,8 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
     super.onActivityResult(requestCode, resultCode, data);
     if (requestCode == CREATE_SCREEN_CAPTURE) {
       if (resultCode == Activity.RESULT_OK) {
-        //todo start service
-        Toast.makeText(this, "start service", Toast.LENGTH_SHORT).show();
-
         Intent intent = KoloroService.intent(this, resultCode, data);
         startService(intent);
-
-        ////temp
-        //OverlayFrameLayout overlayFrameLayout = new OverlayFrameLayout(this, resultCode, data);
-        //this.getWindowManager().addView(overlayFrameLayout, overlayFrameLayout.setupCaptureWindowLayoutParams());
-
-
       } else {
         Log.d(TAG, "Couldn't get permission to screen capture");
         //show message to user

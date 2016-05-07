@@ -134,8 +134,6 @@ public class KoloroService extends Service {
   private ScreenCaptureManager.ImageCaptureListener imageCaptureListener =
       new ScreenCaptureManager.ImageCaptureListener() {
         @Override public void onImageCaptured(Uri imageUri) {
-          Toast.makeText(KoloroService.this, imageUri.toString(), Toast.LENGTH_SHORT).show();
-
           Intent intent = ColorPickActivity.intent(KoloroService.this);
           intent.putExtra(ColorPickActivity.SCREEN_CAPTURE_URI, imageUri);
           intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
