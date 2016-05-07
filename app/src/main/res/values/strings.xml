@@ -7,4 +7,5 @@
   <string name="store_captures_label">Store screen captures in device gallery</string>
   <string name="notification_text">Overlay started. Hit Capture</string>
   <string name="notification_ticker">Overlay started</string>
+  <string name="multi_shot_label">Multi-shot</string>
 </resources>

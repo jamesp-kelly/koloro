@@ -16,6 +16,8 @@ public class PreferencesModule {
   private static final boolean DEFAULT_CAPTURE_BUTTON_VISIBLE = true;
   public static final String STORE_CAPTURES_IN_GALLERY_KEY = "store_captures_in_gallery";
   private static final boolean DEFAULT_CAPTURES_IN_GALLEY = true;
+  public static final String MULTI_SHOT_KEY = "multi_shot";
+  private static final boolean DEFAULT_MULTI_SHOT = false;
 
   @Provides @Singleton
   SharedPreferences provideSharedPreferences(Application app) {
@@ -50,6 +52,17 @@ public class PreferencesModule {
 
   @Provides @Named(STORE_CAPTURES_IN_GALLERY_KEY)
   Boolean provideStoreCaptureInGallery(@Named(STORE_CAPTURES_IN_GALLERY_KEY) BooleanPreference booleanPreference) {
+    return booleanPreference.get();
+  }
+
+  //multi shot allows the user to take multiple shots rapidly and can choose which to inspect
+  @Provides @Singleton @Named(MULTI_SHOT_KEY)
+  BooleanPreference provideMultiShotPreference(SharedPreferences preferences) {
+    return new BooleanPreference(preferences, MULTI_SHOT_KEY, DEFAULT_MULTI_SHOT);
+  }
+
+  @Provides @Named(MULTI_SHOT_KEY)
+  Boolean provideMultiShot(@Named(MULTI_SHOT_KEY) BooleanPreference booleanPreference) {
     return booleanPreference.get();
   }
 

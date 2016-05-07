@@ -6,6 +6,7 @@ import android.content.Context;
 import android.media.projection.MediaProjectionManager;
 import android.view.LayoutInflater;
 import android.view.WindowManager;
+import com.squareup.picasso.Picasso;
 import dagger.Module;
 import dagger.Provides;
 import javax.inject.Singleton;
@@ -42,5 +43,11 @@ public class ApplicationModule {
   @Provides @Singleton
   public LayoutInflater provideLayoutInflater() {
     return (LayoutInflater) application.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+  }
+
+  @Provides @Singleton
+  public Picasso providePicasso() {
+    return new Picasso.Builder(application)
+        .build();
   }
 }

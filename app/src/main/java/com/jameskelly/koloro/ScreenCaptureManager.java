@@ -10,6 +10,7 @@ import android.media.Image;
 import android.media.ImageReader;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
+import android.net.Uri;
 import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -63,7 +64,7 @@ public class ScreenCaptureManager {
     }
 
     String captureFileName = capture_format.format(new Date());
-    String captureFilePath = new File(koloroDir, captureFileName).getAbsolutePath();
+    File captureFile = new File(koloroDir, captureFileName);
     screenInfo = getDeviceScreenInfo();
 
     mediaProjection =
@@ -78,14 +79,14 @@ public class ScreenCaptureManager {
     imageReader.setOnImageAvailableListener(reader -> {
         Image image = reader.acquireLatestImage();
         if (image != null) {
-          convertImage(image, captureFilePath);
+          convertImage(image, captureFile);
         }
     }, null);
 
     //imageCaptureListener.onImageCaptured("farts");
   }
 
-  private void convertImage(Image image, String captureFilePath) {
+  private void convertImage(Image image, File captureFile) {
 
     FileOutputStream fos = null;
     Bitmap bitmap = null;
@@ -103,11 +104,14 @@ public class ScreenCaptureManager {
       //crop
       bitmap = Bitmap.createBitmap(bitmap, 0, 0, screenInfo.width, screenInfo.height);
 
-      fos = new FileOutputStream(captureFilePath);
+      fos = new FileOutputStream(captureFile.getAbsolutePath());
       bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+
+      imageCaptureListener.onImageCaptured(Uri.fromFile(captureFile));
 
     } catch (FileNotFoundException e) {
       e.printStackTrace();
+      imageCaptureListener.onImageCaptureError();
     } finally {
       imageReader.close();
       surface.release();
@@ -120,7 +124,7 @@ public class ScreenCaptureManager {
   }
 
   public interface ImageCaptureListener {
-    void onImageCaptured(String captureUri);
+    void onImageCaptured(Uri captureUri);
     void onImageCaptureError();
   }
 

@@ -31,11 +31,14 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
   BooleanPreference captureButtonVisiblePreference;
   @Inject @Named(PreferencesModule.STORE_CAPTURES_IN_GALLERY_KEY)
   BooleanPreference storeCapturesInGalleryPreference;
+  @Inject @Named(PreferencesModule.MULTI_SHOT_KEY)
+  BooleanPreference multiShotPreference;
   @Inject MediaProjectionManager mediaProjectionManager;
 
   @BindView(R.id.switch_show_notification) Switch showNotificationSwitch;
   @BindView(R.id.switch_capture_button_visible) Switch captureButtonVisibleSwitch;
   @BindView(R.id.switch_store_captures) Switch storeCapturesSwitch;
+  @BindView(R.id.switch_multi_shot) Switch multiShotSwitch;
   @BindView(R.id.start_capture) Button startCaptureButton;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +54,7 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
     showNotificationSwitch.setChecked(showNotificationPreference.get());
     captureButtonVisibleSwitch.setChecked(captureButtonVisiblePreference.get());
     storeCapturesSwitch.setChecked(storeCapturesInGalleryPreference.get());
+    multiShotSwitch.setChecked(multiShotPreference.get());
   }
 
   @OnCheckedChanged(R.id.switch_show_notification)
@@ -82,7 +86,18 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
 
     if (newValue != oldValue) {
       Log.d(TAG, String.format("Updating 'store captures' preference to %s", newValue));
-      showNotificationPreference.set(newValue);
+      storeCapturesInGalleryPreference.set(newValue);
+    }
+  }
+
+  @OnCheckedChanged(R.id.switch_multi_shot)
+  void onMultiShotChanged() {
+    boolean newValue = multiShotSwitch.isChecked();
+    boolean oldValue = multiShotPreference.get();
+
+    if (newValue != oldValue) {
+      Log.d(TAG, String.format("Updating 'store captures' preference to %s", newValue));
+      multiShotPreference.set(newValue);
     }
   }
 

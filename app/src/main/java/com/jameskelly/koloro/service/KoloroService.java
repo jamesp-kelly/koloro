@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.view.WindowManager;
@@ -17,6 +18,7 @@ import com.jameskelly.koloro.R;
 import com.jameskelly.koloro.ScreenCaptureManager;
 import com.jameskelly.koloro.preferences.BooleanPreference;
 import com.jameskelly.koloro.preferences.PreferencesModule;
+import com.jameskelly.koloro.ui.ColorPickActivity;
 import com.jameskelly.koloro.ui.KoloroActivity;
 import com.jameskelly.koloro.ui.OverlayFrameLayout;
 import javax.inject.Inject;
@@ -102,6 +104,12 @@ public class KoloroService extends Service {
     notificationManager.notify(KOLORA_NOTIFICATION_ID, builder.build());
   }
 
+  private void finishService() {
+    stopSelf();
+    removeOverlayView();
+    notificationManager.cancel(KOLORA_NOTIFICATION_ID);
+  }
+
   @Override public void onDestroy() {
     super.onDestroy();
     unregisterReceiver(koloroReciever);
@@ -114,37 +122,38 @@ public class KoloroService extends Service {
   private OverlayFrameLayout.OverlayClickListener
       layoutOverlayClickListener = new OverlayFrameLayout.OverlayClickListener() {
     @Override public void onCaptureClicked() {
+      removeOverlayView();
       screenCaptureManager.captureScreen();
     }
 
     @Override public void onCancelClicked() {
-      removeOverlayView();
-      KoloroService.this.stopSelf();
+      finishService();
     }
   };
 
   private ScreenCaptureManager.ImageCaptureListener imageCaptureListener =
       new ScreenCaptureManager.ImageCaptureListener() {
-        @Override public void onImageCaptured(String imageUri) {
-          Toast.makeText(KoloroService.this, imageUri, Toast.LENGTH_SHORT).show();
-          //Intent intent = new Intent();
-          //intent.putExtra("", imageUri);
-          //startActivity(intent);
-          //KoloroService.this.stopSelf();
+        @Override public void onImageCaptured(Uri imageUri) {
+          Toast.makeText(KoloroService.this, imageUri.toString(), Toast.LENGTH_SHORT).show();
+
+          Intent intent = ColorPickActivity.intent(KoloroService.this);
+          intent.putExtra(ColorPickActivity.SCREEN_CAPTURE_URI, imageUri);
+          intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+          startActivity(intent);
+
+          finishService();
         }
 
         @Override public void onImageCaptureError() {
           Toast.makeText(KoloroService.this, "error", Toast.LENGTH_SHORT).show();
-          removeOverlayView();
-          KoloroService.this.stopSelf();
+          finishService();
         }
       };
 
   private final BroadcastReceiver koloroReciever = new BroadcastReceiver() {
     @Override public void onReceive(Context context, Intent intent) {
       if (intent.getAction().equals(STOP_KOLORO)) {
-        removeOverlayView();
-        KoloroService.this.stopSelf();
+        finishService();
       }
     }
   };
