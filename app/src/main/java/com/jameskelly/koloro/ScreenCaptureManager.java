@@ -12,6 +12,7 @@ import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Looper;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Surface;
@@ -63,6 +64,10 @@ public class ScreenCaptureManager {
       Log.e(TAG, "Unable to create directory");
     }
 
+    if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
+      String test = "";
+    }
+
     String captureFileName = capture_format.format(new Date());
     File captureFile = new File(koloroDir, captureFileName);
     screenInfo = getDeviceScreenInfo();
@@ -82,8 +87,6 @@ public class ScreenCaptureManager {
           convertImage(image, captureFile);
         }
     }, null);
-
-    //imageCaptureListener.onImageCaptured("farts");
   }
 
   private void convertImage(Image image, File captureFile) {

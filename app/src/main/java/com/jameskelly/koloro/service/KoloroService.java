@@ -20,7 +20,8 @@ import com.jameskelly.koloro.preferences.BooleanPreference;
 import com.jameskelly.koloro.preferences.PreferencesModule;
 import com.jameskelly.koloro.ui.ColorPickActivity;
 import com.jameskelly.koloro.ui.KoloroActivity;
-import com.jameskelly.koloro.ui.OverlayFrameLayout;
+import com.jameskelly.koloro.ui.OverlayButtonsLayout;
+import com.jameskelly.koloro.ui.OverlayLoadingLayout;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -31,7 +32,8 @@ public class KoloroService extends Service {
   private static final String STOP_KOLORO = "com.jameskelly.koloro.StopService";
   private static final int KOLORA_NOTIFICATION_ID = 1406;
 
-  private OverlayFrameLayout overlayFrameLayout;
+  private OverlayButtonsLayout overlayButtonsLayout;
+  private OverlayLoadingLayout overlayLoadingLayout;
   private ScreenCaptureManager screenCaptureManager;
 
   @Inject @Named(PreferencesModule.SHOW_NOTIFICATION_KEY) BooleanPreference showNotificationPref;
@@ -61,23 +63,39 @@ public class KoloroService extends Service {
     }
 
     KoloroApplication.get(this).applicationComponent().inject(this);
-
-    overlayFrameLayout = new OverlayFrameLayout(this, layoutOverlayClickListener);
-    windowManager.addView(overlayFrameLayout, overlayFrameLayout.setupCaptureWindowLayoutParams());
-
     screenCaptureManager = new ScreenCaptureManager(this, resultCode, resultData, imageCaptureListener);
 
     if (showNotificationPref.get()) {
       sendNotification();
     }
 
+    showButtonsOverlay();
+    //showLoadingOverlay();
+
     return START_NOT_STICKY;
   }
 
-  private void removeOverlayView() {
-    if (overlayFrameLayout != null) {
-      windowManager.removeView(overlayFrameLayout);
-      overlayFrameLayout = null;
+  private void showButtonsOverlay() {
+    overlayButtonsLayout = new OverlayButtonsLayout(this, layoutOverlayClickListener);
+    windowManager.addView(overlayButtonsLayout, overlayButtonsLayout.setupCaptureWindowLayoutParams());
+  }
+
+  private void removeButtonsOverlay() {
+    if (overlayButtonsLayout != null) {
+      windowManager.removeView(overlayButtonsLayout);
+      overlayButtonsLayout = null;
+    }
+  }
+
+  private void showLoadingOverlay() {
+    overlayLoadingLayout = new OverlayLoadingLayout(this);
+    windowManager.addView(overlayLoadingLayout, overlayLoadingLayout.setupLoadingOverlayParams());
+  }
+
+  private void removeLoadingOverlay() {
+    if (overlayLoadingLayout != null) {
+      windowManager.removeView(overlayLoadingLayout);
+      overlayLoadingLayout = null;
     }
   }
 
@@ -106,7 +124,8 @@ public class KoloroService extends Service {
 
   private void finishService() {
     stopSelf();
-    removeOverlayView();
+    removeButtonsOverlay();
+    removeLoadingOverlay();
     notificationManager.cancel(KOLORA_NOTIFICATION_ID);
   }
 
@@ -119,10 +138,11 @@ public class KoloroService extends Service {
     return null;
   }
 
-  private OverlayFrameLayout.OverlayClickListener
-      layoutOverlayClickListener = new OverlayFrameLayout.OverlayClickListener() {
+  private OverlayButtonsLayout.OverlayClickListener
+      layoutOverlayClickListener = new OverlayButtonsLayout.OverlayClickListener() {
     @Override public void onCaptureClicked() {
-      removeOverlayView();
+      removeButtonsOverlay();
+      //showLoadingOverlay();
       screenCaptureManager.captureScreen();
     }
 
@@ -134,6 +154,7 @@ public class KoloroService extends Service {
   private ScreenCaptureManager.ImageCaptureListener imageCaptureListener =
       new ScreenCaptureManager.ImageCaptureListener() {
         @Override public void onImageCaptured(Uri imageUri) {
+          //removeLoadingOverlay();
           Intent intent = ColorPickActivity.intent(KoloroService.this);
           intent.putExtra(ColorPickActivity.SCREEN_CAPTURE_URI, imageUri);
           intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
@@ -143,6 +164,7 @@ public class KoloroService extends Service {
         }
 
         @Override public void onImageCaptureError() {
+          removeLoadingOverlay();
           Toast.makeText(KoloroService.this, "error", Toast.LENGTH_SHORT).show();
           finishService();
         }
