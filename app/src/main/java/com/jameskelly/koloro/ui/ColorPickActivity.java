@@ -12,10 +12,10 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,8 +36,8 @@ public class ColorPickActivity extends BaseActivity {
   @Inject Picasso picasso;
   @Inject ClipboardManager clipboardManager;
 
+  @BindView(R.id.color_details_layout) ViewGroup colorDetailsLayout;
   @BindView(R.id.screen_capture_image) ImageView screenCaptureImage;
-  @BindView(R.id.color_frame) FrameLayout colorFrame;
   @BindView(R.id.hex_text) EditText hexText;
   @BindView(R.id.copy_button) Button copyButton;
 
@@ -64,15 +64,17 @@ public class ColorPickActivity extends BaseActivity {
 
   @OnTouch(R.id.screen_capture_image)
   boolean captureImageTouch(View v, MotionEvent event) {
+
     int x = Math.round(event.getRawX());
     int y = Math.round(event.getRawY());
 
     String touchedHexColor = getColorAtPoint(x, y);
     int touchedColor = Color.parseColor(touchedHexColor);
 
-    colorFrame.setBackgroundColor(touchedColor);
+    colorDetailsLayout.setBackgroundColor(touchedColor);
     hexText.setText(touchedHexColor);
-    
+    colorDetailsLayout.setVisibility(View.VISIBLE);
+
     return false;
   }
 
