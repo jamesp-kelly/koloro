@@ -1,5 +1,7 @@
 package com.jameskelly.koloro.ui;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -11,11 +13,13 @@ import android.support.annotation.Nullable;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.OnTouch;
 import com.jameskelly.koloro.KoloroApplication;
 import com.jameskelly.koloro.R;
@@ -30,10 +34,12 @@ public class ColorPickActivity extends BaseActivity {
   private Bitmap capturedBitmap;
 
   @Inject Picasso picasso;
+  @Inject ClipboardManager clipboardManager;
 
   @BindView(R.id.screen_capture_image) ImageView screenCaptureImage;
   @BindView(R.id.color_frame) FrameLayout colorFrame;
   @BindView(R.id.hex_text) EditText hexText;
+  @BindView(R.id.copy_button) Button copyButton;
 
   public static Intent intent(Context context) {
     return new Intent(context, ColorPickActivity.class);
@@ -66,10 +72,14 @@ public class ColorPickActivity extends BaseActivity {
 
     colorFrame.setBackgroundColor(touchedColor);
     hexText.setText(touchedHexColor);
-
-    //Toast.makeText(this, hexColor, Toast.LENGTH_LONG).show();
-
+    
     return false;
+  }
+
+  @OnClick(R.id.copy_button)
+  void onClick() {
+    ClipData clip = ClipData.newPlainText("Copied text", hexText.getText().toString());
+    clipboardManager.setPrimaryClip(clip);
   }
 
   Target colorPickerTarget = new Target() {

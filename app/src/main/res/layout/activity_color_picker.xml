@@ -10,24 +10,37 @@
       android:layout_height="match_parent"
       />
 
-  <FrameLayout
-      android:id="@+id/color_frame"
-      android:layout_width="120dp"
-      android:layout_height="60dp"
+  <LinearLayout
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
       android:layout_marginTop="20dp"
       android:layout_marginLeft="30dp"
-      android:background="@android:color/holo_blue_dark">
+      android:orientation="horizontal"
+      >
+    <FrameLayout
+        android:id="@+id/color_frame"
+        android:layout_width="120dp"
+        android:layout_height="60dp"
+        android:background="@android:color/holo_blue_dark">
 
-    <EditText
-        android:id="@+id/hex_text"
+      <EditText
+          android:id="@+id/hex_text"
+          android:layout_width="wrap_content"
+          android:layout_height="30dp"
+          android:layout_gravity="center_vertical|end"
+          android:layout_marginRight="3dp"
+          android:inputType="none"
+          android:background="@android:color/transparent"
+          tools:text="#00000"
+          />
+    </FrameLayout>
+    <Button
+        android:id="@+id/copy_button"
         android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:layout_gravity="center_vertical|end"
-        android:layout_marginRight="3dp"
-        android:inputType="none"
-        android:background="@android:color/transparent"
-        tools:text="#00000"
+        android:layout_height="60dp"
+        android:text="@string/copy_button"
         />
-  </FrameLayout>
+  </LinearLayout>
+
 
 </RelativeLayout>

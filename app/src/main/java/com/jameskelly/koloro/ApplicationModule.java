@@ -2,6 +2,7 @@ package com.jameskelly.koloro;
 
 import android.app.Application;
 import android.app.NotificationManager;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.media.projection.MediaProjectionManager;
 import android.view.LayoutInflater;
@@ -38,6 +39,11 @@ public class ApplicationModule {
   @Provides @Singleton
   public NotificationManager provideNotificationManager() {
     return (NotificationManager) application.getSystemService(Context.NOTIFICATION_SERVICE);
+  }
+
+  @Provides @Singleton
+  public ClipboardManager provideClipboardManager() {
+    return (ClipboardManager) application.getSystemService(Context.CLIPBOARD_SERVICE);
   }
 
   @Provides @Singleton
