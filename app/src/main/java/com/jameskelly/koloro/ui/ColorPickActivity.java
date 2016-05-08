@@ -11,8 +11,9 @@ import android.support.annotation.Nullable;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnTouch;
@@ -31,6 +32,8 @@ public class ColorPickActivity extends BaseActivity {
   @Inject Picasso picasso;
 
   @BindView(R.id.screen_capture_image) ImageView screenCaptureImage;
+  @BindView(R.id.color_frame) FrameLayout colorFrame;
+  @BindView(R.id.hex_text) EditText hexText;
 
   public static Intent intent(Context context) {
     return new Intent(context, ColorPickActivity.class);
@@ -58,9 +61,13 @@ public class ColorPickActivity extends BaseActivity {
     int x = Math.round(event.getRawX());
     int y = Math.round(event.getRawY());
 
-    String hexColor = getColorAtPoint(x, y);
+    String touchedHexColor = getColorAtPoint(x, y);
+    int touchedColor = Color.parseColor(touchedHexColor);
 
-    Toast.makeText(this, hexColor, Toast.LENGTH_LONG).show();
+    colorFrame.setBackgroundColor(touchedColor);
+    hexText.setText(touchedHexColor);
+
+    //Toast.makeText(this, hexColor, Toast.LENGTH_LONG).show();
 
     return false;
   }
