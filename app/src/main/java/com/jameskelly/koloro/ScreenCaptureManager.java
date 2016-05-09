@@ -116,6 +116,7 @@ public class ScreenCaptureManager {
       e.printStackTrace();
       imageCaptureListener.onImageCaptureError();
     } finally {
+      image.close();
       imageReader.close();
       surface.release();
       virtualDisplay.release();

@@ -73,6 +73,7 @@ public class ColorPickActivity extends BaseActivity {
 
     colorDetailsLayout.setBackgroundColor(touchedColor);
     hexText.setText(touchedHexColor);
+    hexText.setTextColor(getHexTextColor(touchedColor));
     colorDetailsLayout.setVisibility(View.VISIBLE);
 
     return false;
@@ -127,5 +128,23 @@ public class ColorPickActivity extends BaseActivity {
     return String.format("#%02x%02x%02x", r, g, b);
   }
 
+  private int getHexTextColor(int backgroundColor) {
+    int resultColorValue = 0;
 
+    int r = Color.red(backgroundColor);
+    int g = Color.green(backgroundColor);
+    int b = Color.blue(backgroundColor);
+
+    double backgroundBrightness = 1 - (0.299 * Color.red(backgroundColor) + 0.587 * Color.green(backgroundColor)
+        + 0.114 * Color.blue(backgroundColor))/255;
+
+    if (backgroundBrightness < 0.5) {
+      //bright color, use black
+      resultColorValue = 0;
+    } else {
+      resultColorValue = 255;
+    }
+
+    return Color.argb(255, resultColorValue, resultColorValue, resultColorValue);
+  }
 }
