@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -24,6 +25,9 @@ import com.jameskelly.koloro.ui.OverlayButtonsLayout;
 import com.jameskelly.koloro.ui.OverlayLoadingLayout;
 import javax.inject.Inject;
 import javax.inject.Named;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class KoloroService extends Service {
 
@@ -63,14 +67,13 @@ public class KoloroService extends Service {
     }
 
     KoloroApplication.get(this).applicationComponent().inject(this);
-    screenCaptureManager = new ScreenCaptureManager(this, resultCode, resultData, imageCaptureListener);
+    screenCaptureManager = new ScreenCaptureManager(this, resultCode, resultData);
 
     if (showNotificationPref.get()) {
       sendNotification();
     }
 
     showButtonsOverlay();
-    //showLoadingOverlay();
 
     return START_NOT_STICKY;
   }
@@ -84,18 +87,6 @@ public class KoloroService extends Service {
     if (overlayButtonsLayout != null) {
       windowManager.removeView(overlayButtonsLayout);
       overlayButtonsLayout = null;
-    }
-  }
-
-  private void showLoadingOverlay() {
-    overlayLoadingLayout = new OverlayLoadingLayout(this);
-    windowManager.addView(overlayLoadingLayout, overlayLoadingLayout.setupLoadingOverlayParams());
-  }
-
-  private void removeLoadingOverlay() {
-    if (overlayLoadingLayout != null) {
-      windowManager.removeView(overlayLoadingLayout);
-      overlayLoadingLayout = null;
     }
   }
 
@@ -125,7 +116,6 @@ public class KoloroService extends Service {
   private void finishService() {
     stopSelf();
     removeButtonsOverlay();
-    removeLoadingOverlay();
     notificationManager.cancel(KOLORA_NOTIFICATION_ID);
   }
 
@@ -142,8 +132,7 @@ public class KoloroService extends Service {
       layoutOverlayClickListener = new OverlayButtonsLayout.OverlayClickListener() {
     @Override public void onCaptureClicked() {
       removeButtonsOverlay();
-      //showLoadingOverlay();
-      screenCaptureManager.captureScreen();
+      screenCaptureManager.captureCurrentScreen(imageCaptureListener);
     }
 
     @Override public void onCancelClicked() {
@@ -153,22 +142,36 @@ public class KoloroService extends Service {
 
   private ScreenCaptureManager.ImageCaptureListener imageCaptureListener =
       new ScreenCaptureManager.ImageCaptureListener() {
-        @Override public void onImageCaptured(Uri imageUri) {
-          //removeLoadingOverlay();
-          Intent intent = ColorPickActivity.intent(KoloroService.this);
-          intent.putExtra(ColorPickActivity.SCREEN_CAPTURE_URI, imageUri);
-          intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-          startActivity(intent);
-
-          finishService();
+        @Override public void onImageCaptured(Bitmap capturedImage) {
+          saveBitmapToGallery(capturedImage);
         }
 
         @Override public void onImageCaptureError() {
-          removeLoadingOverlay();
-          Toast.makeText(KoloroService.this, "error", Toast.LENGTH_SHORT).show();
-          finishService();
         }
       };
+
+  private void saveBitmapToGallery(Bitmap bitmap) {
+    screenCaptureManager.getSavedBitmapUriObservable(bitmap)
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Subscriber<Uri>() {
+          @Override public void onCompleted() {
+          }
+
+          @Override public void onError(Throwable e) {
+            Toast.makeText(KoloroService.this, "Error saving screenshot", Toast.LENGTH_SHORT).show();
+          }
+
+          @Override public void onNext(Uri uri) {
+            Intent intent = ColorPickActivity.intent(KoloroService.this);
+            intent.putExtra(ColorPickActivity.SCREEN_CAPTURE_URI, uri);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+            startActivity(intent);
+
+            finishService();
+          }
+        });
+  }
 
   private final BroadcastReceiver koloroReciever = new BroadcastReceiver() {
     @Override public void onReceive(Context context, Intent intent) {
