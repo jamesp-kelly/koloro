@@ -9,4 +9,6 @@
   <string name="notification_ticker">Overlay started</string>
   <string name="multi_shot_label">Multi-shot</string>
   <string name="copy_button">Copy</string>
+  <string name="capture_method_label">Capture method</string>
+  <string name="preference_spinner_onscreen_button">Onscreen button</string>
 </resources>

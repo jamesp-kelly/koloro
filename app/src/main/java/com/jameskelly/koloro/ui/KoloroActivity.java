@@ -6,14 +6,18 @@ import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.Switch;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
+import butterknife.OnItemSelected;
 import com.jameskelly.koloro.KoloroApplication;
 import com.jameskelly.koloro.R;
 import com.jameskelly.koloro.preferences.BooleanPreference;
+import com.jameskelly.koloro.preferences.CaptureMethodAdaptor;
+import com.jameskelly.koloro.preferences.IntPreference;
 import com.jameskelly.koloro.preferences.PreferencesModule;
 import com.jameskelly.koloro.service.KoloroService;
 import com.jameskelly.koloro.ui.views.KoloroView;
@@ -24,6 +28,8 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
 
   private static final int CREATE_SCREEN_CAPTURE = 1255;
 
+  private CaptureMethodAdaptor captureMethodAdaptor;
+
   @Inject @Named(PreferencesModule.SHOW_NOTIFICATION_KEY)
   BooleanPreference showNotificationPreference;
   @Inject @Named(PreferencesModule.CAPTURE_BUTTON_VISIBLE_KEY)
@@ -32,12 +38,15 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
   BooleanPreference storeCapturesInGalleryPreference;
   @Inject @Named(PreferencesModule.MULTI_SHOT_KEY)
   BooleanPreference multiShotPreference;
+  @Inject @Named(PreferencesModule.SCREENSHOT_METHOD_KEY)
+  IntPreference screenShotMethodPreference;
   @Inject MediaProjectionManager mediaProjectionManager;
 
   @BindView(R.id.switch_show_notification) Switch showNotificationSwitch;
   @BindView(R.id.switch_capture_button_visible) Switch captureButtonVisibleSwitch;
   @BindView(R.id.switch_store_captures) Switch storeCapturesSwitch;
   @BindView(R.id.switch_multi_shot) Switch multiShotSwitch;
+  @BindView(R.id.spinner_capture_method) Spinner captureMethodSpinner;
   @BindView(R.id.start_capture) Button startCaptureButton;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +63,10 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
     captureButtonVisibleSwitch.setChecked(captureButtonVisiblePreference.get());
     storeCapturesSwitch.setChecked(storeCapturesInGalleryPreference.get());
     multiShotSwitch.setChecked(multiShotPreference.get());
+
+    captureMethodAdaptor = new CaptureMethodAdaptor(this);
+    captureMethodSpinner.setAdapter(captureMethodAdaptor);
+    captureMethodSpinner.setSelection(screenShotMethodPreference.get());
   }
 
   @OnCheckedChanged(R.id.switch_show_notification)
@@ -97,6 +110,17 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
     if (newValue != oldValue) {
       Log.d(TAG, String.format("Updating 'store captures' preference to %s", newValue));
       multiShotPreference.set(newValue);
+    }
+  }
+
+  @OnItemSelected(R.id.spinner_capture_method)
+  void onCaptureMethodChanged(int position) {
+    int newValue = position;
+    int oldValue = screenShotMethodPreference.get();
+
+    if (newValue != oldValue) {
+      Log.d(TAG, String.format("Updating 'screenshot method' preference to %s", newValue));
+      screenShotMethodPreference.set(newValue);
     }
   }
 
