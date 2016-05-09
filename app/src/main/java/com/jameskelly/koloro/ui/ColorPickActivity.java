@@ -12,10 +12,10 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,11 +32,12 @@ public class ColorPickActivity extends BaseActivity {
   public static final String SCREEN_CAPTURE_URI = "screen_capture_uri";
 
   private Bitmap capturedBitmap;
+  private float dX, dY;
 
   @Inject Picasso picasso;
   @Inject ClipboardManager clipboardManager;
 
-  @BindView(R.id.color_details_layout) ViewGroup colorDetailsLayout;
+  @BindView(R.id.color_details_layout) FrameLayout colorDetailsLayout;
   @BindView(R.id.screen_capture_image) ImageView screenCaptureImage;
   @BindView(R.id.hex_text) EditText hexText;
   @BindView(R.id.copy_button) Button copyButton;
@@ -59,16 +60,15 @@ public class ColorPickActivity extends BaseActivity {
     Uri screenCaptureUri = intent.getParcelableExtra(SCREEN_CAPTURE_URI);
 
     picasso.load(screenCaptureUri).into(colorPickerTarget);
-
   }
 
   @OnTouch(R.id.screen_capture_image)
   boolean captureImageTouch(View v, MotionEvent event) {
 
-    int x = Math.round(event.getRawX());
-    int y = Math.round(event.getRawY());
+    int touchX = Math.round(event.getRawX());
+    int touchY = Math.round(event.getRawY());
 
-    String touchedHexColor = getColorAtPoint(x, y);
+    String touchedHexColor = getColorAtPoint(touchX, touchY);
     int touchedColor = Color.parseColor(touchedHexColor);
 
     colorDetailsLayout.setBackgroundColor(touchedColor);
@@ -76,6 +76,26 @@ public class ColorPickActivity extends BaseActivity {
     colorDetailsLayout.setVisibility(View.VISIBLE);
 
     return false;
+  }
+
+  @OnTouch(R.id.color_details_layout)
+  boolean colorLayoutTouch(View v, MotionEvent event) {
+    switch (event.getAction()) {
+      case MotionEvent.ACTION_DOWN:
+        dX = v.getX() - event.getRawX();
+        dY = v.getY() - event.getRawY();
+        break;
+      case MotionEvent.ACTION_MOVE:
+        v.animate()
+            .x(event.getRawX() + dX)
+            .y(event.getRawY() + dY)
+            .setDuration(0)
+            .start();
+        break;
+      default:
+        return false;
+    }
+    return true;
   }
 
   @OnClick(R.id.copy_button)
