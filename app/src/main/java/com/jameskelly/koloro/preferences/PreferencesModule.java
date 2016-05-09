@@ -18,6 +18,8 @@ public class PreferencesModule {
   private static final boolean DEFAULT_CAPTURES_IN_GALLEY = true;
   public static final String MULTI_SHOT_KEY = "multi_shot";
   private static final boolean DEFAULT_MULTI_SHOT = false;
+  public static final String SCREENSHOT_METHOD_KEY = "screenshot_method";
+  private static final int DEFAULT_SCREENSHOT_METHOD = 0;
 
   @Provides @Singleton
   SharedPreferences provideSharedPreferences(Application app) {
@@ -64,6 +66,16 @@ public class PreferencesModule {
   @Provides @Named(MULTI_SHOT_KEY)
   Boolean provideMultiShot(@Named(MULTI_SHOT_KEY) BooleanPreference booleanPreference) {
     return booleanPreference.get();
+  }
+
+  @Provides @Singleton @Named(SCREENSHOT_METHOD_KEY)
+  IntPreference provideScreenshotMethodPreference(SharedPreferences preferences) {
+    return new IntPreference(preferences, SCREENSHOT_METHOD_KEY, DEFAULT_SCREENSHOT_METHOD);
+  }
+
+  @Provides @Named(SCREENSHOT_METHOD_KEY)
+  Integer provideScreenshotMethod(@Named(SCREENSHOT_METHOD_KEY) IntPreference intPreference) {
+    return intPreference.get();
   }
 
 }
