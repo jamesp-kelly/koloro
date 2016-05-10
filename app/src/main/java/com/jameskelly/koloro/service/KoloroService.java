@@ -18,6 +18,7 @@ import com.jameskelly.koloro.KoloroApplication;
 import com.jameskelly.koloro.R;
 import com.jameskelly.koloro.ScreenCaptureManager;
 import com.jameskelly.koloro.preferences.BooleanPreference;
+import com.jameskelly.koloro.preferences.IntPreference;
 import com.jameskelly.koloro.preferences.PreferencesModule;
 import com.jameskelly.koloro.ui.ColorPickActivity;
 import com.jameskelly.koloro.ui.KoloroActivity;
@@ -41,6 +42,8 @@ public class KoloroService extends Service {
   private ScreenCaptureManager screenCaptureManager;
 
   @Inject @Named(PreferencesModule.SHOW_NOTIFICATION_KEY) BooleanPreference showNotificationPref;
+  @Inject @Named(PreferencesModule.CAPTURE_BUTTON_POSITION_KEY)
+  IntPreference captureButtonPositionPreference;
   @Inject WindowManager windowManager;
   @Inject NotificationManager notificationManager;
 
@@ -80,7 +83,8 @@ public class KoloroService extends Service {
 
   private void showButtonsOverlay() {
     overlayButtonsLayout = new OverlayButtonsLayout(this, layoutOverlayClickListener);
-    windowManager.addView(overlayButtonsLayout, overlayButtonsLayout.setupCaptureWindowLayoutParams());
+    windowManager.addView(overlayButtonsLayout,
+        overlayButtonsLayout.setupCaptureWindowLayoutParams(captureButtonPositionPreference.get()));
   }
 
   private void removeButtonsOverlay() {

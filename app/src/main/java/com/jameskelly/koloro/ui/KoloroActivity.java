@@ -16,11 +16,13 @@ import butterknife.OnItemSelected;
 import com.jameskelly.koloro.KoloroApplication;
 import com.jameskelly.koloro.R;
 import com.jameskelly.koloro.preferences.BooleanPreference;
-import com.jameskelly.koloro.preferences.CaptureMethodAdaptor;
 import com.jameskelly.koloro.preferences.IntPreference;
 import com.jameskelly.koloro.preferences.PreferencesModule;
+import com.jameskelly.koloro.preferences.SimpleSpinnerAdapter;
 import com.jameskelly.koloro.service.KoloroService;
 import com.jameskelly.koloro.ui.views.KoloroView;
+import java.util.Arrays;
+import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -28,7 +30,7 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
 
   private static final int CREATE_SCREEN_CAPTURE = 1255;
 
-  private CaptureMethodAdaptor captureMethodAdaptor;
+  private SimpleSpinnerAdapter captureButtonPositionAdapter;
 
   @Inject @Named(PreferencesModule.SHOW_NOTIFICATION_KEY)
   BooleanPreference showNotificationPreference;
@@ -38,15 +40,15 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
   BooleanPreference storeCapturesInGalleryPreference;
   @Inject @Named(PreferencesModule.MULTI_SHOT_KEY)
   BooleanPreference multiShotPreference;
-  @Inject @Named(PreferencesModule.SCREENSHOT_METHOD_KEY)
-  IntPreference screenShotMethodPreference;
+  @Inject @Named(PreferencesModule.CAPTURE_BUTTON_POSITION_KEY)
+  IntPreference captureButtonPositionPreference;
   @Inject MediaProjectionManager mediaProjectionManager;
 
   @BindView(R.id.switch_show_notification) Switch showNotificationSwitch;
   @BindView(R.id.switch_capture_button_visible) Switch captureButtonVisibleSwitch;
   @BindView(R.id.switch_store_captures) Switch storeCapturesSwitch;
   @BindView(R.id.switch_multi_shot) Switch multiShotSwitch;
-  @BindView(R.id.spinner_capture_method) Spinner captureMethodSpinner;
+  @BindView(R.id.spinner_capture_button_position) Spinner captureButtonPositionSpinner;
   @BindView(R.id.start_capture) Button startCaptureButton;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
@@ -64,9 +66,14 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
     storeCapturesSwitch.setChecked(storeCapturesInGalleryPreference.get());
     multiShotSwitch.setChecked(multiShotPreference.get());
 
-    captureMethodAdaptor = new CaptureMethodAdaptor(this);
-    captureMethodSpinner.setAdapter(captureMethodAdaptor);
-    captureMethodSpinner.setSelection(screenShotMethodPreference.get());
+    captureButtonPositionAdapter = new SimpleSpinnerAdapter(this, buttonPositionValues());
+    captureButtonPositionSpinner.setAdapter(captureButtonPositionAdapter);
+    captureButtonPositionSpinner.setSelection(captureButtonPositionPreference.get());
+  }
+
+  private List<String> buttonPositionValues() {
+    String[] stringArray = getResources().getStringArray(R.array.capture_button_position_array);
+    return Arrays.asList(stringArray);
   }
 
   @OnCheckedChanged(R.id.switch_show_notification)
@@ -113,14 +120,14 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
     }
   }
 
-  @OnItemSelected(R.id.spinner_capture_method)
+  @OnItemSelected(R.id.spinner_capture_button_position)
   void onCaptureMethodChanged(int position) {
     int newValue = position;
-    int oldValue = screenShotMethodPreference.get();
+    int oldValue = captureButtonPositionPreference.get();
 
     if (newValue != oldValue) {
-      Log.d(TAG, String.format("Updating 'screenshot method' preference to %s", newValue));
-      screenShotMethodPreference.set(newValue);
+      Log.d(TAG, String.format("Updating 'capture button position' preference to %s", newValue));
+      captureButtonPositionPreference.set(newValue);
     }
   }
 
@@ -139,7 +146,6 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
       } else {
         Log.d(TAG, "Couldn't get permission to screen capture");
         //show message to user
-
       }
     }
   }

@@ -13,4 +13,8 @@
   <string name="preference_spinner_onscreen_button">Onscreen button</string>
   <string name="cancel_overlay_description">Close overlay</string>
   <string name="capture_screen_description">Capture screen</string>
+  <string-array name="capture_button_position_array">
+    <item>Top right</item>
+    <item>Top left</item>
+  </string-array>
 </resources>

@@ -50,7 +50,7 @@ public class OverlayButtonsLayout extends FrameLayout implements CaptureView {
     hideCaptureOverlay();
   }
 
-  @Override public WindowManager.LayoutParams setupCaptureWindowLayoutParams() {
+  @Override public WindowManager.LayoutParams setupCaptureWindowLayoutParams(int positionPreference) {
     Resources resources = context.getResources();
 
     WindowManager.LayoutParams params =
@@ -58,8 +58,11 @@ public class OverlayButtonsLayout extends FrameLayout implements CaptureView {
             FLAG_NOT_FOCUSABLE | FLAG_NOT_TOUCH_MODAL | FLAG_LAYOUT_NO_LIMITS |
                 FLAG_LAYOUT_INSET_DECOR | FLAG_LAYOUT_IN_SCREEN, TRANSLUCENT);
 
-    //todo check preferences for gravity
-    params.gravity = Gravity.TOP | Gravity.RIGHT;
+    if (positionPreference == 0) {
+      params.gravity = Gravity.TOP | Gravity.RIGHT;
+    } else if (positionPreference == 1) {
+      params.gravity = Gravity.TOP | Gravity.LEFT;
+    }
 
     return params;
   }

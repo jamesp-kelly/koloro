@@ -6,24 +6,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import java.util.Arrays;
 import java.util.List;
 
-public class CaptureMethodAdaptor extends BaseAdapter {
+public class SimpleSpinnerAdapter extends BaseAdapter {
 
-  private final List<String> captureMethods = Arrays.asList("Onscreen button", "Volume down");
+  private final List<String> spinnerValues;
   private final LayoutInflater layoutInflater;
 
-  public CaptureMethodAdaptor(Context context) {
+  public SimpleSpinnerAdapter(Context context, List<String> values) {
     layoutInflater = LayoutInflater.from(context);
+    spinnerValues = values;
   }
 
   @Override public int getCount() {
-    return captureMethods.size();
+    return spinnerValues.size();
   }
 
   @Override public Object getItem(int position) {
-    return captureMethods.get(position);
+    return spinnerValues.get(position);
   }
 
   @Override public long getItemId(int position) {
@@ -38,7 +38,7 @@ public class CaptureMethodAdaptor extends BaseAdapter {
           (TextView) layoutInflater.inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
     }
 
-    textView.setText(captureMethods.get(position));
+    textView.setText(spinnerValues.get(position));
     return textView;
   }
 }

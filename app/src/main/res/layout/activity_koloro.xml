@@ -50,9 +50,9 @@
           android:layout_width="0dp"
           android:layout_height="wrap_content"
           android:layout_weight="1"
-          android:text="@string/capture_method_label" />
+          android:text="Capture button position" />
       <Spinner
-          android:id="@+id/spinner_capture_method"
+          android:id="@+id/spinner_capture_button_position"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content" />
     </LinearLayout>
