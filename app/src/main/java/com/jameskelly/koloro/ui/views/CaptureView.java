@@ -4,5 +4,6 @@ import android.view.WindowManager;
 
 public interface CaptureView {
   WindowManager.LayoutParams setupCaptureWindowLayoutParams();
-  void displayCaptureOverLay();
+  void displayCaptureOverlay();
+  void hideCaptureOverlay();
 }
