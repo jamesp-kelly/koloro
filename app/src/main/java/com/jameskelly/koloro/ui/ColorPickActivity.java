@@ -13,10 +13,11 @@ import android.support.annotation.Nullable;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -32,15 +33,15 @@ public class ColorPickActivity extends BaseActivity {
   public static final String SCREEN_CAPTURE_URI = "screen_capture_uri";
 
   private Bitmap capturedBitmap;
-  private float dX, dY;
+  private float frameX, frameY, buttonX, buttonY;
 
   @Inject Picasso picasso;
   @Inject ClipboardManager clipboardManager;
 
   @BindView(R.id.color_details_layout) FrameLayout colorDetailsLayout;
+  @BindView(R.id.copy_button) ImageButton copyButton;
   @BindView(R.id.screen_capture_image) ImageView screenCaptureImage;
-  @BindView(R.id.hex_text) EditText hexText;
-  @BindView(R.id.copy_button) Button copyButton;
+  @BindView(R.id.hex_text) TextView hexText;
 
   public static Intent intent(Context context) {
     return new Intent(context, ColorPickActivity.class);
@@ -75,6 +76,7 @@ public class ColorPickActivity extends BaseActivity {
     hexText.setText(touchedHexColor);
     hexText.setTextColor(getHexTextColor(touchedColor));
     colorDetailsLayout.setVisibility(View.VISIBLE);
+    copyButton.setVisibility(View.VISIBLE);
 
     return false;
   }
@@ -83,13 +85,20 @@ public class ColorPickActivity extends BaseActivity {
   boolean colorLayoutTouch(View v, MotionEvent event) {
     switch (event.getAction()) {
       case MotionEvent.ACTION_DOWN:
-        dX = v.getX() - event.getRawX();
-        dY = v.getY() - event.getRawY();
+        frameX = v.getX() - event.getRawX();
+        frameY = v.getY() - event.getRawY();
+        buttonX = copyButton.getX() - event.getRawX();
+        buttonY = copyButton.getY() - event.getRawY();
         break;
       case MotionEvent.ACTION_MOVE:
         v.animate()
-            .x(event.getRawX() + dX)
-            .y(event.getRawY() + dY)
+            .x(event.getRawX() + frameX)
+            .y(event.getRawY() + frameY)
+            .setDuration(0)
+            .start();
+        copyButton.animate()
+            .x(event.getRawX() + buttonX)
+            .y(event.getRawY() + buttonY)
             .setDuration(0)
             .start();
         break;
@@ -103,6 +112,7 @@ public class ColorPickActivity extends BaseActivity {
   void onClick() {
     ClipData clip = ClipData.newPlainText("Copied text", hexText.getText().toString());
     clipboardManager.setPrimaryClip(clip);
+    Toast.makeText(this, R.string.copied_clipboard_toast, Toast.LENGTH_SHORT).show();
   }
 
   Target colorPickerTarget = new Target() {
