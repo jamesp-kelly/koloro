@@ -10,40 +10,49 @@
       android:layout_height="match_parent"
       />
 
-
-  <FrameLayout
-      android:id="@+id/color_details_layout"
-      android:layout_width="150dp"
-      android:layout_height="60dp"
+  <LinearLayout
+      android:id="@+id/color_details_parent"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
       android:layout_marginTop="20dp"
       android:layout_marginBottom="20dp"
       android:layout_marginLeft="30dp"
+      android:padding="3dp"
+      android:orientation="horizontal"
+      android:background="@drawable/color_picker_parent_background"
       android:visibility="gone"
       tools:visibility="visible"
-      android:background="@android:color/holo_blue_dark">
+      >
 
-    <TextView
-        android:id="@+id/hex_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginRight="3dp"
-        android:background="@android:color/transparent"
-        android:textSize="25dp"
-        tools:text="#00000"
+    <FrameLayout
+        android:id="@+id/color_details_layout"
+        android:layout_width="150dp"
+        android:layout_height="60dp"
+        android:background="@drawable/color_picker_background">
+
+      <TextView
+          android:id="@+id/hex_text"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center"
+          android:layout_marginRight="3dp"
+          android:background="@android:color/transparent"
+          android:textSize="25dp"
+          tools:text="#00000"
+          />
+    </FrameLayout>
+
+    <ImageButton
+        android:id="@+id/copy_button"
+        android:layout_width="40dp"
+        android:layout_height="60dp"
+        android:layout_toRightOf="@+id/color_details_layout"
+        android:src="@drawable/ic_content_copy_black_24dp"
         />
-  </FrameLayout>
 
-  <ImageButton
-      android:id="@+id/copy_button"
-      android:layout_width="40dp"
-      android:layout_height="60dp"
-      android:layout_toRightOf="@+id/color_details_layout"
-      android:layout_marginTop="20dp"
-      android:visibility="gone"
-      tools:visibility="visible"
-      android:src="@drawable/ic_content_copy_black_24dp"
-      />
+  </LinearLayout>
+
+
 
 
 

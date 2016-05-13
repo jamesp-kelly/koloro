@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,6 +17,7 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import butterknife.BindView;
@@ -33,11 +35,12 @@ public class ColorPickActivity extends BaseActivity {
   public static final String SCREEN_CAPTURE_URI = "screen_capture_uri";
 
   private Bitmap capturedBitmap;
-  private float frameX, frameY, buttonX, buttonY;
+  private float parentX, parentY;
 
   @Inject Picasso picasso;
   @Inject ClipboardManager clipboardManager;
 
+  @BindView(R.id.color_details_parent) LinearLayout colorDetailsParent;
   @BindView(R.id.color_details_layout) FrameLayout colorDetailsLayout;
   @BindView(R.id.copy_button) ImageButton copyButton;
   @BindView(R.id.screen_capture_image) ImageView screenCaptureImage;
@@ -72,11 +75,13 @@ public class ColorPickActivity extends BaseActivity {
     String touchedHexColor = getColorAtPoint(touchX, touchY);
     int touchedColor = Color.parseColor(touchedHexColor);
 
-    colorDetailsLayout.setBackgroundColor(touchedColor);
+    GradientDrawable background = (GradientDrawable) colorDetailsLayout.getBackground();
+    background.setColor(touchedColor);
+
     hexText.setText(touchedHexColor);
     hexText.setTextColor(getHexTextColor(touchedColor));
-    colorDetailsLayout.setVisibility(View.VISIBLE);
-    copyButton.setVisibility(View.VISIBLE);
+
+    colorDetailsParent.setVisibility(View.VISIBLE);
 
     return false;
   }
@@ -85,20 +90,13 @@ public class ColorPickActivity extends BaseActivity {
   boolean colorLayoutTouch(View v, MotionEvent event) {
     switch (event.getAction()) {
       case MotionEvent.ACTION_DOWN:
-        frameX = v.getX() - event.getRawX();
-        frameY = v.getY() - event.getRawY();
-        buttonX = copyButton.getX() - event.getRawX();
-        buttonY = copyButton.getY() - event.getRawY();
+        parentX = colorDetailsParent.getX() - event.getRawX();
+        parentY = colorDetailsParent.getY() - event.getRawY();
         break;
       case MotionEvent.ACTION_MOVE:
-        v.animate()
-            .x(event.getRawX() + frameX)
-            .y(event.getRawY() + frameY)
-            .setDuration(0)
-            .start();
-        copyButton.animate()
-            .x(event.getRawX() + buttonX)
-            .y(event.getRawY() + buttonY)
+        colorDetailsParent.animate()
+            .x(event.getRawX() + parentX)
+            .y(event.getRawY() + parentY)
             .setDuration(0)
             .start();
         break;
