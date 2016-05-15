@@ -19,7 +19,7 @@ public class OverlayLoadingLayout extends FrameLayout {
     inflate(context, R.layout.loading_overlay, this);
   }
 
-  public WindowManager.LayoutParams setupLoadingOverlayParams() {
+  public WindowManager.LayoutParams layoutParams() {
     WindowManager.LayoutParams params =
         new WindowManager.LayoutParams(MATCH_PARENT, MATCH_PARENT, TYPE_SYSTEM_ALERT,
             FLAG_NOT_FOCUSABLE | FLAG_LAYOUT_IN_SCREEN, PixelFormat.OPAQUE);

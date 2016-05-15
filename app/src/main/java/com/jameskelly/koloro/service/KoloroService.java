@@ -38,7 +38,10 @@ public class KoloroService extends Service {
   private static final int KOLORA_NOTIFICATION_ID = 1406;
 
   private OverlayButtonsLayout overlayButtonsLayout;
+  private WindowManager.LayoutParams buttonsParams;
   private OverlayLoadingLayout overlayLoadingLayout;
+  private WindowManager.LayoutParams loadingParams;
+
   private ScreenCaptureManager screenCaptureManager;
 
   @Inject @Named(PreferencesModule.SHOW_NOTIFICATION_KEY) BooleanPreference showNotificationPref;
@@ -72,55 +75,65 @@ public class KoloroService extends Service {
     KoloroApplication.get(this).applicationComponent().inject(this);
     screenCaptureManager = new ScreenCaptureManager(this, resultCode, resultData);
 
-    if (showNotificationPref.get()) {
-      sendNotification();
-    }
+    overlayButtonsLayout = new OverlayButtonsLayout(this, layoutOverlayClickListener);
+    buttonsParams = overlayButtonsLayout.layoutParams(captureButtonPositionPreference.get());
+    overlayLoadingLayout = new OverlayLoadingLayout(this);
+    loadingParams = overlayLoadingLayout.layoutParams();
 
+    createNotification();
     showButtonsOverlay();
 
     return START_NOT_STICKY;
   }
 
   private void showButtonsOverlay() {
-    overlayButtonsLayout = new OverlayButtonsLayout(this, layoutOverlayClickListener);
-    windowManager.addView(overlayButtonsLayout,
-        overlayButtonsLayout.setupCaptureWindowLayoutParams(captureButtonPositionPreference.get()));
+    windowManager.addView(overlayButtonsLayout, buttonsParams);
   }
 
   private void removeButtonsOverlay() {
     if (overlayButtonsLayout != null) {
       windowManager.removeView(overlayButtonsLayout);
-      overlayButtonsLayout = null;
     }
   }
 
-  private void sendNotification() {
+  private void createNotification() {
+    if (showNotificationPref.get()) {
+      Intent homeIntent = new Intent(this, KoloroActivity.class);
+      homeIntent.setAction(Intent.ACTION_MAIN);
+      homeIntent.addCategory(Intent.CATEGORY_LAUNCHER);
 
-    Intent homeIntent = new Intent(this, KoloroActivity.class);
-    homeIntent.setAction(Intent.ACTION_MAIN);
-    homeIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+      Intent stopIntent = new Intent(STOP_KOLORO);
 
-    Intent stopIntent = new Intent(STOP_KOLORO);
+      PendingIntent homePendingIntent = PendingIntent.getActivity(this, 0, homeIntent, 0);
+      PendingIntent stopPendingIntent = PendingIntent.getBroadcast(this, 0, stopIntent, 0);
 
-    PendingIntent homePendingIntent = PendingIntent.getActivity(this, 0, homeIntent, 0);
-    PendingIntent stopPendingIntent = PendingIntent.getBroadcast(this, 0, stopIntent, 0);
+      Notification.Builder builder = new Notification.Builder(this).setContentTitle(getString(R.string.app_name))
+          .setContentText(getString(R.string.notification_text))
+          .setSmallIcon(R.drawable.ic_colorize_white_24dp)
+          .setTicker(getString(R.string.notification_ticker))
+          .setContentIntent(homePendingIntent)
+          .setDeleteIntent(stopPendingIntent)
+          .setCategory(Notification.CATEGORY_SERVICE);
 
-    Notification.Builder builder = new Notification.Builder(this)
-        .setContentTitle(getString(R.string.app_name))
-        .setContentText(getString(R.string.notification_text))
-        .setSmallIcon(R.drawable.ic_colorize_white_24dp)
-        .setTicker(getString(R.string.notification_ticker))
-        .setContentIntent(homePendingIntent)
-        .setDeleteIntent(stopPendingIntent)
-        .setCategory(Notification.CATEGORY_SERVICE);
-
-    notificationManager.notify(KOLORA_NOTIFICATION_ID, builder.build());
+      notificationManager.notify(KOLORA_NOTIFICATION_ID, builder.build());
+    }
   }
 
   private void finishService() {
     stopSelf();
-    removeButtonsOverlay();
+    cleanupOverlays();
     notificationManager.cancel(KOLORA_NOTIFICATION_ID);
+  }
+
+  private void cleanupOverlays() {
+    if (overlayButtonsLayout != null) {
+      windowManager.removeView(overlayButtonsLayout);
+      overlayButtonsLayout = null;
+    }
+    if (overlayLoadingLayout != null) {
+      windowManager.removeView(overlayLoadingLayout);
+      overlayLoadingLayout = null;
+    }
   }
 
   @Override public void onDestroy() {

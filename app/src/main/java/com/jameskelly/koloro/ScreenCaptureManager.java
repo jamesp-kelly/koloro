@@ -11,7 +11,6 @@ import android.media.ImageReader;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -56,11 +55,7 @@ public class ScreenCaptureManager {
   }
 
   public void captureCurrentScreen(ImageCaptureListener imageCaptureListener) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      nativeScreenCapture(imageCaptureListener);
-    } else {
-      //doesnt seem possible
-    }
+    nativeScreenCapture(imageCaptureListener);
   }
 
   private void nativeScreenCapture(ImageCaptureListener imageCaptureListener) {

@@ -1,7 +1,6 @@
 package com.jameskelly.koloro.ui;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.view.Gravity;
 import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
@@ -25,7 +24,6 @@ public class OverlayButtonsLayout extends FrameLayout implements CaptureView {
   private static final int ANIM_IN_DURATION = 300;
   private static final int ANIM_OUT_DURATION = 150;
 
-  private final Context context;
   private OverlayClickListener overlayClickListener;
 
   @BindDimen(R.dimen.overlay_buttons_width) int buttonsWidth;
@@ -33,7 +31,6 @@ public class OverlayButtonsLayout extends FrameLayout implements CaptureView {
 
   public OverlayButtonsLayout(Context context, OverlayClickListener overlayClickListener) {
     super(context);
-    this.context = context;
     this.overlayClickListener = overlayClickListener;
     inflate(context, R.layout.capture_buttons_overlay, this);
 
@@ -50,8 +47,7 @@ public class OverlayButtonsLayout extends FrameLayout implements CaptureView {
     hideCaptureOverlay();
   }
 
-  @Override public WindowManager.LayoutParams setupCaptureWindowLayoutParams(int positionPreference) {
-    Resources resources = context.getResources();
+  @Override public WindowManager.LayoutParams layoutParams(int positionPreference) {
 
     WindowManager.LayoutParams params =
         new WindowManager.LayoutParams(buttonsWidth, buttonsHeight, TYPE_SYSTEM_ERROR,
