@@ -32,6 +32,7 @@ import com.squareup.picasso.Target;
 import javax.inject.Inject;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 public class ColorPickActivity extends BaseActivity {
 
@@ -126,7 +127,7 @@ public class ColorPickActivity extends BaseActivity {
     Toast.makeText(this, R.string.copied_clipboard_toast, Toast.LENGTH_SHORT).show();
   }
 
-  @Subscribe
+  @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
   public void onEventRecieved(ImageProcessedEvent event) {
 
   }

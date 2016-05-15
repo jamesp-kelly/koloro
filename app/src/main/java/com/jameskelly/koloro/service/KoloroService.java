@@ -29,6 +29,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -146,7 +147,7 @@ public class KoloroService extends Service {
     EventBus.getDefault().unregister(this);
   }
 
-  @Subscribe
+  @Subscribe(threadMode = ThreadMode.MAIN)
   public void onEventRecieved(ScreenCapturedEvent event) {
 
   }
