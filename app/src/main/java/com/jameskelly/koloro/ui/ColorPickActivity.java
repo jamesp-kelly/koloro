@@ -26,9 +26,12 @@ import butterknife.OnClick;
 import butterknife.OnTouch;
 import com.jameskelly.koloro.KoloroApplication;
 import com.jameskelly.koloro.R;
+import com.jameskelly.koloro.events.ImageProcessedEvent;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import javax.inject.Inject;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 public class ColorPickActivity extends BaseActivity {
 
@@ -64,6 +67,16 @@ public class ColorPickActivity extends BaseActivity {
     Uri screenCaptureUri = intent.getParcelableExtra(SCREEN_CAPTURE_URI);
 
     picasso.load(screenCaptureUri).into(colorPickerTarget);
+  }
+
+  @Override protected void onStart() {
+    super.onStart();
+    EventBus.getDefault().register(this);
+  }
+
+  @Override protected void onStop() {
+    EventBus.getDefault().unregister(this);
+    super.onStop();
   }
 
   @OnTouch(R.id.screen_capture_image)
@@ -111,6 +124,11 @@ public class ColorPickActivity extends BaseActivity {
     ClipData clip = ClipData.newPlainText("Copied text", hexText.getText().toString());
     clipboardManager.setPrimaryClip(clip);
     Toast.makeText(this, R.string.copied_clipboard_toast, Toast.LENGTH_SHORT).show();
+  }
+
+  @Subscribe
+  public void onEventRecieved(ImageProcessedEvent event) {
+
   }
 
   Target colorPickerTarget = new Target() {

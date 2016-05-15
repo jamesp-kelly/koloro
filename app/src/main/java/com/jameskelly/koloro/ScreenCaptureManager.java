@@ -16,6 +16,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Surface;
 import android.view.WindowManager;
+import com.jameskelly.koloro.events.ScreenCapturedEvent;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -25,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import javax.inject.Inject;
+import org.greenrobot.eventbus.EventBus;
 import rx.Observable;
 import rx.functions.Func0;
 
@@ -73,6 +75,7 @@ public class ScreenCaptureManager {
     imageReader.setOnImageAvailableListener(reader -> {
       Image image = reader.acquireLatestImage();
       if (image != null) {
+        EventBus.getDefault().post(new ScreenCapturedEvent(true));
         Bitmap capturedBitmap = null;
 
         try {

@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.jameskelly.koloro.KoloroApplication;
 import com.jameskelly.koloro.R;
 import com.jameskelly.koloro.ScreenCaptureManager;
+import com.jameskelly.koloro.events.ScreenCapturedEvent;
 import com.jameskelly.koloro.preferences.BooleanPreference;
 import com.jameskelly.koloro.preferences.IntPreference;
 import com.jameskelly.koloro.preferences.PreferencesModule;
@@ -26,6 +27,8 @@ import com.jameskelly.koloro.ui.OverlayButtonsLayout;
 import com.jameskelly.koloro.ui.OverlayLoadingLayout;
 import javax.inject.Inject;
 import javax.inject.Named;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -62,6 +65,7 @@ public class KoloroService extends Service {
 
     IntentFilter filter = new IntentFilter(STOP_KOLORO);
     registerReceiver(koloroReciever, filter);
+    EventBus.getDefault().register(this);
   }
 
   @Override public int onStartCommand(Intent intent, int flags, int startId) {
@@ -139,6 +143,12 @@ public class KoloroService extends Service {
   @Override public void onDestroy() {
     super.onDestroy();
     unregisterReceiver(koloroReciever);
+    EventBus.getDefault().unregister(this);
+  }
+
+  @Subscribe
+  public void onEventRecieved(ScreenCapturedEvent event) {
+
   }
 
   @Nullable @Override public IBinder onBind(Intent intent) {
