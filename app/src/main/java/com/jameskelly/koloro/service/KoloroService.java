@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.jameskelly.koloro.KoloroApplication;
 import com.jameskelly.koloro.R;
 import com.jameskelly.koloro.ScreenCaptureManager;
+import com.jameskelly.koloro.events.ImageProcessedEvent;
 import com.jameskelly.koloro.events.ScreenCapturedEvent;
 import com.jameskelly.koloro.preferences.BooleanPreference;
 import com.jameskelly.koloro.preferences.IntPreference;
@@ -96,7 +97,7 @@ public class KoloroService extends Service {
   }
 
   private void removeButtonsOverlay() {
-    if (overlayButtonsLayout != null) {
+    if (overlayButtonsLayout != null && overlayButtonsLayout.isAttachedToWindow()) {
       windowManager.removeView(overlayButtonsLayout);
     }
   }
@@ -132,11 +133,15 @@ public class KoloroService extends Service {
 
   private void cleanupOverlays() {
     if (overlayButtonsLayout != null) {
-      windowManager.removeView(overlayButtonsLayout);
+      if (overlayButtonsLayout.isAttachedToWindow()) {
+        windowManager.removeView(overlayButtonsLayout);
+      }
       overlayButtonsLayout = null;
     }
     if (overlayLoadingLayout != null) {
-      windowManager.removeView(overlayLoadingLayout);
+      if (overlayLoadingLayout.isAttachedToWindow()) {
+        windowManager.removeView(overlayLoadingLayout);
+      }
       overlayLoadingLayout = null;
     }
   }
@@ -171,7 +176,12 @@ public class KoloroService extends Service {
   private ScreenCaptureManager.ImageCaptureListener imageCaptureListener =
       new ScreenCaptureManager.ImageCaptureListener() {
         @Override public void onImageCaptured(Bitmap capturedImage) {
+
           saveBitmapToGallery(capturedImage);
+
+          Intent intent = ColorPickActivity.intent(KoloroService.this);
+          intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+          startActivity(intent);
         }
 
         @Override public void onImageCaptureError() {
@@ -191,12 +201,7 @@ public class KoloroService extends Service {
           }
 
           @Override public void onNext(Uri uri) {
-            Intent intent = ColorPickActivity.intent(KoloroService.this);
-            intent.putExtra(ColorPickActivity.SCREEN_CAPTURE_URI, uri);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-            startActivity(intent);
-
-            finishService();
+            EventBus.getDefault().postSticky(new ImageProcessedEvent(true, uri));
           }
         });
   }

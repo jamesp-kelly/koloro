@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.MotionEvent;
@@ -63,11 +62,6 @@ public class ColorPickActivity extends BaseActivity {
     setContentView(R.layout.activity_color_picker);
     KoloroApplication.get(this).applicationComponent().inject(this);
     ButterKnife.bind(this);
-
-    Intent intent = getIntent();
-    Uri screenCaptureUri = intent.getParcelableExtra(SCREEN_CAPTURE_URI);
-
-    picasso.load(screenCaptureUri).into(colorPickerTarget);
   }
 
   @Override protected void onStart() {
@@ -129,7 +123,9 @@ public class ColorPickActivity extends BaseActivity {
 
   @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
   public void onEventRecieved(ImageProcessedEvent event) {
-
+    if (event.isSuccess() && event.getImageUri() != null) {
+      picasso.load(event.getImageUri()).into(colorPickerTarget);
+    }
   }
 
   Target colorPickerTarget = new Target() {

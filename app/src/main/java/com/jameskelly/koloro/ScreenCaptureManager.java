@@ -93,7 +93,6 @@ public class ScreenCaptureManager {
           capturedBitmap = Bitmap.createBitmap(capturedBitmap, 0, 0, screenInfo.width, screenInfo.height);
 
           imageCaptureListener.onImageCaptured(capturedBitmap);
-
         } catch (UnsupportedOperationException e) {
           Log.e(TAG, "Native screen capture failed. Use canvas mode", e);
           //todo call canvas method here
