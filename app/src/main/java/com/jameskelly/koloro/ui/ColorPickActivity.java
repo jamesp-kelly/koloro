@@ -74,6 +74,11 @@ public class ColorPickActivity extends BaseActivity {
     super.onStop();
   }
 
+  @Override public void onBackPressed() {
+    super.onBackPressed();
+    screenCaptureImage.setImageDrawable(null);
+  }
+
   @OnTouch(R.id.screen_capture_image)
   boolean captureImageTouch(View v, MotionEvent event) {
 

@@ -18,19 +18,16 @@ import com.jameskelly.koloro.KoloroApplication;
 import com.jameskelly.koloro.R;
 import com.jameskelly.koloro.ScreenCaptureManager;
 import com.jameskelly.koloro.events.ImageProcessedEvent;
-import com.jameskelly.koloro.events.ScreenCapturedEvent;
 import com.jameskelly.koloro.preferences.BooleanPreference;
 import com.jameskelly.koloro.preferences.IntPreference;
 import com.jameskelly.koloro.preferences.PreferencesModule;
 import com.jameskelly.koloro.ui.ColorPickActivity;
 import com.jameskelly.koloro.ui.KoloroActivity;
-import com.jameskelly.koloro.ui.OverlayButtonsLayout;
-import com.jameskelly.koloro.ui.ScreenCaptureFlashLayout;
+import com.jameskelly.koloro.ui.layouts.OverlayButtonsLayout;
+import com.jameskelly.koloro.ui.layouts.ScreenCaptureFlashLayout;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -66,7 +63,6 @@ public class KoloroService extends Service {
   @Override public void onCreate() {
     IntentFilter filter = new IntentFilter(STOP_KOLORO);
     registerReceiver(koloroReciever, filter);
-    EventBus.getDefault().register(this);
   }
 
   @Override public int onStartCommand(Intent intent, int flags, int startId) {
@@ -82,7 +78,7 @@ public class KoloroService extends Service {
 
     overlayButtonsLayout = new OverlayButtonsLayout(this, layoutOverlayClickListener);
     buttonsParams = overlayButtonsLayout.layoutParams(captureButtonPositionPreference.get());
-    screenCaptureFlashLayout = new ScreenCaptureFlashLayout(this, this::removeScreenCaptureFlash);
+    screenCaptureFlashLayout = new ScreenCaptureFlashLayout(this, this::removeFlashStartWork);
     loadingParams = screenCaptureFlashLayout.layoutParams();
 
     setForground();
@@ -109,6 +105,12 @@ public class KoloroService extends Service {
     if (screenCaptureFlashLayout != null && screenCaptureFlashLayout.isAttachedToWindow()) {
       windowManager.removeView(screenCaptureFlashLayout);
     }
+  }
+
+  private void removeFlashStartWork() {
+    removeScreenCaptureFlash();
+    screenCaptureManager.captureCurrentScreen(imageCaptureListener);
+
   }
 
   private void setForground() {
@@ -156,27 +158,17 @@ public class KoloroService extends Service {
   @Override public void onDestroy() {
     super.onDestroy();
     unregisterReceiver(koloroReciever);
-    EventBus.getDefault().unregister(this);
-  }
-
-  @Subscribe(threadMode = ThreadMode.MAIN)
-  public void onEventRecieved(ScreenCapturedEvent event) {
-
   }
 
   @Nullable @Override public IBinder onBind(Intent intent) {
     return null;
   }
 
-
   private OverlayButtonsLayout.OverlayClickListener
       layoutOverlayClickListener = new OverlayButtonsLayout.OverlayClickListener() {
     @Override public void onCaptureClicked() {
       removeButtonsOverlay();
       showScreenCaptureFlash();
-
-      screenCaptureManager.captureCurrentScreen(imageCaptureListener);
-
     }
 
     @Override public void onCancelClicked() {

@@ -1,4 +1,4 @@
-package com.jameskelly.koloro.ui;
+package com.jameskelly.koloro.ui.layouts;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
@@ -58,26 +58,15 @@ public class ScreenCaptureFlashLayout extends FrameLayout {
 
     animator.addUpdateListener(animation ->
         border.setStroke((Integer) animation.getAnimatedValue(), borderColor));
-    animator.addListener(animListener);
+    animator.addListener(new AnimatorEndListener() {
+      @Override public void onAnimationEnd(Animator animation) {
+        postDelayed(flashListener::onFlashComplete, 250);
+      }
+    });
     animator.start();
 
     super.onAttachedToWindow();
   }
-
-  private Animator.AnimatorListener animListener = new Animator.AnimatorListener() {
-    @Override public void onAnimationStart(Animator animation) {
-    }
-
-    @Override public void onAnimationEnd(Animator animation) {
-      flashListener.onFlashComplete();
-    }
-
-    @Override public void onAnimationCancel(Animator animation) {
-    }
-
-    @Override public void onAnimationRepeat(Animator animation) {
-    }
-  };
 
   public interface FlashListener {
     void onFlashComplete();

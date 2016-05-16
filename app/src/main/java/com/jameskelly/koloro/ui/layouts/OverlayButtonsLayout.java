@@ -1,4 +1,4 @@
-package com.jameskelly.koloro.ui;
+package com.jameskelly.koloro.ui.layouts;
 
 import android.content.Context;
 import android.view.Gravity;
