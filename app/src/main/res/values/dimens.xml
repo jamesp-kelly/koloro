@@ -7,4 +7,5 @@
   <dimen name="overlay_buttons_height">25dp</dimen>
   <dimen name="overlay_loading_width">144dp</dimen>
   <dimen name="overlay_loading_height">1800dp</dimen>
+  <dimen name="prefs_layout_margin_top">10dp</dimen>
 </resources>
