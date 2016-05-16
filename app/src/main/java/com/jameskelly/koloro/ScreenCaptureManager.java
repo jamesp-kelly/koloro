@@ -57,10 +57,6 @@ public class ScreenCaptureManager {
   }
 
   public void captureCurrentScreen(ImageCaptureListener imageCaptureListener) {
-    nativeScreenCapture(imageCaptureListener);
-  }
-
-  private void nativeScreenCapture(ImageCaptureListener imageCaptureListener) {
 
     ScreenInfo screenInfo = getDeviceScreenInfo();
 
@@ -94,8 +90,7 @@ public class ScreenCaptureManager {
 
           imageCaptureListener.onImageCaptured(capturedBitmap);
         } catch (UnsupportedOperationException e) {
-          Log.e(TAG, "Native screen capture failed. Use canvas mode", e);
-          //todo call canvas method here
+          Log.e(TAG, "Native screen capture failed. Unsupported", e);
         } finally {
           image.close();
           reader.close();

@@ -25,7 +25,7 @@ import com.jameskelly.koloro.preferences.PreferencesModule;
 import com.jameskelly.koloro.ui.ColorPickActivity;
 import com.jameskelly.koloro.ui.KoloroActivity;
 import com.jameskelly.koloro.ui.OverlayButtonsLayout;
-import com.jameskelly.koloro.ui.OverlayLoadingLayout;
+import com.jameskelly.koloro.ui.ScreenCaptureFlashLayout;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.greenrobot.eventbus.EventBus;
@@ -44,7 +44,7 @@ public class KoloroService extends Service {
 
   private OverlayButtonsLayout overlayButtonsLayout;
   private WindowManager.LayoutParams buttonsParams;
-  private OverlayLoadingLayout overlayLoadingLayout;
+  private ScreenCaptureFlashLayout screenCaptureFlashLayout;
   private WindowManager.LayoutParams loadingParams;
 
   private ScreenCaptureManager screenCaptureManager;
@@ -64,7 +64,6 @@ public class KoloroService extends Service {
   }
 
   @Override public void onCreate() {
-
     IntentFilter filter = new IntentFilter(STOP_KOLORO);
     registerReceiver(koloroReciever, filter);
     EventBus.getDefault().register(this);
@@ -83,10 +82,10 @@ public class KoloroService extends Service {
 
     overlayButtonsLayout = new OverlayButtonsLayout(this, layoutOverlayClickListener);
     buttonsParams = overlayButtonsLayout.layoutParams(captureButtonPositionPreference.get());
-    overlayLoadingLayout = new OverlayLoadingLayout(this);
-    loadingParams = overlayLoadingLayout.layoutParams();
+    screenCaptureFlashLayout = new ScreenCaptureFlashLayout(this, this::removeScreenCaptureFlash);
+    loadingParams = screenCaptureFlashLayout.layoutParams();
 
-    createNotification();
+    setForground();
     showButtonsOverlay();
 
     return START_NOT_STICKY;
@@ -102,33 +101,41 @@ public class KoloroService extends Service {
     }
   }
 
-  private void createNotification() {
-    if (showNotificationPref.get()) {
-      Intent homeIntent = new Intent(this, KoloroActivity.class);
-      homeIntent.setAction(Intent.ACTION_MAIN);
-      homeIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+  private void showScreenCaptureFlash() {
+    windowManager.addView(screenCaptureFlashLayout, loadingParams);
+  }
 
-      Intent stopIntent = new Intent(STOP_KOLORO);
-
-      PendingIntent homePendingIntent = PendingIntent.getActivity(this, 0, homeIntent, 0);
-      PendingIntent stopPendingIntent = PendingIntent.getBroadcast(this, 0, stopIntent, 0);
-
-      Notification.Builder builder = new Notification.Builder(this).setContentTitle(getString(R.string.app_name))
-          .setContentText(getString(R.string.notification_text))
-          .setSmallIcon(R.drawable.ic_colorize_white_24dp)
-          .setTicker(getString(R.string.notification_ticker))
-          .setContentIntent(homePendingIntent)
-          .setDeleteIntent(stopPendingIntent)
-          .setCategory(Notification.CATEGORY_SERVICE);
-
-      notificationManager.notify(KOLORA_NOTIFICATION_ID, builder.build());
+  private void removeScreenCaptureFlash() {
+    if (screenCaptureFlashLayout != null && screenCaptureFlashLayout.isAttachedToWindow()) {
+      windowManager.removeView(screenCaptureFlashLayout);
     }
   }
 
+  private void setForground() {
+    Intent homeIntent = new Intent(this, KoloroActivity.class);
+    homeIntent.setAction(Intent.ACTION_MAIN);
+    homeIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+
+    Intent stopIntent = new Intent(STOP_KOLORO);
+
+    PendingIntent homePendingIntent = PendingIntent.getActivity(this, 0, homeIntent, 0);
+    PendingIntent stopPendingIntent = PendingIntent.getBroadcast(this, 0, stopIntent, 0);
+
+    Notification.Builder builder = new Notification.Builder(this).setContentTitle(getString(R.string.app_name))
+        .setContentText(getString(R.string.notification_text))
+        .setSmallIcon(R.drawable.ic_colorize_white_24dp)
+        .setTicker(getString(R.string.notification_ticker))
+        .setContentIntent(homePendingIntent)
+        .setDeleteIntent(stopPendingIntent)
+        .setCategory(Notification.CATEGORY_SERVICE);
+
+    startForeground(KOLORA_NOTIFICATION_ID, builder.build());
+  }
+
   private void finishService() {
-    stopSelf();
+    stopForeground(true);
     cleanupOverlays();
-    notificationManager.cancel(KOLORA_NOTIFICATION_ID);
+    stopSelf();
   }
 
   private void cleanupOverlays() {
@@ -138,11 +145,11 @@ public class KoloroService extends Service {
       }
       overlayButtonsLayout = null;
     }
-    if (overlayLoadingLayout != null) {
-      if (overlayLoadingLayout.isAttachedToWindow()) {
-        windowManager.removeView(overlayLoadingLayout);
+    if (screenCaptureFlashLayout != null) {
+      if (screenCaptureFlashLayout.isAttachedToWindow()) {
+        windowManager.removeView(screenCaptureFlashLayout);
       }
-      overlayLoadingLayout = null;
+      screenCaptureFlashLayout = null;
     }
   }
 
@@ -161,11 +168,15 @@ public class KoloroService extends Service {
     return null;
   }
 
+
   private OverlayButtonsLayout.OverlayClickListener
       layoutOverlayClickListener = new OverlayButtonsLayout.OverlayClickListener() {
     @Override public void onCaptureClicked() {
       removeButtonsOverlay();
+      showScreenCaptureFlash();
+
       screenCaptureManager.captureCurrentScreen(imageCaptureListener);
+
     }
 
     @Override public void onCancelClicked() {
@@ -176,7 +187,6 @@ public class KoloroService extends Service {
   private ScreenCaptureManager.ImageCaptureListener imageCaptureListener =
       new ScreenCaptureManager.ImageCaptureListener() {
         @Override public void onImageCaptured(Bitmap capturedImage) {
-
           saveBitmapToGallery(capturedImage);
 
           Intent intent = ColorPickActivity.intent(KoloroService.this);
