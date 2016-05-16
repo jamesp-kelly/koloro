@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.IBinder;
+import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -38,6 +39,7 @@ public class KoloroService extends Service {
   private static final String EXTRA_DATA = "data";
   private static final String STOP_KOLORO = "com.jameskelly.koloro.StopService";
   private static final int KOLORA_NOTIFICATION_ID = 1406;
+  private static final int VIBRATE_DURATION = 50;
 
   private OverlayButtonsLayout overlayButtonsLayout;
   private WindowManager.LayoutParams buttonsParams;
@@ -49,8 +51,10 @@ public class KoloroService extends Service {
   @Inject @Named(PreferencesModule.SHOW_NOTIFICATION_KEY) BooleanPreference showNotificationPref;
   @Inject @Named(PreferencesModule.CAPTURE_BUTTON_POSITION_KEY)
   IntPreference captureButtonPositionPreference;
+  @Inject @Named(PreferencesModule.VIBRATION_KEY) BooleanPreference vibrationPref;
   @Inject WindowManager windowManager;
   @Inject NotificationManager notificationManager;
+  @Inject Vibrator vibrator;
 
 
   public static Intent intent(Context context, int resultCode, Intent data) {
@@ -99,6 +103,9 @@ public class KoloroService extends Service {
 
   private void showScreenCaptureFlash() {
     windowManager.addView(screenCaptureFlashLayout, loadingParams);
+    if (vibrationPref.get()) {
+      vibrator.vibrate(VIBRATE_DURATION);
+    }
   }
 
   private void removeScreenCaptureFlash() {
@@ -110,7 +117,6 @@ public class KoloroService extends Service {
   private void removeFlashStartWork() {
     removeScreenCaptureFlash();
     screenCaptureManager.captureCurrentScreen(imageCaptureListener);
-
   }
 
   private void setForground() {
@@ -182,7 +188,8 @@ public class KoloroService extends Service {
           saveBitmapToGallery(capturedImage);
 
           Intent intent = ColorPickActivity.intent(KoloroService.this);
-          intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+          intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+              | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS | Intent.FLAG_ACTIVITY_NO_ANIMATION);
           startActivity(intent);
         }
 
@@ -204,6 +211,7 @@ public class KoloroService extends Service {
 
           @Override public void onNext(Uri uri) {
             EventBus.getDefault().postSticky(new ImageProcessedEvent(true, uri));
+            finishService();
           }
         });
   }

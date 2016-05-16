@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.media.projection.MediaProjectionManager;
+import android.os.Vibrator;
 import android.view.LayoutInflater;
 import android.view.WindowManager;
 import com.squareup.picasso.Picasso;
@@ -44,6 +45,11 @@ public class ApplicationModule {
   @Provides @Singleton
   public ClipboardManager provideClipboardManager() {
     return (ClipboardManager) application.getSystemService(Context.CLIPBOARD_SERVICE);
+  }
+
+  @Provides @Singleton
+  public Vibrator providesVibrator() {
+    return (Vibrator) application.getSystemService(Context.VIBRATOR_SERVICE);
   }
 
   @Provides @Singleton

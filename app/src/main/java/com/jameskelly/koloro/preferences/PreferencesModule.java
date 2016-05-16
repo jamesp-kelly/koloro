@@ -20,6 +20,8 @@ public class PreferencesModule {
   private static final boolean DEFAULT_MULTI_SHOT = false;
   public static final String CAPTURE_BUTTON_POSITION_KEY = "capture_button_position";
   private static final int DEFAULT_CAPTURE_BUTTON_POSITION = 0;
+  public static final String VIBRATION_KEY = "vibration";
+  private static final boolean DEFAULT_VIBRATION = true;
 
   @Provides @Singleton
   SharedPreferences provideSharedPreferences(Application app) {
@@ -76,6 +78,16 @@ public class PreferencesModule {
   @Provides @Named(CAPTURE_BUTTON_POSITION_KEY)
   Integer provideCaptureButtonPosition(@Named(CAPTURE_BUTTON_POSITION_KEY) IntPreference intPreference) {
     return intPreference.get();
+  }
+
+  @Provides @Singleton @Named(VIBRATION_KEY)
+  BooleanPreference provideVibrationPreference(SharedPreferences preferences) {
+    return new BooleanPreference(preferences, VIBRATION_KEY, DEFAULT_VIBRATION);
+  }
+
+  @Provides @Named(VIBRATION_KEY)
+  Boolean provideVibration(@Named(VIBRATION_KEY) BooleanPreference booleanPreference) {
+    return booleanPreference.get();
   }
 
 }

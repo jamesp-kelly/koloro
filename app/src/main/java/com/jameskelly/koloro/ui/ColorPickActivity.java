@@ -64,6 +64,11 @@ public class ColorPickActivity extends BaseActivity {
     ButterKnife.bind(this);
   }
 
+  @Override protected void onResume() {
+    super.onResume();
+    screenCaptureImage.setImageDrawable(null);
+  }
+
   @Override protected void onStart() {
     super.onStart();
     EventBus.getDefault().register(this);
@@ -72,11 +77,6 @@ public class ColorPickActivity extends BaseActivity {
   @Override protected void onStop() {
     EventBus.getDefault().unregister(this);
     super.onStop();
-  }
-
-  @Override public void onBackPressed() {
-    super.onBackPressed();
-    screenCaptureImage.setImageDrawable(null);
   }
 
   @OnTouch(R.id.screen_capture_image)
