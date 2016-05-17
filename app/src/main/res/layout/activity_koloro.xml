@@ -14,7 +14,7 @@
       android:orientation="vertical"
       android:layout_marginTop="?attr/actionBarSize"
       >
-    <RelativeLayout
+    <com.jameskelly.koloro.ui.layouts.RevealRelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="15dp"
@@ -27,7 +27,7 @@
           android:layout_width="290dp"
           android:layout_alignParentLeft="true"
           android:text="@string/start_capture_button"
-          android:background="?attr/colorAccent"
+          android:background="@color/colorAccent"
           />
 
       <ImageButton
@@ -46,20 +46,89 @@
           android:layout_height="wrap_content"
           android:layout_below="@id/start_capture"
           android:layout_marginTop="@dimen/prefs_layout_margin_top"
+          android:padding="15dp"
           android:orientation="vertical"
           android:visibility="invisible"
           tools:visibility="visible"
           android:background="@color/colorPrimaryDark"
           >
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:text="Hello"
-            />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="35dp"
+            android:layout_gravity="center_horizontal">
+          <TextView
+              style="@style/PrefsText"
+              android:text="@string/show_notification_label" />
+          <Switch
+              android:id="@+id/switch_show_notification"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center_horizontal">
+          <TextView
+              style="@style/PrefsText"
+              android:text="Capture button position" />
+          <Spinner
+              android:id="@+id/spinner_capture_button_position"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center_horizontal">
+          <TextView
+              style="@style/PrefsText"
+              android:text="@string/store_captures_label" />
+          <Switch
+              android:id="@+id/switch_store_captures"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center_horizontal">
+          <TextView
+              style="@style/PrefsText"
+              android:text="@string/multi_shot_label" />
+          <Switch
+              android:id="@+id/switch_multi_shot"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:orientation="horizontal"
+            android:layout_gravity="center_horizontal">
+          <TextView
+              style="@style/PrefsText"
+              android:text="@string/capture_button_visible_label" />
+          <Switch
+              android:id="@+id/switch_capture_button_visible"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content" />
+        </LinearLayout>
+
+
 
       </LinearLayout>
 
-    </RelativeLayout>
+    </com.jameskelly.koloro.ui.layouts.RevealRelativeLayout>
 
 
 

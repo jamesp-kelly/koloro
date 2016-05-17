@@ -7,7 +7,6 @@ import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
@@ -27,6 +26,8 @@ import com.jameskelly.koloro.preferences.SimpleSpinnerAdapter;
 import com.jameskelly.koloro.service.KoloroService;
 import com.jameskelly.koloro.ui.layouts.AnimatorEndListener;
 import com.jameskelly.koloro.ui.views.KoloroView;
+import io.codetail.animation.SupportAnimator;
+import io.codetail.animation.ViewAnimationUtils;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -151,35 +152,50 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
           .setInterpolator(new AccelerateInterpolator(2.0f))
           .setListener(new AnimatorEndListener() {
             @Override public void onAnimationEnd(Animator animation) {
-              prefsButton.setImageDrawable(null);
-              layoutExpanAnimation();
+              prefsButton.setImageDrawable(getResources()
+                  .getDrawable(R.drawable.ic_clear_white_24dp, null));
+              prefsButton.bringToFront();
+              layoutExpandAnimation(true, null);
             }
           });
     } else {
+      layoutExpandAnimation(false, new SupportAnimator.AnimatorListener() {
+        @Override public void onAnimationStart() {}
 
-      prefsLayout.setVisibility(View.INVISIBLE); //animation needed
-
-      prefsButton.animate()
-          .translationYBy((prefsButton.getHeight() + prefsLayoutMarginTop) * -1)
-          .setDuration(150)
-          .setInterpolator(new DecelerateInterpolator(2.0f))
-          .setListener(new AnimatorEndListener() {
-            @Override public void onAnimationEnd(Animator animation) {
-              prefsButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_colorize_white_24dp, null));
-            }
-          });
+        @Override public void onAnimationEnd() {
+          prefsLayout.setVisibility(View.INVISIBLE);
+          prefsButton.animate()
+              .translationYBy((prefsButton.getHeight() + prefsLayoutMarginTop) * -1)
+              .setDuration(150)
+              .setInterpolator(new DecelerateInterpolator(2.0f))
+              .setListener(new AnimatorEndListener() {
+                @Override public void onAnimationEnd(Animator animation) {
+                  prefsButton.setImageDrawable(getResources()
+                      .getDrawable(R.drawable.ic_colorize_white_24dp, null));
+                }
+              });
+        }
+        @Override public void onAnimationCancel() {}
+        @Override public void onAnimationRepeat() {}
+      });
     }
   }
 
-  private void layoutExpanAnimation() {
+  private void layoutExpandAnimation(boolean reveal, SupportAnimator.AnimatorListener listener) {
     int x = prefsLayout.getWidth();
     int y = 0;
     float maxRadius = (float) Math.hypot(prefsLayout.getWidth(), prefsLayout.getHeight());
 
-    Animator animator = ViewAnimationUtils.createCircularReveal(prefsLayout, x, y, 200, maxRadius);
-    prefsLayout.setVisibility(View.VISIBLE);
+    SupportAnimator animator = ViewAnimationUtils.createCircularReveal
+        (prefsLayout, x, y, (reveal ? 200 : maxRadius), (reveal ? maxRadius : 200));
     animator.setInterpolator(new AccelerateDecelerateInterpolator());
+    prefsLayout.setVisibility(reveal ? View.VISIBLE : prefsLayout.getVisibility());
+    if (listener != null) {
+      animator.addListener(listener);
+    }
+
     animator.start();
+
   }
 
   @OnClick(R.id.start_capture)
