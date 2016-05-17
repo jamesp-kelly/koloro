@@ -8,4 +8,6 @@
   <dimen name="overlay_loading_width">144dp</dimen>
   <dimen name="overlay_loading_height">1800dp</dimen>
   <dimen name="prefs_layout_margin_top">10dp</dimen>
+
+  <dimen name="start_button_margin_right">50dp</dimen>
 </resources>

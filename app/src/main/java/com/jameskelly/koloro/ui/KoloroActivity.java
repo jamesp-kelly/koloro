@@ -1,6 +1,7 @@
 package com.jameskelly.koloro.ui;
 
 import android.animation.Animator;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.media.projection.MediaProjectionManager;
@@ -11,8 +12,10 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import butterknife.BindDimen;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -152,6 +155,7 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
           .setInterpolator(new AccelerateInterpolator(2.0f))
           .setListener(new AnimatorEndListener() {
             @Override public void onAnimationEnd(Animator animation) {
+              startButtonAnimation(true);
               prefsButton.setImageDrawable(getResources()
                   .getDrawable(R.drawable.ic_clear_white_24dp, null));
               prefsButton.bringToFront();
@@ -160,7 +164,9 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
           });
     } else {
       layoutExpandAnimation(false, new SupportAnimator.AnimatorListener() {
-        @Override public void onAnimationStart() {}
+        @Override public void onAnimationStart() {
+          startButtonAnimation(false);
+        }
 
         @Override public void onAnimationEnd() {
           prefsLayout.setVisibility(View.INVISIBLE);
@@ -195,7 +201,26 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
     }
 
     animator.start();
+  }
 
+  private void startButtonAnimation(boolean expand) {
+
+    int maxMargin =
+        getResources().getDimensionPixelSize(R.dimen.start_button_margin_right);
+    int minMargin = 0;
+
+    ValueAnimator animator = ValueAnimator.ofInt(expand ? maxMargin : minMargin
+        , expand ? minMargin : maxMargin);
+    animator.setInterpolator(new LinearInterpolator());
+    animator.setDuration(150);
+
+    animator.addUpdateListener(animation -> {
+      RelativeLayout.LayoutParams layoutParams =
+          (RelativeLayout.LayoutParams) startCaptureButton.getLayoutParams();
+      layoutParams.setMargins(0, 0, (Integer) animation.getAnimatedValue(), 0);
+      startCaptureButton.setLayoutParams(layoutParams);
+    });
+    animator.start();
   }
 
   @OnClick(R.id.start_capture)
