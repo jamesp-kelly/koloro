@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.MotionEvent;
@@ -25,26 +26,29 @@ import butterknife.OnClick;
 import butterknife.OnTouch;
 import com.jameskelly.koloro.KoloroApplication;
 import com.jameskelly.koloro.R;
-import com.jameskelly.koloro.events.ImageProcessedEvent;
+import com.jameskelly.koloro.ui.presenters.ColorPickerPresenter;
+import com.jameskelly.koloro.ui.views.ColorPickerView;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import javax.inject.Inject;
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
-public class ColorPickActivity extends BaseActivity {
+public class ColorPickActivity extends BaseActivity implements ColorPickerView {
 
   public static final String SCREEN_CAPTURE_URI = "screen_capture_uri";
 
   private Bitmap capturedBitmap;
   private float parentX, parentY;
 
+  private int currentlySelectedColor;
+  private String currentlySelectedColorHex;
+
   @Inject Picasso picasso;
   @Inject ClipboardManager clipboardManager;
+  @Inject ColorPickerPresenter presenter;
 
   @BindView(R.id.color_details_parent) LinearLayout colorDetailsParent;
   @BindView(R.id.color_details_layout) FrameLayout colorDetailsLayout;
+  @BindView(R.id.save_button) ImageButton saveButton;
   @BindView(R.id.copy_button) ImageButton copyButton;
   @BindView(R.id.screen_capture_image) ImageView screenCaptureImage;
   @BindView(R.id.hex_text) TextView hexText;
@@ -62,6 +66,8 @@ public class ColorPickActivity extends BaseActivity {
     setContentView(R.layout.activity_color_picker);
     KoloroApplication.get(this).applicationComponent().inject(this);
     ButterKnife.bind(this);
+
+    presenter.bindView(this);
   }
 
   @Override protected void onResume() {
@@ -71,12 +77,16 @@ public class ColorPickActivity extends BaseActivity {
 
   @Override protected void onStart() {
     super.onStart();
-    EventBus.getDefault().register(this);
+    presenter.onStart();
   }
 
   @Override protected void onStop() {
-    EventBus.getDefault().unregister(this);
+    presenter.onStop();
     super.onStop();
+  }
+
+  @Override public void displayCaptureImage(Uri imageUri) {
+    picasso.load(imageUri).into(colorPickerTarget);
   }
 
   @OnTouch(R.id.screen_capture_image)
@@ -85,14 +95,14 @@ public class ColorPickActivity extends BaseActivity {
     int touchX = Math.round(event.getRawX());
     int touchY = Math.round(event.getRawY());
 
-    String touchedHexColor = getColorAtPoint(touchX, touchY);
-    int touchedColor = Color.parseColor(touchedHexColor);
+    currentlySelectedColorHex = presenter.generateHexColor(capturedBitmap.getPixel(touchX, touchY));
+    currentlySelectedColor = Color.parseColor(currentlySelectedColorHex);
 
     GradientDrawable background = (GradientDrawable) colorDetailsLayout.getBackground();
-    background.setColor(touchedColor);
+    background.setColor(currentlySelectedColor);
 
-    hexText.setText(touchedHexColor);
-    hexText.setTextColor(getHexTextColor(touchedColor));
+    hexText.setText(currentlySelectedColorHex);
+    hexText.setTextColor(presenter.getContrastingTextColor(currentlySelectedColor));
 
     colorDetailsParent.setVisibility(View.VISIBLE);
 
@@ -119,18 +129,17 @@ public class ColorPickActivity extends BaseActivity {
     return true;
   }
 
+  @OnClick(R.id.save_button)
+  void onSaveClicked() {
+    Toast.makeText(this, "saved", Toast.LENGTH_SHORT).show();
+    presenter.saveColor(currentlySelectedColor, currentlySelectedColorHex);
+  }
+
   @OnClick(R.id.copy_button)
-  void onClick() {
+  void onCopyClicked() {
     ClipData clip = ClipData.newPlainText("Copied text", hexText.getText().toString());
     clipboardManager.setPrimaryClip(clip);
     Toast.makeText(this, R.string.copied_clipboard_toast, Toast.LENGTH_SHORT).show();
-  }
-
-  @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-  public void onEventRecieved(ImageProcessedEvent event) {
-    if (event.isSuccess() && event.getImageUri() != null) {
-      picasso.load(event.getImageUri()).into(colorPickerTarget);
-    }
   }
 
   Target colorPickerTarget = new Target() {
@@ -145,34 +154,4 @@ public class ColorPickActivity extends BaseActivity {
     @Override public void onPrepareLoad(Drawable placeHolderDrawable) {
     }
   };
-
-  private String getColorAtPoint(int x, int y) {
-    int pixelColor = capturedBitmap.getPixel(x, y);
-
-    int r = Color.red(pixelColor);
-    int g = Color.green(pixelColor);
-    int b = Color.blue(pixelColor);
-
-    return String.format("#%02x%02x%02x", r, g, b);
-  }
-
-  private int getHexTextColor(int backgroundColor) {
-    int resultColorValue = 0;
-
-    int r = Color.red(backgroundColor);
-    int g = Color.green(backgroundColor);
-    int b = Color.blue(backgroundColor);
-
-    double backgroundBrightness = 1 - (0.299 * Color.red(backgroundColor) + 0.587 * Color.green(backgroundColor)
-        + 0.114 * Color.blue(backgroundColor))/255;
-
-    if (backgroundBrightness < 0.5) {
-      //bright color, use black
-      resultColorValue = 0;
-    } else {
-      resultColorValue = 255;
-    }
-
-    return Color.argb(255, resultColorValue, resultColorValue, resultColorValue);
-  }
 }

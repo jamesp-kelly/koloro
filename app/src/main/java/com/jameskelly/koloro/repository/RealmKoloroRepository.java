@@ -1,0 +1,69 @@
+package com.jameskelly.koloro.repository;
+
+import android.content.Context;
+import com.jameskelly.koloro.model.KoloroObj;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import io.realm.RealmResults;
+import java.util.List;
+
+public class RealmKoloroRepository implements KoloroRepository {
+
+  private static final String TAG = RealmKoloroRepository.class.getSimpleName();
+
+  private Context context;
+  private Realm realm;
+  private RealmConfiguration realmConfiguration;
+
+  public RealmKoloroRepository(Context context) {
+    this.context = context;
+  }
+
+  @Override public void setupConnection() {
+    realmConfiguration = new RealmConfiguration.Builder(context).build();
+    realm = Realm.getInstance(realmConfiguration);
+  }
+
+  @Override public void closeConnection() {
+    if (realm != null && !realm.isClosed()) {
+      realm.close();
+    }
+  }
+
+  @Override public KoloroObj getKoloroObj(int koloroObjid) {
+    return realm.where(KoloroObj.class).equalTo(KoloroObj.idField, koloroObjid).findFirst();
+  }
+
+  @Override public List<KoloroObj> getAllKoloroObjs() {
+    return realm.where(KoloroObj.class).findAll();
+  }
+
+  @Override public List<KoloroObj> getLatestKoloroObjs(int limit) {
+    RealmResults<KoloroObj> realmResults = realm.where(KoloroObj.class).findAll();
+    if (realmResults.size() <= limit) {
+      return realmResults;
+    } else {
+      return realmResults.subList(realmResults.size() - limit, realmResults.size() - 1);
+    }
+  }
+
+  @Override public KoloroObj createKoloroObj(int colorInt, String hexstring) {
+    realm.beginTransaction();
+
+    KoloroObj koloroObj = realm.createObject(KoloroObj.class);
+    int key;
+    try {
+      key = realm.where(KoloroObj.class).max(KoloroObj.idField).intValue() + 1;
+    } catch (ArrayIndexOutOfBoundsException ex) {
+      key = 0;
+    }
+    koloroObj.setId(key);
+    koloroObj.setColorInt(colorInt);
+    koloroObj.setHexString(hexstring);
+    koloroObj.setSavedTimeStamp(System.currentTimeMillis());
+
+    realm.commitTransaction();
+
+    return koloroObj;
+  }
+}

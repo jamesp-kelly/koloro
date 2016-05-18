@@ -1,29 +1,15 @@
 package com.jameskelly.koloro.ui.presenters;
 
+import com.jameskelly.koloro.repository.KoloroRepository;
 import dagger.Module;
 import dagger.Provides;
 import javax.inject.Singleton;
 
 @Module
 public class PresenterModule {
-  //private final CaptureView captureView;
-  //
-  //public PresenterModule(CaptureView captureView) {
-  //  this.captureView = captureView;
-  //}
-  //
-  //@Provides @Singleton
-  //CaptureView provideCaptureView() {
-  //  return captureView;
-  //}
-  //
-  //@Provides @Singleton
-  //CapturePresenter provideCapturePresenter() {
-  //  return new CapturePresenterImpl(captureView);
-  //}
 
   @Provides @Singleton
-  CapturePresenter provideCapturePresenter() {
-    return new CapturePresenterImpl();
+  ColorPickerPresenter provideColorPickPresenter(KoloroRepository repository) {
+    return new ColorPickPresenterImpl(repository);
   }
 }

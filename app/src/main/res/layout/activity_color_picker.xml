@@ -27,7 +27,7 @@
     <FrameLayout
         android:id="@+id/color_details_layout"
         android:layout_width="150dp"
-        android:layout_height="60dp"
+        android:layout_height="80dp"
         android:background="@drawable/color_picker_background">
 
       <TextView
@@ -42,13 +42,29 @@
           />
     </FrameLayout>
 
-    <ImageButton
-        android:id="@+id/copy_button"
-        android:layout_width="40dp"
-        android:layout_height="60dp"
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
         android:layout_toRightOf="@+id/color_details_layout"
-        android:src="@drawable/ic_content_copy_black_24dp"
-        />
+        >
+      <ImageButton
+          android:id="@+id/save_button"
+          android:layout_width="40dp"
+          android:layout_height="40dp"
+          android:src="@drawable/ic_save_black_24dp"
+          style="@style/Widget.AppCompat.Button.Borderless"
+          />
+      <ImageButton
+          android:id="@+id/copy_button"
+          android:layout_width="40dp"
+          android:layout_height="40dp"
+          android:src="@drawable/ic_content_copy_black_24dp"
+          style="@style/Widget.AppCompat.Button.Borderless"
+          />
+    </LinearLayout>
+
+
 
   </LinearLayout>
 

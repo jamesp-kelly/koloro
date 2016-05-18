@@ -8,6 +8,8 @@ import android.media.projection.MediaProjectionManager;
 import android.os.Vibrator;
 import android.view.LayoutInflater;
 import android.view.WindowManager;
+import com.jameskelly.koloro.repository.KoloroRepository;
+import com.jameskelly.koloro.repository.RealmKoloroRepository;
 import com.squareup.picasso.Picasso;
 import dagger.Module;
 import dagger.Provides;
@@ -61,5 +63,10 @@ public class ApplicationModule {
   public Picasso providePicasso() {
     return new Picasso.Builder(application)
         .build();
+  }
+
+  @Provides @Singleton
+  public KoloroRepository provideKoloroRepository() {
+    return new RealmKoloroRepository(application.getApplicationContext());
   }
 }
