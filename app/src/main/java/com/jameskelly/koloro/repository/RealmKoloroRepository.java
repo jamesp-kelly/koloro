@@ -5,11 +5,12 @@ import com.jameskelly.koloro.model.KoloroObj;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
-import java.util.List;
+import io.realm.Sort;
 
 public class RealmKoloroRepository implements KoloroRepository {
 
   private static final String TAG = RealmKoloroRepository.class.getSimpleName();
+  private static final int MAX_SIZE = 10;
 
   private Context context;
   private Realm realm;
@@ -34,17 +35,9 @@ public class RealmKoloroRepository implements KoloroRepository {
     return realm.where(KoloroObj.class).equalTo(KoloroObj.idField, koloroObjid).findFirst();
   }
 
-  @Override public List<KoloroObj> getAllKoloroObjs() {
-    return realm.where(KoloroObj.class).findAll();
-  }
-
-  @Override public List<KoloroObj> getLatestKoloroObjs(int limit) {
-    RealmResults<KoloroObj> realmResults = realm.where(KoloroObj.class).findAll();
-    if (realmResults.size() <= limit) {
-      return realmResults;
-    } else {
-      return realmResults.subList(realmResults.size() - limit, realmResults.size() - 1);
-    }
+  @Override public RealmResults<KoloroObj> getAllKoloroObjs() {
+    return realm.where(KoloroObj.class).findAll().sort(KoloroObj.savedTimeStampField,
+        Sort.DESCENDING);
   }
 
   @Override public KoloroObj createKoloroObj(int colorInt, String hexstring) {
@@ -61,6 +54,13 @@ public class RealmKoloroRepository implements KoloroRepository {
     koloroObj.setColorInt(colorInt);
     koloroObj.setHexString(hexstring);
     koloroObj.setSavedTimeStamp(System.currentTimeMillis());
+
+    RealmResults<KoloroObj> koloroObjs = realm.where(KoloroObj.class).findAll().sort(KoloroObj.savedTimeStampField,
+        Sort.DESCENDING);
+
+    if (koloroObjs.size() > MAX_SIZE) {
+      koloroObjs.deleteLastFromRealm();
+    }
 
     realm.commitTransaction();
 

@@ -11,6 +11,8 @@ import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -26,6 +28,7 @@ import butterknife.OnClick;
 import butterknife.OnTouch;
 import com.jameskelly.koloro.KoloroApplication;
 import com.jameskelly.koloro.R;
+import com.jameskelly.koloro.ui.adaptors.ColorRecyclerAdapter;
 import com.jameskelly.koloro.ui.presenters.ColorPickerPresenter;
 import com.jameskelly.koloro.ui.views.ColorPickerView;
 import com.squareup.picasso.Picasso;
@@ -41,6 +44,7 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
 
   private int currentlySelectedColor;
   private String currentlySelectedColorHex;
+  private ColorRecyclerAdapter colorRecyclerAdapter;
 
   @Inject Picasso picasso;
   @Inject ClipboardManager clipboardManager;
@@ -52,6 +56,7 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
   @BindView(R.id.copy_button) ImageButton copyButton;
   @BindView(R.id.screen_capture_image) ImageView screenCaptureImage;
   @BindView(R.id.hex_text) TextView hexText;
+  @BindView(R.id.color_list_recycler) RecyclerView colorRecycler;
 
   public static Intent intent(Context context) {
     return new Intent(context, ColorPickActivity.class);
@@ -68,6 +73,11 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
     ButterKnife.bind(this);
 
     presenter.bindView(this);
+    presenter.setupRealm();
+
+    colorRecycler.setLayoutManager(new LinearLayoutManager(this));
+    colorRecyclerAdapter = new ColorRecyclerAdapter(presenter.getAllKoloroObjects());
+    colorRecycler.setAdapter(colorRecyclerAdapter);
   }
 
   @Override protected void onResume() {
@@ -83,6 +93,11 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
   @Override protected void onStop() {
     presenter.onStop();
     super.onStop();
+  }
+
+  @Override protected void onDestroy() {
+    presenter.unbindView(this);
+    super.onDestroy();
   }
 
   @Override public void displayCaptureImage(Uri imageUri) {
@@ -140,6 +155,10 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
     ClipData clip = ClipData.newPlainText("Copied text", hexText.getText().toString());
     clipboardManager.setPrimaryClip(clip);
     Toast.makeText(this, R.string.copied_clipboard_toast, Toast.LENGTH_SHORT).show();
+  }
+
+  @Override public void updateColorList() {
+    colorRecyclerAdapter.notifyDataSetChanged();
   }
 
   Target colorPickerTarget = new Target() {

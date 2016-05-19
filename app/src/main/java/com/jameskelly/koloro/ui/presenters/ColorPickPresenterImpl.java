@@ -2,8 +2,12 @@ package com.jameskelly.koloro.ui.presenters;
 
 import android.graphics.Color;
 import com.jameskelly.koloro.events.ImageProcessedEvent;
+import com.jameskelly.koloro.model.KoloroObj;
 import com.jameskelly.koloro.repository.KoloroRepository;
 import com.jameskelly.koloro.ui.views.ColorPickerView;
+import io.realm.RealmChangeListener;
+import io.realm.RealmResults;
+import java.util.List;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -12,34 +16,43 @@ public class ColorPickPresenterImpl implements ColorPickerPresenter {
 
   private KoloroRepository repository;
   private ColorPickerView view;
+  private RealmResults<KoloroObj> koloroObjects;
 
   public ColorPickPresenterImpl(KoloroRepository repository) {
     this.repository = repository;
   }
 
   @Override public void bindView(ColorPickerView view) {
-    if (this.view != null) {
-      throw new IllegalStateException("Previous view wasn't unbounded");
-    }
     this.view = view;
   }
 
   @Override public void unbindView(ColorPickerView view) {
     if (this.view != view) {
       this.view = null;
-    } else {
-      throw new IllegalStateException("View wasn't bound. Cannot unbind");
     }
   }
 
   @Override public void onStart() {
     EventBus.getDefault().register(this);
-    repository.setupConnection();
   }
 
   @Override public void onStop() {
     EventBus.getDefault().unregister(this);
     repository.closeConnection();
+  }
+
+  @Override public void setupRealm() {
+    repository.setupConnection();
+  }
+
+  @Override public List<KoloroObj> getAllKoloroObjects() {
+    koloroObjects = repository.getAllKoloroObjs();
+    koloroObjects.addChangeListener(new RealmChangeListener() {
+      @Override public void onChange() {
+        view.updateColorList();
+      }
+    });
+      return koloroObjects;
   }
 
   @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
@@ -77,6 +90,7 @@ public class ColorPickPresenterImpl implements ColorPickerPresenter {
   }
 
   @Override public void saveColor(int currentlySelectedColor, String currentlySelectedColorHex) {
-    repository.createKoloroObj(currentlySelectedColor, currentlySelectedColorHex);
+    KoloroObj koloroObj =
+        repository.createKoloroObj(currentlySelectedColor, currentlySelectedColorHex);
   }
 }

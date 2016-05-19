@@ -1,12 +1,11 @@
 package com.jameskelly.koloro.repository;
 
 import com.jameskelly.koloro.model.KoloroObj;
-import java.util.List;
+import io.realm.RealmResults;
 
 public interface KoloroRepository {
   KoloroObj getKoloroObj(int koloroObjid);
-  List<KoloroObj> getAllKoloroObjs();
-  List<KoloroObj> getLatestKoloroObjs(int limit);
+  RealmResults<KoloroObj> getAllKoloroObjs();
 
   KoloroObj createKoloroObj(int colorInt, String hexstring);
   void setupConnection();

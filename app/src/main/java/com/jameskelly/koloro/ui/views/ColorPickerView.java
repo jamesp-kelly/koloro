@@ -5,6 +5,6 @@ import android.net.Uri;
 public interface ColorPickerView {
 
   void displayCaptureImage(Uri imageUri);
-
+  void updateColorList();
 
 }
