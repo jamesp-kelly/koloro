@@ -1,11 +1,11 @@
 package com.jameskelly.koloro.ui.adaptors;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.jameskelly.koloro.R;
@@ -15,9 +15,11 @@ import java.util.List;
 public class ColorRecyclerAdapter extends RecyclerView.Adapter<ColorRecyclerAdapter.ColorViewHolder> {
 
   private List<KoloroObj> koloroObjs;
+  private ColorTextChangeListener listener;
 
-  public ColorRecyclerAdapter(List<KoloroObj> koloroObjs) {
+  public ColorRecyclerAdapter(List<KoloroObj> koloroObjs, ColorTextChangeListener listener) {
     this.koloroObjs = koloroObjs;
+    this.listener = listener;
   }
 
   @Override public ColorViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -28,9 +30,9 @@ public class ColorRecyclerAdapter extends RecyclerView.Adapter<ColorRecyclerAdap
   }
 
   @Override public void onBindViewHolder(ColorViewHolder holder, int position) {
-    Log.i("TESTING", String.valueOf(koloroObjs.get(position).getColorInt()));
-
-    holder.itemLayout.setBackgroundColor(koloroObjs.get(position).getColorInt());
+    holder.colorItemLayout.setBackgroundColor(koloroObjs.get(position).getColorInt());
+    holder.colorItemText.setText(koloroObjs.get(position).getHexString());
+    listener.colorTextChanged(holder.colorItemText, koloroObjs.get(position).getColorInt());
   }
 
   @Override public int getItemCount() {
@@ -39,11 +41,16 @@ public class ColorRecyclerAdapter extends RecyclerView.Adapter<ColorRecyclerAdap
 
   public static class ColorViewHolder extends RecyclerView.ViewHolder {
 
-    @BindView(R.id.color_item_frame) FrameLayout itemLayout;
+    @BindView(R.id.color_item_frame) FrameLayout colorItemLayout;
+    @BindView(R.id.color_item_text) TextView colorItemText;
 
     public ColorViewHolder(View itemView) {
       super(itemView);
       ButterKnife.bind(this, itemView);
     }
+  }
+
+  public interface ColorTextChangeListener {
+    void colorTextChanged(TextView view, int backgroundColor);
   }
 }

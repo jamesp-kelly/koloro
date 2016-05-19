@@ -11,6 +11,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MotionEvent;
@@ -50,6 +51,7 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
   @Inject ClipboardManager clipboardManager;
   @Inject ColorPickerPresenter presenter;
 
+  @BindView(R.id.drawer_layout) DrawerLayout drawerLayout;
   @BindView(R.id.color_details_parent) LinearLayout colorDetailsParent;
   @BindView(R.id.color_details_layout) FrameLayout colorDetailsLayout;
   @BindView(R.id.save_button) ImageButton saveButton;
@@ -76,7 +78,10 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
     presenter.setupRealm();
 
     colorRecycler.setLayoutManager(new LinearLayoutManager(this));
-    colorRecyclerAdapter = new ColorRecyclerAdapter(presenter.getAllKoloroObjects());
+    colorRecyclerAdapter = new ColorRecyclerAdapter(presenter.getAllKoloroObjects(),
+        (view, backgroundColor) -> {
+          view.setTextColor(presenter.getContrastingTextColor(backgroundColor));
+        });
     colorRecycler.setAdapter(colorRecyclerAdapter);
   }
 
