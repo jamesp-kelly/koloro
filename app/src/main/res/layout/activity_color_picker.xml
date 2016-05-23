@@ -77,8 +77,8 @@
   <FrameLayout
       android:layout_width="wrap_content"
       android:layout_height="match_parent"
-      android:background="@color/colorAccent"
       android:layout_gravity="end"
+      android:background="@color/saved_colors_drawer_background"
       >
     <android.support.v7.widget.RecyclerView
         android:id="@+id/color_list_recycler"

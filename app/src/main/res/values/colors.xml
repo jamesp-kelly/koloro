@@ -3,4 +3,6 @@
   <color name="colorPrimary">#9C27B0</color>
   <color name="colorPrimaryDark">#7B1FA2</color>
   <color name="colorAccent">#B2FF59</color>
+
+  <color name="saved_colors_drawer_background">#5c4e4c4c</color>
 </resources>

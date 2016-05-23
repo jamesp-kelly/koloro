@@ -107,7 +107,7 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
 
   @Override public void displayCaptureImage(Uri imageUri) {
     picasso.load(imageUri).into(colorPickerTarget);
-    colorDetailsParent.setVisibility(View.VISIBLE);
+    updateColorDetails(200, 200); //simulate touch to "defaut" the details view
   }
 
   @OnTouch(R.id.screen_capture_image)
@@ -116,6 +116,12 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
     int touchX = Math.round(event.getRawX());
     int touchY = Math.round(event.getRawY());
 
+    updateColorDetails(touchX, touchY);
+
+    return false;
+  }
+
+  private void updateColorDetails(int touchX, int touchY) {
     currentlySelectedColorHex = presenter.generateHexColor(capturedBitmap.getPixel(touchX, touchY));
     currentlySelectedColor = Color.parseColor(currentlySelectedColorHex);
 
@@ -125,7 +131,7 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
     hexText.setText(currentlySelectedColorHex);
     hexText.setTextColor(presenter.getContrastingTextColor(currentlySelectedColor));
 
-    return false;
+    colorDetailsParent.setVisibility(View.VISIBLE);
   }
 
   @OnTouch(R.id.color_details_layout)
