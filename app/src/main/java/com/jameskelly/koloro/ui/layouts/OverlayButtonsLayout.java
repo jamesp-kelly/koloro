@@ -5,7 +5,9 @@ import android.view.Gravity;
 import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import butterknife.BindDimen;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.jameskelly.koloro.R;
@@ -29,6 +31,9 @@ public class OverlayButtonsLayout extends FrameLayout implements CaptureView {
   @BindDimen(R.dimen.overlay_buttons_width) int buttonsWidth;
   @BindDimen(R.dimen.overlay_buttons_height) int buttonsHeight;
 
+  @BindView(R.id.captureButton) ImageButton captureButtton;
+  @BindView(R.id.cancelButton) ImageButton cancelButton;
+
   public OverlayButtonsLayout(Context context, OverlayClickListener overlayClickListener) {
     super(context);
     this.overlayClickListener = overlayClickListener;
@@ -39,6 +44,9 @@ public class OverlayButtonsLayout extends FrameLayout implements CaptureView {
 
   @OnClick(R.id.captureButton)
   void captureClicked() {
+    captureButtton.setVisibility(INVISIBLE);
+    cancelButton.setVisibility(INVISIBLE);
+
     overlayClickListener.onCaptureClicked();
   }
 

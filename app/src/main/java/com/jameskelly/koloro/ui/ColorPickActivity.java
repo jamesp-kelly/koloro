@@ -107,6 +107,7 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
 
   @Override public void displayCaptureImage(Uri imageUri) {
     picasso.load(imageUri).into(colorPickerTarget);
+    colorDetailsParent.setVisibility(View.VISIBLE);
   }
 
   @OnTouch(R.id.screen_capture_image)
@@ -123,8 +124,6 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
 
     hexText.setText(currentlySelectedColorHex);
     hexText.setTextColor(presenter.getContrastingTextColor(currentlySelectedColor));
-
-    colorDetailsParent.setVisibility(View.VISIBLE);
 
     return false;
   }
