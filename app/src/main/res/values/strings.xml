@@ -14,6 +14,7 @@
   <string name="cancel_overlay_description">Close overlay</string>
   <string name="capture_screen_description">Capture screen</string>
   <string name="copied_clipboard_toast">Copied to clipboard</string>
+  <string name="screen_capture_toast">Capturing screen. Please wait...</string>
   <string-array name="capture_button_position_array">
     <item>Top right</item>
     <item>Top left</item>

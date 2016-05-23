@@ -103,6 +103,10 @@ public class KoloroService extends Service {
 
   private void showScreenCaptureFlash() {
     windowManager.addView(screenCaptureFlashLayout, loadingParams);
+    vibrate();
+  }
+
+  private void vibrate() {
     if (vibrationPref.get()) {
       vibrator.vibrate(VIBRATE_DURATION);
     }
@@ -174,7 +178,10 @@ public class KoloroService extends Service {
       layoutOverlayClickListener = new OverlayButtonsLayout.OverlayClickListener() {
     @Override public void onCaptureClicked() {
       removeButtonsOverlay();
-      showScreenCaptureFlash();
+      Toast.makeText(KoloroService.this, R.string.screen_capture_toast, Toast.LENGTH_SHORT).show();
+      vibrate();
+
+      screenCaptureManager.captureCurrentScreen(imageCaptureListener);
     }
 
     @Override public void onCancelClicked() {
