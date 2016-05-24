@@ -17,8 +17,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -29,7 +29,9 @@ import butterknife.OnClick;
 import butterknife.OnTouch;
 import com.jameskelly.koloro.KoloroApplication;
 import com.jameskelly.koloro.R;
+import com.jameskelly.koloro.model.KoloroObj;
 import com.jameskelly.koloro.ui.adaptors.ColorRecyclerAdapter;
+import com.jameskelly.koloro.ui.adaptors.ColorRecyclerAdapter.ColorItemListener;
 import com.jameskelly.koloro.ui.presenters.ColorPickerPresenter;
 import com.jameskelly.koloro.ui.views.ColorPickerView;
 import com.squareup.picasso.Picasso;
@@ -54,8 +56,8 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
   @BindView(R.id.drawer_layout) DrawerLayout drawerLayout;
   @BindView(R.id.color_details_parent) LinearLayout colorDetailsParent;
   @BindView(R.id.color_details_layout) FrameLayout colorDetailsLayout;
-  @BindView(R.id.save_button) ImageButton saveButton;
-  @BindView(R.id.copy_button) ImageButton copyButton;
+  @BindView(R.id.save_button) Button saveButton;
+  @BindView(R.id.copy_button) Button copyButton;
   @BindView(R.id.screen_capture_image) ImageView screenCaptureImage;
   @BindView(R.id.hex_text) TextView hexText;
   @BindView(R.id.color_list_recycler) RecyclerView colorRecycler;
@@ -78,12 +80,26 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
     presenter.setupRealm();
 
     colorRecycler.setLayoutManager(new LinearLayoutManager(this));
-    colorRecyclerAdapter = new ColorRecyclerAdapter(presenter.getAllKoloroObjects(),
-        (view, backgroundColor) -> {
-          view.setTextColor(presenter.getContrastingTextColor(backgroundColor));
-        });
+    colorRecyclerAdapter = new ColorRecyclerAdapter(presenter.getAllKoloroObjects(), colorItemListener);
     colorRecycler.setAdapter(colorRecyclerAdapter);
   }
+
+  ColorItemListener colorItemListener = new ColorItemListener() {
+    @Override public void colorTextChanged(int backgroundColor, TextView... affectedViews) {
+      int contrastingTextColor = presenter.getContrastingTextColor(backgroundColor);
+      for (TextView view : affectedViews) {
+        view.setTextColor(contrastingTextColor);
+      }
+    }
+
+    @Override public void noteButtonClicked(KoloroObj koloroObj) {
+      Toast.makeText(ColorPickActivity.this, koloroObj.getHexString(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override public void copyButtonClicked(String hexString) {
+      saveToClipBoard(hexString);
+    }
+  };
 
   @Override protected void onResume() {
     super.onResume();
@@ -163,7 +179,11 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
 
   @OnClick(R.id.copy_button)
   void onCopyClicked() {
-    ClipData clip = ClipData.newPlainText("Copied text", hexText.getText().toString());
+    saveToClipBoard(hexText.getText().toString());
+  }
+
+  private void saveToClipBoard(String hexString) {
+    ClipData clip = ClipData.newPlainText("Copied text", hexString);
     clipboardManager.setPrimaryClip(clip);
     Toast.makeText(this, R.string.copied_clipboard_toast, Toast.LENGTH_SHORT).show();
   }

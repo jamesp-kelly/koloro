@@ -1,10 +1,12 @@
 package com.jameskelly.koloro.ui.adaptors;
 
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
+import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -15,9 +17,9 @@ import java.util.List;
 public class ColorRecyclerAdapter extends RecyclerView.Adapter<ColorRecyclerAdapter.ColorViewHolder> {
 
   private List<KoloroObj> koloroObjs;
-  private ColorTextChangeListener listener;
+  private ColorItemListener listener;
 
-  public ColorRecyclerAdapter(List<KoloroObj> koloroObjs, ColorTextChangeListener listener) {
+  public ColorRecyclerAdapter(List<KoloroObj> koloroObjs, ColorItemListener listener) {
     this.koloroObjs = koloroObjs;
     this.listener = listener;
   }
@@ -32,7 +34,15 @@ public class ColorRecyclerAdapter extends RecyclerView.Adapter<ColorRecyclerAdap
   @Override public void onBindViewHolder(ColorViewHolder holder, int position) {
     holder.colorItemLayout.setBackgroundColor(koloroObjs.get(position).getColorInt());
     holder.colorItemText.setText(koloroObjs.get(position).getHexString());
-    listener.colorTextChanged(holder.colorItemText, koloroObjs.get(position).getColorInt());
+    listener.colorTextChanged(koloroObjs.get(position).getColorInt(),
+        holder.colorItemText, holder.colorItemNote);
+
+
+    holder.copyButton.setOnClickListener(v -> {
+      listener.copyButtonClicked(koloroObjs.get(position).getHexString());
+    });
+
+    holder.noteButton.setOnClickListener(v -> listener.noteButtonClicked(koloroObjs.get(position)));
   }
 
   @Override public int getItemCount() {
@@ -41,16 +51,22 @@ public class ColorRecyclerAdapter extends RecyclerView.Adapter<ColorRecyclerAdap
 
   public static class ColorViewHolder extends RecyclerView.ViewHolder {
 
-    @BindView(R.id.color_item_frame) FrameLayout colorItemLayout;
+    @BindView(R.id.color_item_frame) RelativeLayout colorItemLayout;
     @BindView(R.id.color_item_text) TextView colorItemText;
+    @BindView(R.id.color_item_note) TextView colorItemNote;
+    @BindView(R.id.color_item_copy_button) Button copyButton;
+    @BindView(R.id.color_item_note_button) Button noteButton;
 
     public ColorViewHolder(View itemView) {
       super(itemView);
       ButterKnife.bind(this, itemView);
+      colorItemNote.setEllipsize(TextUtils.TruncateAt.END);
     }
   }
 
-  public interface ColorTextChangeListener {
-    void colorTextChanged(TextView view, int backgroundColor);
+  public interface ColorItemListener {
+    void colorTextChanged(int backgroundColor, TextView... affectedViews);
+    void noteButtonClicked(KoloroObj koloroObj);
+    void copyButtonClicked(String hexString);
   }
 }

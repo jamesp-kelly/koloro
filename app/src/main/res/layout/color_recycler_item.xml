@@ -1,14 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/color_item_frame"
     android:layout_width="match_parent"
-    android:layout_height="120dp">
+    android:layout_height="150dp"
+    tools:layout_width="200dp"
+    tools:background="@color/colorAccent">
 
   <TextView
       android:id="@+id/color_item_text"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_gravity="center"
+      android:layout_centerHorizontal="true"
+      android:layout_marginTop="30dp"
+      android:textSize="25sp"
+      tools:text="#ffffff"
       />
 
-</FrameLayout>
+  <TextView
+      android:id="@+id/color_item_note"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_centerHorizontal="true"
+      android:layout_below="@id/color_item_text"
+      android:layout_marginTop="10dp"
+      android:paddingLeft="5dp"
+      android:paddingRight="5dp"
+      android:maxLines="2"
+      tools:text="YouTube icon red"
+      />
+
+  <Button
+      android:id="@+id/color_item_copy_button"
+      android:layout_width="wrap_content"
+      android:layout_height="38dp"
+      android:layout_alignParentBottom="true"
+      android:layout_alignParentLeft="true"
+      android:text="@string/copy_button"
+      style="@style/Widget.AppCompat.Button.Small"
+      android:backgroundTint="@android:color/white"
+      />
+
+  <Button
+      android:id="@+id/color_item_note_button"
+      android:layout_width="wrap_content"
+      android:layout_height="38dp"
+      android:layout_alignParentBottom="true"
+      android:layout_toRightOf="@id/color_item_copy_button"
+      android:text="@string/note_button"
+      style="@style/Widget.AppCompat.Button.Small"
+      android:backgroundTint="@android:color/white"
+      />
+
+</RelativeLayout>
