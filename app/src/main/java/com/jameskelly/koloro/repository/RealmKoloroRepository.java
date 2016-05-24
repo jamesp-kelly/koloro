@@ -54,6 +54,7 @@ public class RealmKoloroRepository implements KoloroRepository {
     koloroObj.setColorInt(colorInt);
     koloroObj.setHexString(hexstring);
     koloroObj.setSavedTimeStamp(System.currentTimeMillis());
+    koloroObj.setNote("");
 
     RealmResults<KoloroObj> koloroObjs = realm.where(KoloroObj.class).findAll().sort(KoloroObj.savedTimeStampField,
         Sort.DESCENDING);
@@ -65,5 +66,11 @@ public class RealmKoloroRepository implements KoloroRepository {
     realm.commitTransaction();
 
     return koloroObj;
+  }
+
+  @Override public void updateNote(KoloroObj koloroObj, String note) {
+    realm.beginTransaction();
+    koloroObj.setNote(note);
+    realm.commitTransaction();
   }
 }

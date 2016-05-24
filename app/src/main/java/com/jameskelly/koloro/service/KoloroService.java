@@ -84,6 +84,7 @@ public class KoloroService extends Service {
     buttonsParams = overlayButtonsLayout.layoutParams(captureButtonPositionPreference.get());
     screenCaptureFlashLayout = new ScreenCaptureFlashLayout(this, this::removeFlashStartWork);
     loadingParams = screenCaptureFlashLayout.layoutParams();
+    //todo snackbar instead of toast
     captureToast = Toast.makeText(KoloroService.this,
         R.string.screen_capture_toast, Toast.LENGTH_LONG);
 

@@ -8,6 +8,7 @@ public interface KoloroRepository {
   RealmResults<KoloroObj> getAllKoloroObjs();
 
   KoloroObj createKoloroObj(int colorInt, String hexstring);
+  void updateNote(KoloroObj koloroObj, String note);
   void setupConnection();
   void closeConnection();
 }

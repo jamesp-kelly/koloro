@@ -17,6 +17,8 @@
   <string name="screen_capture_toast">Capturing screen. Please wait...</string>
   <string name="save_button">Save</string>
   <string name="note_button">Note</string>
+  <string name="cancel_button">Cancel</string>
+  <string name="saved_color_note_title">Saved Color Note</string>
   <string-array name="capture_button_position_array">
     <item>Top right</item>
     <item>Top left</item>

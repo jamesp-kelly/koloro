@@ -94,4 +94,8 @@ public class ColorPickPresenterImpl implements ColorPickerPresenter {
     KoloroObj koloroObj =
         repository.createKoloroObj(currentlySelectedColor, currentlySelectedColorHex);
   }
+
+  @Override public void saveNote(KoloroObj koloroObj, String inputValue) {
+    repository.updateNote(koloroObj, inputValue);
+  }
 }

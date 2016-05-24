@@ -14,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -27,6 +28,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTouch;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.jameskelly.koloro.KoloroApplication;
 import com.jameskelly.koloro.R;
 import com.jameskelly.koloro.model.KoloroObj;
@@ -93,7 +95,21 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
     }
 
     @Override public void noteButtonClicked(KoloroObj koloroObj) {
-      Toast.makeText(ColorPickActivity.this, koloroObj.getHexString(), Toast.LENGTH_SHORT).show();
+      new MaterialDialog.Builder(ColorPickActivity.this)
+          .title(R.string.saved_color_note_title)
+          .inputType(InputType.TYPE_CLASS_TEXT)
+          .input("R.string.input_hint", koloroObj.getNote(), (dialog, input) -> {
+            //don't need to do anything here
+          })
+          .positiveText(R.string.save_button)
+          .negativeText(R.string.cancel_button)
+          .onPositive((dialog, which) -> {
+            if (dialog.getInputEditText() != null) {
+              String inputValue = dialog.getInputEditText().getText().toString();
+              presenter.saveNote(koloroObj, inputValue);
+            }
+          })
+          .show();
     }
 
     @Override public void copyButtonClicked(String hexString) {

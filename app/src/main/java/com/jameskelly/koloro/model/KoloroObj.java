@@ -16,6 +16,9 @@ public class KoloroObj extends RealmObject {
   private long savedTimeStamp;
   public static final String savedTimeStampField = "savedTimeStamp";
 
+  private String note;
+  public static final String noteField = "noteField";
+
   public long getId() {
     return id;
   }
@@ -46,5 +49,13 @@ public class KoloroObj extends RealmObject {
 
   public void setSavedTimeStamp(long savedTimeStamp) {
     this.savedTimeStamp = savedTimeStamp;
+  }
+
+  public String getNote() {
+    return note;
+  }
+
+  public void setNote(String note) {
+    this.note = note;
   }
 }

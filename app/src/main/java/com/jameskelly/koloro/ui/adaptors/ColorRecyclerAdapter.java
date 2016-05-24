@@ -34,13 +34,12 @@ public class ColorRecyclerAdapter extends RecyclerView.Adapter<ColorRecyclerAdap
   @Override public void onBindViewHolder(ColorViewHolder holder, int position) {
     holder.colorItemLayout.setBackgroundColor(koloroObjs.get(position).getColorInt());
     holder.colorItemText.setText(koloroObjs.get(position).getHexString());
+    holder.colorItemNote.setText(koloroObjs.get(position).getNote());
     listener.colorTextChanged(koloroObjs.get(position).getColorInt(),
         holder.colorItemText, holder.colorItemNote);
 
-
-    holder.copyButton.setOnClickListener(v -> {
-      listener.copyButtonClicked(koloroObjs.get(position).getHexString());
-    });
+    holder.copyButton.setOnClickListener(v ->
+        listener.copyButtonClicked(koloroObjs.get(position).getHexString()));
 
     holder.noteButton.setOnClickListener(v -> listener.noteButtonClicked(koloroObjs.get(position)));
   }

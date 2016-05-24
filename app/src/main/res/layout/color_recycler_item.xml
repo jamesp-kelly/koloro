@@ -17,6 +17,40 @@
       tools:text="#ffffff"
       />
 
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="38dp"
+      android:background="@color/picker_background_grey_opaque"
+      android:layout_alignParentBottom="true"
+      android:layout_marginBottom="5dp"
+      android:orientation="horizontal"
+      >
+
+    <Button
+        android:id="@+id/color_item_copy_button"
+        android:layout_width="wrap_content"
+        android:layout_height="38dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:text="@string/copy_button"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:backgroundTint="@android:color/white"
+        />
+
+    <Button
+        android:id="@+id/color_item_note_button"
+        android:layout_width="wrap_content"
+        android:layout_height="38dp"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@id/color_item_copy_button"
+        android:text="@string/note_button"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:backgroundTint="@android:color/white"
+        />
+
+
+  </LinearLayout>
+
   <TextView
       android:id="@+id/color_item_note"
       android:layout_width="wrap_content"
@@ -28,28 +62,6 @@
       android:paddingRight="5dp"
       android:maxLines="2"
       tools:text="YouTube icon red"
-      />
-
-  <Button
-      android:id="@+id/color_item_copy_button"
-      android:layout_width="wrap_content"
-      android:layout_height="38dp"
-      android:layout_alignParentBottom="true"
-      android:layout_alignParentLeft="true"
-      android:text="@string/copy_button"
-      style="@style/Widget.AppCompat.Button.Small"
-      android:backgroundTint="@android:color/white"
-      />
-
-  <Button
-      android:id="@+id/color_item_note_button"
-      android:layout_width="wrap_content"
-      android:layout_height="38dp"
-      android:layout_alignParentBottom="true"
-      android:layout_toRightOf="@id/color_item_copy_button"
-      android:text="@string/note_button"
-      style="@style/Widget.AppCompat.Button.Small"
-      android:backgroundTint="@android:color/white"
       />
 
 </RelativeLayout>
