@@ -108,6 +108,7 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
   @Override public void displayCaptureImage(Uri imageUri) {
     picasso.load(imageUri).into(colorPickerTarget);
     updateColorDetails(200, 200); //simulate touch to "defaut" the details view
+    //here
   }
 
   @OnTouch(R.id.screen_capture_image)

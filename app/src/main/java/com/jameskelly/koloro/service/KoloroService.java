@@ -45,8 +45,8 @@ public class KoloroService extends Service {
   private WindowManager.LayoutParams buttonsParams;
   private ScreenCaptureFlashLayout screenCaptureFlashLayout;
   private WindowManager.LayoutParams loadingParams;
-
   private ScreenCaptureManager screenCaptureManager;
+  private Toast captureToast;
 
   @Inject @Named(PreferencesModule.SHOW_NOTIFICATION_KEY) BooleanPreference showNotificationPref;
   @Inject @Named(PreferencesModule.CAPTURE_BUTTON_POSITION_KEY)
@@ -84,6 +84,8 @@ public class KoloroService extends Service {
     buttonsParams = overlayButtonsLayout.layoutParams(captureButtonPositionPreference.get());
     screenCaptureFlashLayout = new ScreenCaptureFlashLayout(this, this::removeFlashStartWork);
     loadingParams = screenCaptureFlashLayout.layoutParams();
+    captureToast = Toast.makeText(KoloroService.this,
+        R.string.screen_capture_toast, Toast.LENGTH_LONG);
 
     setForground();
     showButtonsOverlay();
@@ -178,7 +180,7 @@ public class KoloroService extends Service {
       layoutOverlayClickListener = new OverlayButtonsLayout.OverlayClickListener() {
     @Override public void onCaptureClicked() {
       removeButtonsOverlay();
-      Toast.makeText(KoloroService.this, R.string.screen_capture_toast, Toast.LENGTH_SHORT).show();
+      captureToast.show();
       vibrate();
 
       screenCaptureManager.captureCurrentScreen(imageCaptureListener);
@@ -217,7 +219,7 @@ public class KoloroService extends Service {
           }
 
           @Override public void onNext(Uri uri) {
-            EventBus.getDefault().postSticky(new ImageProcessedEvent(true, uri));
+            EventBus.getDefault().postSticky(new ImageProcessedEvent(true, uri, captureToast));
             finishService();
           }
         });

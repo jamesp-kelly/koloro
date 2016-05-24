@@ -58,6 +58,7 @@ public class ColorPickPresenterImpl implements ColorPickerPresenter {
   @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
   @Override public void onImageProcessedEventReceived(ImageProcessedEvent event) {
     if (event.isSuccess() && event.getImageUri() != null) {
+      event.getCaptureToast().cancel();
       view.displayCaptureImage(event.getImageUri());
     }
   }
