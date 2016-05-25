@@ -1,6 +1,7 @@
 package com.jameskelly.koloro.repository;
 
 import android.content.Context;
+import android.util.Log;
 import com.jameskelly.koloro.model.KoloroObj;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -10,7 +11,7 @@ import io.realm.Sort;
 public class RealmKoloroRepository implements KoloroRepository {
 
   private static final String TAG = RealmKoloroRepository.class.getSimpleName();
-  private static final int MAX_SIZE = 10;
+  private static final int MAX_SIZE = 50;
 
   private Context context;
   private Realm realm;
@@ -59,8 +60,11 @@ public class RealmKoloroRepository implements KoloroRepository {
     RealmResults<KoloroObj> koloroObjs = realm.where(KoloroObj.class).findAll().sort(KoloroObj.savedTimeStampField,
         Sort.DESCENDING);
 
+    Log.d(TAG, "Number of Koloro objs stored: " + koloroObjs.size());
+
     if (koloroObjs.size() > MAX_SIZE) {
       koloroObjs.deleteLastFromRealm();
+      Log.d(TAG, "Deleting oldest koloro obj");
     }
 
     realm.commitTransaction();

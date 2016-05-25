@@ -139,8 +139,6 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
 
   @Override public void displayCaptureImage(Uri imageUri) {
     picasso.load(imageUri).into(colorPickerTarget);
-    updateColorDetails(200, 200); //simulate touch to "defaut" the details view
-    //here
   }
 
   @OnTouch(R.id.screen_capture_image)
@@ -212,6 +210,7 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
     @Override public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
       capturedBitmap = bitmap;
       screenCaptureImage.setImageBitmap(bitmap);
+      updateColorDetails(200, 200); //simulate touch to display the color picker
     }
 
     @Override public void onBitmapFailed(Drawable errorDrawable) {
