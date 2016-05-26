@@ -197,8 +197,8 @@ public class KoloroService extends Service {
           saveBitmapToGallery(capturedImage);
 
           Intent intent = ColorPickActivity.intent(KoloroService.this);
-          intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-              | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS | Intent.FLAG_ACTIVITY_NO_ANIMATION);
+          intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
+              | Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_ACTIVITY_NO_HISTORY);
           startActivity(intent);
         }
 

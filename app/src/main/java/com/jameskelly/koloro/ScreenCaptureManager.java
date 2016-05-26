@@ -62,7 +62,7 @@ public class ScreenCaptureManager {
 
     mediaProjection =
         mediaProjectionManager.getMediaProjection(resultCode, resultData);
-    imageReader = ImageReader.newInstance(screenInfo.width, screenInfo.height, PixelFormat.RGBA_8888, 2);
+    imageReader = ImageReader.newInstance(screenInfo.width, screenInfo.height, PixelFormat.RGBX_8888, 2);
     surface = imageReader.getSurface();
     virtualDisplay = mediaProjection.createVirtualDisplay(VIRTUAL_DISPLAY_NAME,
         screenInfo.width, screenInfo.height, screenInfo.density,
