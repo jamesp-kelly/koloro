@@ -98,4 +98,5 @@ public class ColorPickPresenterImpl implements ColorPickerPresenter {
   @Override public void saveNote(KoloroObj koloroObj, String inputValue) {
     repository.updateNote(koloroObj, inputValue);
   }
+
 }

@@ -4,6 +4,8 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -16,6 +18,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.view.MotionEvent;
+import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -68,6 +71,7 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
     return new Intent(context, ColorPickActivity.class);
   }
 
+  @SuppressWarnings("ResourceType")
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
@@ -75,6 +79,7 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
         WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
     setContentView(R.layout.activity_color_picker);
+    setRequestedOrientation(getAppropiateOrientation());
     KoloroApplication.get(this).applicationComponent().inject(this);
     ButterKnife.bind(this);
 
@@ -202,6 +207,21 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
     Toast.makeText(this, R.string.copied_clipboard_toast, Toast.LENGTH_SHORT).show();
   }
 
+  private int getAppropiateOrientation() {
+    int orientation = getResources().getConfiguration().orientation;
+    int rotation = getWindowManager().getDefaultDisplay().getRotation();
+
+    if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+      return ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+    } else {
+      if (rotation == Surface.ROTATION_270) {
+        return ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE;
+      } else {
+        return ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+      }
+    }
+  }
+
   @Override public void updateColorList() {
     colorRecyclerAdapter.notifyDataSetChanged();
   }
@@ -219,4 +239,5 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
     @Override public void onPrepareLoad(Drawable placeHolderDrawable) {
     }
   };
+
 }
