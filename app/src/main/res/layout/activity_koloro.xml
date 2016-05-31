@@ -10,13 +10,13 @@
 
   <include layout="@layout/toolbar"/>
 
-  <LinearLayout
+  <RelativeLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:orientation="vertical"
       android:layout_marginTop="?attr/actionBarSize"
       >
     <com.jameskelly.koloro.ui.layouts.RevealRelativeLayout
+        android:id="@+id/reveal_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="15dp"
@@ -125,16 +125,19 @@
               android:layout_width="wrap_content"
               android:layout_height="wrap_content" />
         </LinearLayout>
-
-
-
       </LinearLayout>
-
     </com.jameskelly.koloro.ui.layouts.RevealRelativeLayout>
 
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/saved_colors_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/reveal_layout"
+      />
 
-  </LinearLayout>
+
+  </RelativeLayout>
 
 
 </android.support.design.widget.CoordinatorLayout>

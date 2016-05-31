@@ -1,6 +1,5 @@
 package com.jameskelly.koloro.ui;
 
-import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Intent;
@@ -10,8 +9,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -27,7 +24,6 @@ import com.jameskelly.koloro.preferences.IntPreference;
 import com.jameskelly.koloro.preferences.PreferencesModule;
 import com.jameskelly.koloro.preferences.SimpleSpinnerAdapter;
 import com.jameskelly.koloro.service.KoloroService;
-import com.jameskelly.koloro.ui.layouts.AnimatorEndListener;
 import com.jameskelly.koloro.ui.views.KoloroView;
 import io.codetail.animation.SupportAnimator;
 import io.codetail.animation.ViewAnimationUtils;
@@ -149,37 +145,14 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
   @OnClick(R.id.prefs_button)
   void onPrefsClicked(View v) {
     if (prefsLayout.getVisibility() == View.INVISIBLE) {
-      prefsButton.animate()
-          .translationYBy(prefsButton.getHeight() + prefsLayoutMarginTop)
-          .setDuration(150)
-          .setInterpolator(new AccelerateInterpolator(2.0f))
-          .setListener(new AnimatorEndListener() {
-            @Override public void onAnimationEnd(Animator animation) {
-              startButtonAnimation(true);
-              prefsButton.setImageDrawable(getResources()
-                  .getDrawable(R.drawable.ic_clear_white_24dp, null));
-              prefsButton.bringToFront();
-              layoutExpandAnimation(true, null);
-            }
-          });
+      layoutExpandAnimation(true, null);
     } else {
       layoutExpandAnimation(false, new SupportAnimator.AnimatorListener() {
         @Override public void onAnimationStart() {
-          startButtonAnimation(false);
         }
 
         @Override public void onAnimationEnd() {
           prefsLayout.setVisibility(View.INVISIBLE);
-          prefsButton.animate()
-              .translationYBy((prefsButton.getHeight() + prefsLayoutMarginTop) * -1)
-              .setDuration(150)
-              .setInterpolator(new DecelerateInterpolator(2.0f))
-              .setListener(new AnimatorEndListener() {
-                @Override public void onAnimationEnd(Animator animation) {
-                  prefsButton.setImageDrawable(getResources()
-                      .getDrawable(R.drawable.ic_colorize_white_24dp, null));
-                }
-              });
         }
         @Override public void onAnimationCancel() {}
         @Override public void onAnimationRepeat() {}

@@ -103,7 +103,7 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
       new MaterialDialog.Builder(ColorPickActivity.this)
           .title(R.string.saved_color_note_title)
           .inputType(InputType.TYPE_CLASS_TEXT)
-          .input("R.string.input_hint", koloroObj.getNote(), (dialog, input) -> {
+          .input(getString(R.string.note_hint), koloroObj.getNote(), (dialog, input) -> {
             //don't need to do anything here
           })
           .positiveText(R.string.save_button)
