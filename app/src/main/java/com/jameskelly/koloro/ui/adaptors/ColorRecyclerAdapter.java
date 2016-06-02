@@ -1,5 +1,6 @@
 package com.jameskelly.koloro.ui.adaptors;
 
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -18,15 +19,24 @@ public class ColorRecyclerAdapter extends RecyclerView.Adapter<ColorRecyclerAdap
 
   private List<KoloroObj> koloroObjs;
   private ColorItemListener listener;
+  private int orientation;
 
-  public ColorRecyclerAdapter(List<KoloroObj> koloroObjs, ColorItemListener listener) {
+  public ColorRecyclerAdapter(List<KoloroObj> koloroObjs, ColorItemListener listener, int orientation) {
     this.koloroObjs = koloroObjs;
     this.listener = listener;
+    this.orientation = orientation;
   }
 
   @Override public ColorViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-    View view = LayoutInflater.from(parent.getContext())
-        .inflate(R.layout.color_recycler_item, parent, false);
+    View view;
+
+    if (orientation == LinearLayoutManager.VERTICAL) {
+      view = LayoutInflater.from(parent.getContext())
+          .inflate(R.layout.color_recycler_item_vertical, parent, false);
+    } else {
+      view = LayoutInflater.from(parent.getContext())
+          .inflate(R.layout.color_recycler_item_horizontal, parent, false);
+    }
 
     return new ColorViewHolder(view);
   }

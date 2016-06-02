@@ -5,7 +5,6 @@ import com.jameskelly.koloro.events.ImageProcessedEvent;
 import com.jameskelly.koloro.model.KoloroObj;
 import com.jameskelly.koloro.repository.KoloroRepository;
 import com.jameskelly.koloro.ui.views.ColorPickerView;
-import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import java.util.List;
 import org.greenrobot.eventbus.EventBus;
@@ -27,9 +26,7 @@ public class ColorPickPresenterImpl implements ColorPickerPresenter {
   }
 
   @Override public void unbindView(ColorPickerView view) {
-    if (this.view != view) {
-      this.view = null;
-    }
+    this.view = null;
   }
 
   @Override public void onStart() {
@@ -47,12 +44,8 @@ public class ColorPickPresenterImpl implements ColorPickerPresenter {
 
   @Override public List<KoloroObj> getAllKoloroObjects() {
     koloroObjects = repository.getAllKoloroObjs();
-    koloroObjects.addChangeListener(new RealmChangeListener() {
-      @Override public void onChange() {
-        view.updateColorList();
-      }
-    });
-      return koloroObjects;
+    koloroObjects.addChangeListener(() -> view.updateColorList());
+    return koloroObjects;
   }
 
   @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)

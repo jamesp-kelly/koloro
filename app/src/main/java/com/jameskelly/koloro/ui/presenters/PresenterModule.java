@@ -9,6 +9,11 @@ import javax.inject.Singleton;
 public class PresenterModule {
 
   @Provides @Singleton
+  KoloroPresenter provideKoloroPresenter(KoloroRepository repository) {
+    return new KoloroPresenterImpl(repository);
+  }
+
+  @Provides @Singleton
   ColorPickerPresenter provideColorPickPresenter(KoloroRepository repository) {
     return new ColorPickPresenterImpl(repository);
   }

@@ -87,7 +87,8 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
     presenter.setupRealm();
 
     colorRecycler.setLayoutManager(new LinearLayoutManager(this));
-    colorRecyclerAdapter = new ColorRecyclerAdapter(presenter.getAllKoloroObjects(), colorItemListener);
+    colorRecyclerAdapter = new ColorRecyclerAdapter(presenter.getAllKoloroObjects(),
+        colorItemListener, LinearLayoutManager.VERTICAL);
     colorRecycler.setAdapter(colorRecyclerAdapter);
   }
 
