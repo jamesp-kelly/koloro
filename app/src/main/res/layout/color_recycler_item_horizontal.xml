@@ -2,8 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/color_item_frame"
-    android:layout_width="180dp"
-    android:layout_height="150dp"
+    android:layout_width="100dp"
+    android:layout_height="180dp"
     tools:layout_width="200dp"
     tools:background="@color/colorAccent">
 
@@ -13,43 +13,9 @@
       android:layout_height="wrap_content"
       android:layout_centerHorizontal="true"
       android:layout_marginTop="30dp"
-      android:textSize="25sp"
+      android:textSize="20sp"
       tools:text="#ffffff"
       />
-
-  <LinearLayout
-      android:layout_width="match_parent"
-      android:layout_height="38dp"
-      android:background="@color/picker_background_grey_opaque"
-      android:layout_alignParentBottom="true"
-      android:layout_marginBottom="5dp"
-      android:orientation="horizontal"
-      >
-
-    <Button
-        android:id="@+id/color_item_copy_button"
-        android:layout_width="wrap_content"
-        android:layout_height="38dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:text="@string/copy_button"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:backgroundTint="@android:color/white"
-        />
-
-    <Button
-        android:id="@+id/color_item_note_button"
-        android:layout_width="wrap_content"
-        android:layout_height="38dp"
-        android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@id/color_item_copy_button"
-        android:text="@string/note_button"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:backgroundTint="@android:color/white"
-        />
-
-
-  </LinearLayout>
 
   <TextView
       android:id="@+id/color_item_note"
@@ -63,5 +29,41 @@
       android:maxLines="2"
       tools:text="YouTube icon red"
       />
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="38dp"
+      android:background="@color/picker_background_grey_opaque"
+      android:layout_alignParentBottom="true"
+      android:layout_marginBottom="5dp"
+      android:orientation="horizontal"
+      >
+
+    <ImageButton
+        android:id="@+id/color_item_copy_button"
+        android:layout_width="0dp"
+        android:layout_height="38dp"
+        android:layout_weight="1"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/ic_content_copy_black_24dp"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        />
+
+    <ImageButton
+        android:id="@+id/color_item_note_button"
+        android:layout_width="0dp"
+        android:layout_height="38dp"
+        android:layout_weight="1"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@id/color_item_copy_button"
+        android:src="@drawable/ic_edit_black_24dp"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        />
+
+
+  </LinearLayout>
+
+
 
 </RelativeLayout>

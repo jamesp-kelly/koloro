@@ -1,5 +1,6 @@
 package com.jameskelly.koloro.ui;
 
+import android.animation.Animator;
 import android.app.Activity;
 import android.content.Intent;
 import android.media.projection.MediaProjectionManager;
@@ -17,6 +18,7 @@ import butterknife.BindDimen;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.jameskelly.koloro.KoloroApplication;
 import com.jameskelly.koloro.R;
 import com.jameskelly.koloro.model.KoloroObj;
@@ -25,6 +27,7 @@ import com.jameskelly.koloro.ui.adaptors.ColorRecyclerAdapter;
 import com.jameskelly.koloro.ui.adaptors.ColorRecyclerAdapter.ColorItemListener;
 import com.jameskelly.koloro.ui.presenters.KoloroPresenter;
 import com.jameskelly.koloro.ui.views.KoloroView;
+import com.jameskelly.koloro.util.FirebaseEvents;
 import io.codetail.animation.SupportAnimator;
 import io.codetail.animation.ViewAnimationUtils;
 import javax.inject.Inject;
@@ -37,12 +40,14 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
 
   @Inject MediaProjectionManager mediaProjectionManager;
   @Inject KoloroPresenter presenter;
+  @Inject FirebaseAnalytics firebaseAnalytics;
 
   @BindDimen(R.dimen.prefs_layout_margin_top) int prefsLayoutMarginTop;
   @BindView(R.id.prefs_button) ImageButton prefsButton;
   @BindView(R.id.prefs_layout) ViewGroup prefsLayout;
   @BindView(R.id.start_capture) Button startCaptureButton;
   @BindView(R.id.saved_colors_recycler) RecyclerView savedColorsRecycler;
+  @BindView(R.id.saved_colors_button) Button savedColorsButton;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -72,7 +77,7 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
     }
 
     @Override public void copyButtonClicked(String hexString) {
-
+      firebaseAnalytics.logEvent(FirebaseEvents.CAPTURE_BUTTON_CLICKED, null);
     }
   };
 
@@ -117,14 +122,41 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
     startActivityForResult(mediaCaptureIntent, CREATE_SCREEN_CAPTURE);
   }
 
+  @OnClick(R.id.saved_colors_button)
+  void onSavedColorsClicked(View v) {
+    if (savedColorsRecycler.getVisibility() == View.INVISIBLE) {
+
+      savedColorsRecycler.setTranslationY(savedColorsRecycler.getHeight());
+
+      savedColorsRecycler.animate()
+          .translationY(0)
+          .setListener(new Animator.AnimatorListener() {
+            @Override public void onAnimationStart(Animator animation) {
+              savedColorsRecycler.setVisibility(View.VISIBLE);
+            }
+
+            @Override public void onAnimationEnd(Animator animation) {
+            }
+
+            @Override public void onAnimationCancel(Animator animation) {
+            }
+
+            @Override public void onAnimationRepeat(Animator animation) {
+            }
+          });
+    }
+  }
+
   @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
     if (requestCode == CREATE_SCREEN_CAPTURE) {
       if (resultCode == Activity.RESULT_OK) {
         Intent intent = KoloroService.intent(this, resultCode, data);
         startService(intent);
+        firebaseAnalytics.logEvent(FirebaseEvents.CAPTURE_PERMISSION_GRANTED, null);
       } else {
         Log.d(TAG, "Couldn't get permission to screen capture");
+        firebaseAnalytics.logEvent(FirebaseEvents.CAPTURE_PERMISSION_DENIED, null);
         //show message to user
       }
     }

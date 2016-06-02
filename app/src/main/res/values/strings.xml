@@ -20,6 +20,7 @@
   <string name="cancel_button">Cancel</string>
   <string name="saved_color_note_title">Saved Color Note</string>
   <string name="note_hint">Type a note</string>
+  <string name="saved_colors_button">Saved Colors</string>
   <string-array name="capture_button_position_array">
     <item>Top right</item>
     <item>Top left</item>

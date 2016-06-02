@@ -35,6 +35,7 @@
         android:text="@string/copy_button"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:backgroundTint="@android:color/white"
+        android:drawableStart="@drawable/ic_content_copy_black_24dp"
         />
 
     <Button
@@ -46,6 +47,7 @@
         android:text="@string/note_button"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:backgroundTint="@android:color/white"
+        android:drawableStart="@drawable/ic_edit_black_24dp"
         />
 
 

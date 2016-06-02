@@ -32,6 +32,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTouch;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.jameskelly.koloro.KoloroApplication;
 import com.jameskelly.koloro.R;
 import com.jameskelly.koloro.model.KoloroObj;
@@ -39,6 +40,7 @@ import com.jameskelly.koloro.ui.adaptors.ColorRecyclerAdapter;
 import com.jameskelly.koloro.ui.adaptors.ColorRecyclerAdapter.ColorItemListener;
 import com.jameskelly.koloro.ui.presenters.ColorPickerPresenter;
 import com.jameskelly.koloro.ui.views.ColorPickerView;
+import com.jameskelly.koloro.util.FirebaseEvents;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import javax.inject.Inject;
@@ -57,6 +59,7 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
   @Inject Picasso picasso;
   @Inject ClipboardManager clipboardManager;
   @Inject ColorPickerPresenter presenter;
+  @Inject FirebaseAnalytics firebaseAnalytics;
 
   @BindView(R.id.drawer_layout) DrawerLayout drawerLayout;
   @BindView(R.id.color_details_parent) LinearLayout colorDetailsParent;
@@ -113,6 +116,8 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
             if (dialog.getInputEditText() != null) {
               String inputValue = dialog.getInputEditText().getText().toString();
               presenter.saveNote(koloroObj, inputValue);
+              Bundle bundle = new Bundle();
+              firebaseAnalytics.logEvent(FirebaseEvents.NOTE_ADDED, null);
             }
           })
           .show();
@@ -120,6 +125,9 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
 
     @Override public void copyButtonClicked(String hexString) {
       saveToClipBoard(hexString);
+      Bundle bundle = new Bundle();
+      bundle.putString(FirebaseAnalytics.Param.ITEM_ID, hexString);
+      firebaseAnalytics.logEvent(FirebaseEvents.COLOR_COPIED, bundle);
     }
   };
 
@@ -195,11 +203,18 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
   void onSaveClicked() {
     Toast.makeText(this, "saved", Toast.LENGTH_SHORT).show();
     presenter.saveColor(currentlySelectedColor, currentlySelectedColorHex);
+    Bundle bundle = new Bundle();
+    bundle.putString(FirebaseAnalytics.Param.ITEM_ID, currentlySelectedColorHex);
+    firebaseAnalytics.logEvent(FirebaseEvents.COLOR_SAVED, bundle);
   }
 
   @OnClick(R.id.copy_button)
   void onCopyClicked() {
-    saveToClipBoard(hexText.getText().toString());
+    String hexString = hexText.getText().toString();
+    saveToClipBoard(hexString);
+    Bundle bundle = new Bundle();
+    bundle.putString(FirebaseAnalytics.Param.ITEM_ID, hexString);
+    firebaseAnalytics.logEvent(FirebaseEvents.COLOR_COPIED, bundle);
   }
 
   private void saveToClipBoard(String hexString) {

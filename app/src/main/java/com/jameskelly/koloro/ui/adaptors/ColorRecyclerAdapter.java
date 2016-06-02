@@ -6,7 +6,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import butterknife.BindView;
@@ -63,8 +62,8 @@ public class ColorRecyclerAdapter extends RecyclerView.Adapter<ColorRecyclerAdap
     @BindView(R.id.color_item_frame) RelativeLayout colorItemLayout;
     @BindView(R.id.color_item_text) TextView colorItemText;
     @BindView(R.id.color_item_note) TextView colorItemNote;
-    @BindView(R.id.color_item_copy_button) Button copyButton;
-    @BindView(R.id.color_item_note_button) Button noteButton;
+    @BindView(R.id.color_item_copy_button) View copyButton;
+    @BindView(R.id.color_item_note_button) View noteButton;
 
     public ColorViewHolder(View itemView) {
       super(itemView);

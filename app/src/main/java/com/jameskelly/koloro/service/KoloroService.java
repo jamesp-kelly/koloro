@@ -15,6 +15,7 @@ import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.view.WindowManager;
 import android.widget.Toast;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.jameskelly.koloro.KoloroApplication;
 import com.jameskelly.koloro.R;
 import com.jameskelly.koloro.ScreenCaptureManager;
@@ -26,6 +27,7 @@ import com.jameskelly.koloro.ui.ColorPickActivity;
 import com.jameskelly.koloro.ui.KoloroActivity;
 import com.jameskelly.koloro.ui.layouts.OverlayButtonsLayout;
 import com.jameskelly.koloro.ui.layouts.ScreenCaptureFlashLayout;
+import com.jameskelly.koloro.util.FirebaseEvents;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.greenrobot.eventbus.EventBus;
@@ -55,6 +57,7 @@ public class KoloroService extends Service {
   @Inject WindowManager windowManager;
   @Inject NotificationManager notificationManager;
   @Inject Vibrator vibrator;
+  @Inject FirebaseAnalytics firebaseAnalytics;
 
 
   public static Intent intent(Context context, int resultCode, Intent data) {
@@ -182,12 +185,14 @@ public class KoloroService extends Service {
       removeButtonsOverlay();
       captureToast.show();
       vibrate();
+      firebaseAnalytics.logEvent(FirebaseEvents.OVERLAY_CAPTURE_CLICKED, null);
 
       screenCaptureManager.captureCurrentScreen(imageCaptureListener);
     }
 
     @Override public void onCancelClicked() {
       finishService();
+      firebaseAnalytics.logEvent(FirebaseEvents.OVERLAY_CANCEL_CLICKED, null);
     }
   };
 

@@ -8,6 +8,7 @@ import android.media.projection.MediaProjectionManager;
 import android.os.Vibrator;
 import android.view.LayoutInflater;
 import android.view.WindowManager;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.jameskelly.koloro.repository.KoloroRepository;
 import com.jameskelly.koloro.repository.RealmKoloroRepository;
 import com.squareup.picasso.Picasso;
@@ -68,5 +69,10 @@ public class ApplicationModule {
   @Provides @Singleton
   public KoloroRepository provideKoloroRepository() {
     return new RealmKoloroRepository(application.getApplicationContext());
+  }
+
+  @Provides @Singleton
+  public FirebaseAnalytics provideFirebaseAnalytics() {
+    return FirebaseAnalytics.getInstance(application.getApplicationContext());
   }
 }

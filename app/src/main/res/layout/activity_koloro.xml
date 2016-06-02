@@ -12,13 +12,13 @@
 
   <RelativeLayout
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"
+      android:layout_height="match_parent"
       android:layout_marginTop="?attr/actionBarSize"
       >
     <com.jameskelly.koloro.ui.layouts.RevealRelativeLayout
         android:id="@+id/reveal_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:padding="15dp"
         android:orientation="horizontal"
         android:gravity="center_horizontal">
@@ -56,13 +56,26 @@
           android:background="@color/colorAccent"
           />
 
-      <android.support.v7.widget.RecyclerView
-          android:id="@+id/saved_colors_recycler"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="20dp"
-          android:layout_below="@id/help_button"
-          />
+
+        <Button
+            android:id="@+id/saved_colors_button"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_alignParentBottom="true"
+            style="?android:attr/borderlessButtonStyle"
+            android:text="@string/saved_colors_button"
+            android:background="@color/colorAccent"
+            />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/saved_colors_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:visibility="invisible"
+            />
+
+
 
       <FrameLayout
           android:id="@+id/prefs_layout"
