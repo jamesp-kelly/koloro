@@ -1,30 +1,25 @@
 package com.jameskelly.koloro.ui;
 
-import android.animation.Animator;
 import android.app.Activity;
 import android.content.Intent;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.TextView;
 import butterknife.BindDimen;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnTouch;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.jameskelly.koloro.KoloroApplication;
 import com.jameskelly.koloro.R;
-import com.jameskelly.koloro.model.KoloroObj;
+import com.jameskelly.koloro.preferences.SimpleSpinnerAdapter;
 import com.jameskelly.koloro.service.KoloroService;
-import com.jameskelly.koloro.ui.adaptors.ColorRecyclerAdapter;
-import com.jameskelly.koloro.ui.adaptors.ColorRecyclerAdapter.ColorItemListener;
 import com.jameskelly.koloro.ui.presenters.KoloroPresenter;
 import com.jameskelly.koloro.ui.views.KoloroView;
 import com.jameskelly.koloro.util.FirebaseEvents;
@@ -36,7 +31,7 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
 
   private static final int CREATE_SCREEN_CAPTURE = 1255;
 
-  private ColorRecyclerAdapter colorRecyclerAdapter;
+  private SimpleSpinnerAdapter captureButtonPositionAdapter;
 
   @Inject MediaProjectionManager mediaProjectionManager;
   @Inject KoloroPresenter presenter;
@@ -46,7 +41,6 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
   @BindView(R.id.prefs_button) ImageButton prefsButton;
   @BindView(R.id.prefs_layout) ViewGroup prefsLayout;
   @BindView(R.id.start_capture) Button startCaptureButton;
-  @BindView(R.id.saved_colors_recycler) RecyclerView savedColorsRecycler;
   @BindView(R.id.saved_colors_button) Button savedColorsButton;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
@@ -55,37 +49,34 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
     KoloroApplication.get(this).applicationComponent().inject(this);
     ButterKnife.bind(this);
 
-    prefsLayout.setEnabled(false);
-
+    //prefsLayout.setEnabled(false);
     presenter.bindView(this);
     presenter.setupRealm();
 
-    savedColorsRecycler.setLayoutManager(
-        new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-    colorRecyclerAdapter = new ColorRecyclerAdapter(presenter.getAllKoloroObjects(),
-        listener, LinearLayoutManager.HORIZONTAL);
-    savedColorsRecycler.setAdapter(colorRecyclerAdapter);
+
+    getSupportFragmentManager().beginTransaction()
+        .replace(R.id.prefs_layout, new PreferenceFragment())
+        .commit();
   }
-
-  ColorItemListener listener = new ColorItemListener() {
-    @Override public void colorTextChanged(int backgroundColor, TextView... affectedViews) {
-
-    }
-
-    @Override public void noteButtonClicked(KoloroObj koloroObj) {
-
-    }
-
-    @Override public void copyButtonClicked(String hexString) {
-      firebaseAnalytics.logEvent(FirebaseEvents.CAPTURE_BUTTON_CLICKED, null);
-    }
-  };
 
 
   @OnClick(R.id.prefs_button)
   void onPrefsClicked(View v) {
     if (prefsLayout.getVisibility() == View.INVISIBLE) {
-      layoutExpandAnimation(true, null);
+      layoutExpandAnimation(true, new SupportAnimator.AnimatorListener() {
+        @Override public void onAnimationStart() {
+        }
+
+        @Override public void onAnimationEnd() {
+          //prefsLayout.setEnabled(true);
+        }
+
+        @Override public void onAnimationCancel() {
+        }
+
+        @Override public void onAnimationRepeat() {
+        }
+      });
     } else {
       layoutExpandAnimation(false, new SupportAnimator.AnimatorListener() {
         @Override public void onAnimationStart() {
@@ -93,6 +84,7 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
 
         @Override public void onAnimationEnd() {
           prefsLayout.setVisibility(View.INVISIBLE);
+          //prefsLayout.setEnabled(false);
         }
         @Override public void onAnimationCancel() {}
         @Override public void onAnimationRepeat() {}
@@ -122,30 +114,16 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
     startActivityForResult(mediaCaptureIntent, CREATE_SCREEN_CAPTURE);
   }
 
-  @OnClick(R.id.saved_colors_button)
-  void onSavedColorsClicked(View v) {
-    if (savedColorsRecycler.getVisibility() == View.INVISIBLE) {
+  //@OnClick(R.id.help_button)
+  //void onHelpClicked() {
+  //  Toast.makeText(this, "This doesn't do anything right now", Toast.LENGTH_SHORT).show();
+  //}
 
-      savedColorsRecycler.setTranslationY(savedColorsRecycler.getHeight());
-
-      savedColorsRecycler.animate()
-          .translationY(0)
-          .setListener(new Animator.AnimatorListener() {
-            @Override public void onAnimationStart(Animator animation) {
-              savedColorsRecycler.setVisibility(View.VISIBLE);
-            }
-
-            @Override public void onAnimationEnd(Animator animation) {
-            }
-
-            @Override public void onAnimationCancel(Animator animation) {
-            }
-
-            @Override public void onAnimationRepeat(Animator animation) {
-            }
-          });
-    }
+  @OnTouch(R.id.prefs_layout)
+  boolean onPrefsLayoutTouched() {
+    return true;
   }
+
 
   @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
@@ -160,10 +138,6 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
         //show message to user
       }
     }
-  }
-
-  @Override public void updateColorList() {
-    colorRecyclerAdapter.notifyDataSetChanged();
   }
 
   @Override protected void onStop() {

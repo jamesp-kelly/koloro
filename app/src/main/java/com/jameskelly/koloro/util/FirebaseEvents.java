@@ -10,6 +10,7 @@ public class FirebaseEvents {
   public static final String COLOR_SAVED = "color_saved";
   public static final String COLOR_COPIED = "color_copied";
   public static final String NOTE_ADDED = "note_added";
+  public static final String PREFERENCE_CHANGED = "preference_changed";
 
   public static final String PARAM_COLOR = "param_color";
 }

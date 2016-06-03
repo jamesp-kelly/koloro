@@ -12,9 +12,11 @@ public class SimpleSpinnerAdapter extends BaseAdapter {
 
   private final List<String> spinnerValues;
   private final LayoutInflater layoutInflater;
+  private final Context context;
 
   public SimpleSpinnerAdapter(Context context, List<String> values) {
     layoutInflater = LayoutInflater.from(context);
+    this.context = context;
     spinnerValues = values;
   }
 
@@ -36,6 +38,7 @@ public class SimpleSpinnerAdapter extends BaseAdapter {
     if (textView == null) {
       textView =
           (TextView) layoutInflater.inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
+      textView.setTextColor(context.getResources().getColor(android.R.color.white));
     }
 
     textView.setText(spinnerValues.get(position));

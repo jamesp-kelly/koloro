@@ -138,13 +138,13 @@ public class KoloroService extends Service {
     PendingIntent homePendingIntent = PendingIntent.getActivity(this, 0, homeIntent, 0);
     PendingIntent stopPendingIntent = PendingIntent.getBroadcast(this, 0, stopIntent, 0);
 
-    Notification.Builder builder = new Notification.Builder(this).setContentTitle(getString(R.string.app_name))
+    Notification.Builder builder = new Notification.Builder(this).setContentTitle(getString(R.string.notification_title))
         .setContentText(getString(R.string.notification_text))
         .setSmallIcon(R.drawable.ic_colorize_white_24dp)
-        .setTicker(getString(R.string.notification_ticker))
+        .setTicker(getString(R.string.notification_title))
         .setContentIntent(homePendingIntent)
         .setDeleteIntent(stopPendingIntent)
-        .setCategory(Notification.CATEGORY_SERVICE);
+        .setCategory(Notification.CATEGORY_SERVICE); //add cancel button?
 
     startForeground(KOLORA_NOTIFICATION_ID, builder.build());
   }

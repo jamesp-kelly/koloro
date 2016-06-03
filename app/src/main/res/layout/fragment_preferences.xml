@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+  <TextView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_gravity="start"
+      android:text="@string/preferences_label"
+      android:textColor="@android:color/white"
+      android:textAllCaps="true"
+      android:textAlignment="viewStart" />
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      android:layout_gravity="center_horizontal">
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/capture_button_position"
+        android:textColor="@android:color/white"/>
+    <Spinner
+        android:id="@+id/spinner_capture_button_position"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:popupBackground="@color/colorPrimary"
+        android:gravity="end"
+        />
+  </LinearLayout>
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      android:layout_gravity="center_horizontal"
+      >
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/vibration_label"
+        android:textColor="@android:color/white"/>
+
+    <Switch
+        android:id="@+id/switch_vibration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+  </LinearLayout>
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      android:layout_gravity="center_horizontal">
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/store_captures_label"
+        android:textColor="@android:color/white"
+        />
+    <Switch
+        android:id="@+id/switch_store_captures"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:enabled="false"
+        />
+  </LinearLayout>
+
+
+
+</LinearLayout>

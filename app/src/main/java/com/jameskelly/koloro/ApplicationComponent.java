@@ -4,6 +4,7 @@ import com.jameskelly.koloro.preferences.PreferencesModule;
 import com.jameskelly.koloro.service.KoloroService;
 import com.jameskelly.koloro.ui.ColorPickActivity;
 import com.jameskelly.koloro.ui.KoloroActivity;
+import com.jameskelly.koloro.ui.PreferenceFragment;
 import com.jameskelly.koloro.ui.presenters.PresenterModule;
 import dagger.Component;
 import javax.inject.Singleton;
@@ -20,4 +21,5 @@ public interface ApplicationComponent {
   void inject(ColorPickActivity colorPickActivity);
   void inject(KoloroService koloroService);
   void inject(ScreenCaptureManager screenCaptureManager);
+  void inject(PreferenceFragment preferenceFragment);
 }
