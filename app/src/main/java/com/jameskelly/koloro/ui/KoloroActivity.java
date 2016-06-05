@@ -15,6 +15,9 @@ import butterknife.BindDimen;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.jameskelly.koloro.KoloroApplication;
 import com.jameskelly.koloro.R;
@@ -39,6 +42,7 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
   @BindDimen(R.dimen.prefs_layout_margin_top) int prefsLayoutMarginTop;
   @BindView(R.id.prefs_layout) ViewGroup prefsLayout;
   @BindView(R.id.start_capture) Button startCaptureButton;
+  @BindView(R.id.adView) AdView adView;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -53,6 +57,10 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
     getSupportFragmentManager().beginTransaction()
         .replace(R.id.prefs_layout, new PreferenceFragment())
         .commit();
+
+    MobileAds.initialize(getApplicationContext(), getString(R.string.ad_app_id));
+    AdRequest adRequest = new AdRequest.Builder().build();
+    adView.loadAd(adRequest);
   }
 
 

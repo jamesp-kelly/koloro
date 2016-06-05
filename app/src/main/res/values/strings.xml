@@ -24,8 +24,15 @@
   <string name="saved_colors_button">Saved Colors</string>
   <string name="capture_button_position">Capture button position</string>
   <string name="vibration_label">Vibration</string>
+
+  <string name="ad_app_id">ca-app-pub-6855808991220674~3673032548</string>
+  <string name="banner_ad_unit_id_test">ca-app-pub-3940256099942544/6300978111</string>
+  <string name="banner_ad_unit_id_prod">ca-app-pub-6855808991220674/5149765749</string>
+
   <string-array name="capture_button_position_array">
     <item>Top right</item>
     <item>Top left</item>
   </string-array>
+
+
 </resources>
