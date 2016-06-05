@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/homeBackground"
     tools:context=".ui.KoloroActivity"
     >
 
@@ -13,88 +14,80 @@
   <RelativeLayout
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:layout_marginTop="?attr/actionBarSize"
       >
-    <com.jameskelly.koloro.ui.layouts.RevealRelativeLayout
-        android:id="@+id/reveal_layout"
+
+    <FrameLayout
+        android:id="@+id/ad_placeholder"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorAccent"
+        />
+
+
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="15dp"
-        android:orientation="horizontal"
-        android:gravity="center_horizontal">
+        android:layout_above="@id/ad_placeholder">
 
-      <Button
-          android:id="@+id/start_capture"
-          android:layout_height="60dp"
+      <LinearLayout
           android:layout_width="match_parent"
-          android:layout_marginRight="@dimen/start_button_margin_right"
-          android:paddingLeft="@dimen/start_button_margin_right"
-          android:layout_alignParentLeft="true"
-          style="?android:attr/borderlessButtonStyle"
-          android:text="@string/start_capture_button"
-          android:background="@color/colorAccent"
-          />
+          android:layout_height="wrap_content"
+          android:layout_marginTop="?attr/actionBarSize"
+          android:layout_marginLeft="15dp"
+          android:layout_marginRight="15dp"
+          android:orientation="vertical"
+          >
 
-      <ImageButton
-          android:id="@+id/prefs_button"
-          android:layout_width="50dp"
-          android:layout_height="60dp"
-          android:layout_alignParentRight="true"
-          style="?android:attr/borderlessButtonStyle"
-          android:background="@color/colorAccent"
-          android:src="@drawable/ic_settings_black_24dp"
-          />
-
-      <!--<Button-->
-          <!--android:id="@+id/help_button"-->
-          <!--android:layout_width="match_parent"-->
-          <!--android:layout_height="60dp"-->
-          <!--android:layout_marginTop="20dp"-->
-          <!--android:layout_below="@id/start_capture"-->
-          <!--style="?android:attr/borderlessButtonStyle"-->
-          <!--android:text="How to use"-->
-          <!--android:background="@color/colorAccent"-->
-          <!--/>-->
+        <Button
+            android:id="@+id/start_capture"
+            android:layout_height="60dp"
+            android:layout_width="match_parent"
+            android:layout_marginTop="20dp"
+            android:text="@string/start_capture_button"
+            android:background="@android:color/white"
+            />
 
 
         <Button
-            android:id="@+id/saved_colors_button"
+            android:id="@+id/help_button"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_alignParentBottom="true"
-            style="?android:attr/borderlessButtonStyle"
-            android:text="@string/saved_colors_button"
-            android:background="@color/colorAccent"
-            android:visibility="gone"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:text="How to use Koloro"
+            android:background="@android:color/white"
+            android:gravity="center"
+            android:drawableLeft="@drawable/ic_edit_black_24dp"
+            android:padding="5dp"
             />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/saved_colors_recycler"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:visibility="invisible"
+            android:layout_marginTop="20dp"
+            android:textSize="20sp"
+            android:text="@string/preferences_label"
+            android:textColor="@android:color/black"
             />
 
-      <FrameLayout
-          android:id="@+id/prefs_layout"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:minHeight="100dp"
-          android:layout_below="@id/start_capture"
-          android:layout_marginTop="5dp"
-          android:padding="15dp"
-          android:visibility="invisible"
-          tools:visibility="invisible"
-          android:background="@color/colorPrimaryDark"
-          >
-
-      </FrameLayout>
-
-    </com.jameskelly.koloro.ui.layouts.RevealRelativeLayout>
-
+        <FrameLayout
+            android:id="@+id/prefs_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="100dp"
+            android:layout_marginTop="5dp"
+            android:padding="15dp"
+            android:background="@android:color/white"
+            >
+        </FrameLayout>
+      </LinearLayout>
+    </ScrollView>
 
   </RelativeLayout>
+
+
+  
+
 
 
 </android.support.design.widget.CoordinatorLayout>
