@@ -11,4 +11,6 @@ public interface KoloroPresenter {
   void bindView(KoloroView view);
   void unbindView(KoloroView view);
   List<KoloroObj> getAllKoloroObjects();
+  int getContrastingTextColor(int backgroundColor);
+  void saveNote(KoloroObj koloroObj, String inputValue);
 }

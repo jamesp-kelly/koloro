@@ -9,82 +9,104 @@
     tools:context=".ui.KoloroActivity"
     >
 
-  <include layout="@layout/toolbar"/>
-
-  <RelativeLayout
+  <android.support.v4.widget.DrawerLayout
+      android:id="@+id/drawer_layout"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       >
 
-    <com.google.android.gms.ads.AdView
-        android:id="@+id/adView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        app:adSize="BANNER"
-        app:adUnitId="@string/banner_ad_unit_id_test">
-    </com.google.android.gms.ads.AdView>
-
-
-    <ScrollView
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/adView">
+        >
 
-      <LinearLayout
+      <include layout="@layout/toolbar"/>
+
+      <com.google.android.gms.ads.AdView
+          android:id="@+id/adView"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:layout_marginTop="?attr/actionBarSize"
-          android:layout_marginLeft="15dp"
-          android:layout_marginRight="15dp"
-          android:orientation="vertical"
-          >
-
-        <Button
-            android:id="@+id/start_capture"
-            android:layout_height="60dp"
-            android:layout_width="match_parent"
-            android:layout_marginTop="20dp"
-            android:text="@string/start_capture_button"
-            android:background="@android:color/white"
-            android:drawableLeft="@drawable/ic_palette_black_24dp"
-            android:padding="12dp"
-            />
+          android:layout_centerHorizontal="true"
+          android:layout_alignParentBottom="true"
+          app:adSize="BANNER"
+          app:adUnitId="@string/banner_ad_unit_id_test">
+      </com.google.android.gms.ads.AdView>
 
 
-        <Button
-            android:id="@+id/help_button"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginTop="10dp"
-            android:text="How to use Koloro"
-            android:background="@android:color/white"
-            android:gravity="center"
-            android:drawableLeft="@drawable/ic_help_outline_black_24dp"
-            android:padding="12dp"
-            />
+      <ScrollView
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:layout_above="@id/adView">
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:textSize="20sp"
-            android:text="@string/preferences_label"
-            android:textColor="@android:color/black"
-            />
-
-        <FrameLayout
-            android:id="@+id/prefs_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="100dp"
-            android:layout_marginTop="5dp"
-            android:padding="15dp"
-            android:background="@android:color/white"
+            android:layout_marginTop="?attr/actionBarSize"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:orientation="vertical"
             >
-        </FrameLayout>
-      </LinearLayout>
-    </ScrollView>
-  </RelativeLayout>
+
+          <Button
+              android:id="@+id/start_capture"
+              android:layout_height="60dp"
+              android:layout_width="match_parent"
+              android:layout_marginTop="20dp"
+              android:text="@string/start_capture_button"
+              android:background="@android:color/white"
+              android:drawableLeft="@drawable/ic_palette_black_24dp"
+              android:padding="12dp"
+              />
+
+
+          <Button
+              android:id="@+id/help_button"
+              android:layout_width="match_parent"
+              android:layout_height="40dp"
+              android:layout_marginTop="10dp"
+              android:text="How to use Koloro"
+              android:background="@android:color/white"
+              android:gravity="center"
+              android:drawableLeft="@drawable/ic_help_outline_black_24dp"
+              android:padding="12dp"
+              />
+
+          <TextView
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="20dp"
+              android:textSize="20sp"
+              android:text="@string/preferences_label"
+              android:textColor="@android:color/black"
+              />
+
+          <FrameLayout
+              android:id="@+id/prefs_layout"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:minHeight="100dp"
+              android:layout_marginTop="5dp"
+              android:padding="15dp"
+              android:background="@android:color/white"
+              >
+          </FrameLayout>
+        </LinearLayout>
+      </ScrollView>
+    </RelativeLayout>
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:background="@color/saved_colors_drawer_background"
+        >
+      <android.support.v7.widget.RecyclerView
+          android:id="@+id/color_list_recycler"
+          android:layout_width="200dp"
+          android:layout_height="wrap_content"
+          />
+
+    </FrameLayout>
+
+  </android.support.v4.widget.DrawerLayout>
 </android.support.design.widget.CoordinatorLayout>
