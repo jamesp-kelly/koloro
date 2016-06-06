@@ -3,10 +3,7 @@ package com.jameskelly.koloro.ui;
 import android.app.Activity;
 import android.content.Intent;
 import android.media.projection.MediaProjectionManager;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -67,15 +64,7 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
   @OnClick(R.id.start_capture)
   void onStartCaptureClicked() {
     Intent mediaCaptureIntent = mediaProjectionManager.createScreenCaptureIntent();
-
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
-      //need to request permission to draw overlays
-      Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-          Uri.parse("package:" + getPackageName()));
-      startActivityForResult(intent, OVERLAY_PERMISSION);
-    } else {
-      startActivityForResult(mediaCaptureIntent, CREATE_SCREEN_CAPTURE);
-    }
+    startActivityForResult(mediaCaptureIntent, CREATE_SCREEN_CAPTURE);
   }
 
   @OnClick(R.id.help_button)
@@ -95,12 +84,6 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
         Log.d(TAG, "Couldn't get permission to screen capture");
         firebaseAnalytics.logEvent(FirebaseEvents.CAPTURE_PERMISSION_DENIED, null);
         //show message to user
-      }
-    } else if (requestCode == OVERLAY_PERMISSION && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-      if (Settings.canDrawOverlays(this)) {
-        startActivityForResult(mediaProjectionManager.createScreenCaptureIntent(), CREATE_SCREEN_CAPTURE);
-      } else {
-        Toast.makeText(this, "Couldn't get permission to display overlay", Toast.LENGTH_SHORT).show();
       }
     }
   }

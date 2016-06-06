@@ -38,6 +38,7 @@ public class SimpleSpinnerAdapter extends BaseAdapter {
     if (textView == null) {
       textView =
           (TextView) layoutInflater.inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
+      textView.setBackgroundColor(context.getResources().getColor(android.R.color.white));
     }
 
     textView.setText(spinnerValues.get(position));

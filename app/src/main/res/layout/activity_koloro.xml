@@ -27,7 +27,6 @@
     </com.google.android.gms.ads.AdView>
 
 
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -49,6 +48,8 @@
             android:layout_marginTop="20dp"
             android:text="@string/start_capture_button"
             android:background="@android:color/white"
+            android:drawableLeft="@drawable/ic_palette_black_24dp"
+            android:padding="12dp"
             />
 
 
@@ -60,8 +61,8 @@
             android:text="How to use Koloro"
             android:background="@android:color/white"
             android:gravity="center"
-            android:drawableLeft="@drawable/ic_edit_black_24dp"
-            android:padding="5dp"
+            android:drawableLeft="@drawable/ic_help_outline_black_24dp"
+            android:padding="12dp"
             />
 
         <TextView
@@ -85,12 +86,5 @@
         </FrameLayout>
       </LinearLayout>
     </ScrollView>
-
   </RelativeLayout>
-
-
-  
-
-
-
 </android.support.design.widget.CoordinatorLayout>
