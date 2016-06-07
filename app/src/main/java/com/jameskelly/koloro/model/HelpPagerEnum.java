@@ -4,7 +4,7 @@ import com.jameskelly.koloro.R;
 
 public enum HelpPagerEnum {
 
-  INTRO(R.string.help_intro, R.drawable.ic_palette_black_24dp),
+  INTRO(R.string.help_intro, R.drawable.youtube_screenshot),
   HOME(R.string.help_home, R.drawable.ic_palette_black_24dp),
   OVERLAY(R.string.help_overlay, R.drawable.ic_palette_black_24dp);
 
