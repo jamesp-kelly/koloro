@@ -140,7 +140,7 @@ public class KoloroService extends Service {
 
     Notification.Builder builder = new Notification.Builder(this).setContentTitle(getString(R.string.notification_title))
         .setContentText(getString(R.string.notification_text))
-        .setSmallIcon(R.drawable.ic_colorize_white_24dp)
+        .setSmallIcon(R.drawable.ic_palette_white_24dp)
         .setTicker(getString(R.string.notification_title))
         .setContentIntent(homePendingIntent)
         .setDeleteIntent(stopPendingIntent)

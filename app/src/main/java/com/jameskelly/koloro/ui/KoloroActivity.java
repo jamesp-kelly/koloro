@@ -86,7 +86,9 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
 
   @OnClick(R.id.help_button)
   void onHelpClicked() {
-    Toast.makeText(this, "This doesn't do anything right now", Toast.LENGTH_SHORT).show();
+    //Toast.makeText(this, "This doesn't do anything right now", Toast.LENGTH_SHORT).show();
+    Intent intent = new Intent(this, HelpActivity.class);
+    startActivity(intent);
   }
 
 

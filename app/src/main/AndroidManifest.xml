@@ -27,6 +27,7 @@
       </intent-filter>
     </activity>
     <activity android:name=".ui.ColorPickActivity"/>
+    <activity android:name=".ui.HelpActivity" android:parentActivityName=".ui.KoloroActivity"/>
     <service android:name=".service.KoloroService"/>
   </application>
 

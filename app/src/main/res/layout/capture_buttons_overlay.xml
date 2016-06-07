@@ -21,7 +21,7 @@
       android:layout_height="match_parent"
       android:layout_weight="1"
       android:src="@drawable/ic_camera_white_24dp"
-      android:background="@color/colorPrimary"
+      android:background="@color/colorPrimaryDark"
       android:contentDescription="@string/capture_screen_description"
       />
 

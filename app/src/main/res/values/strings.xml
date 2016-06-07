@@ -29,6 +29,17 @@
   <string name="banner_ad_unit_id_test">ca-app-pub-3940256099942544/6300978111</string>
   <string name="banner_ad_unit_id_prod">ca-app-pub-6855808991220674/5149765749</string>
 
+  <string name="help_intro">One two three four five six</string>
+  <string name="help_home">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam convallis metus vel mi porta, id egestas lectus commodo. Nunc at gravida odio. Nulla gravida massa interdum, dapibus risus sit amet, pharetra diam. Maecenas gravida finibus turpis condimentum porttitor. Phasellus interdum dolor sed eros laoreet, in ornare nisi imperdiet. Nullam ut pretium nisl. Aliquam congue ultrices purus, sed bibendum ipsum condimentum ac. Nullam pellentesque tincidunt sodales. Vivamus mattis tellus sit amet mi gravida vulputate. Ut at laoreet velit. Integer at leo ut risus fermentum euismod. Curabitur eget purus aliquet libero congue vulputate vitae sit amet massa.
+
+Pellentesque malesuada rutrum imperdiet. Suspendisse efficitur quam consequat lectus fringilla, non bibendum leo eleifend. Cras et sem consequat, rhoncus ipsum vitae, convallis ligula. Cras tempus molestie quam, sit amet congue est congue non. Morbi eget eros luctus, semper nibh a, posuere metus. Ut lobortis quam purus, aliquet interdum urna vestibulum vitae. Duis egestas leo massa, ac sodales urna cursus fermentum. Integer vitae sodales justo, a rutrum nunc. Nulla vel massa ac leo consectetur semper feugiat dapibus elit. Phasellus sollicitudin eros ac fermentum suscipit.
+
+</string>
+  <string name="help_overlay">One two three four five six</string>
+  <string name="help_picker">One two three four five six</string>
+  <string name="help_preferences">One two three four five six</string>
+  <string name="help_premium">One two three four five six</string>
+
   <string-array name="capture_button_position_array">
     <item>Top right</item>
     <item>Top left</item>
