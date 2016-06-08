@@ -168,13 +168,10 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
 
   @OnTouch(R.id.screen_capture_image)
   boolean captureImageTouch(View v, MotionEvent event) {
-
     int touchX = Math.round(event.getRawX());
     int touchY = Math.round(event.getRawY());
-
     updateColorDetails(touchX, touchY);
-
-    return false;
+    return true;
   }
 
   private void updateColorDetails(int touchX, int touchY) {
