@@ -60,8 +60,8 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
     ButterKnife.bind(this);
 
     presenter.bindView(this);
-    presenter.setupRealm();
 
+    setupSavedColorList();
 
     getSupportFragmentManager().beginTransaction()
         .replace(R.id.prefs_layout, new PreferenceFragment())
@@ -70,6 +70,13 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
     MobileAds.initialize(getApplicationContext(), getString(R.string.ad_app_id));
     AdRequest adRequest = new AdRequest.Builder().build();
     adView.loadAd(adRequest);
+
+  }
+
+  void setupSavedColorList() {
+    if (!presenter.realmActive()) {
+      presenter.setupRealm();
+    }
 
     colorRecycler.setLayoutManager(new LinearLayoutManager(this));
     colorRecyclerAdapter = new ColorRecyclerAdapter(presenter.getAllKoloroObjects(),
@@ -105,6 +112,13 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
         //show message to user
       }
     }
+  }
+
+  @Override protected void onStart() {
+    if (!presenter.realmActive()) {
+      setupSavedColorList();
+    }
+    super.onStart();
   }
 
   @Override protected void onStop() {

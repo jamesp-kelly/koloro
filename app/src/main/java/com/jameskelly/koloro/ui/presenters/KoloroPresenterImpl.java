@@ -65,4 +65,8 @@ public class KoloroPresenterImpl implements KoloroPresenter {
   @Override public void saveNote(KoloroObj koloroObj, String inputValue) {
     repository.updateNote(koloroObj, inputValue);
   }
+
+  @Override public boolean realmActive() {
+    return (koloroObjects != null && koloroObjects.isValid());
+  }
 }
