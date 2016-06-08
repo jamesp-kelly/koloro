@@ -37,9 +37,12 @@ public class PreferenceFragment extends Fragment {
   IntPreference captureButtonPositionPreference;
   @Inject @Named(PreferencesModule.VIBRATION_KEY)
   BooleanPreference vibrationPreference;
+  @Inject @Named(PreferencesModule.STORE_CAPTURES_IN_GALLERY_KEY)
+  BooleanPreference storeCapturesPreference;
 
   @BindView(R.id.spinner_capture_button_position) Spinner captureButtonPositionSpinner;
   @BindView(R.id.switch_vibration) Switch vibrationSwitch;
+  @BindView(R.id.switch_store_captures) Switch storeCapturesSwitch;
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -59,6 +62,7 @@ public class PreferenceFragment extends Fragment {
     captureButtonPositionSpinner.setAdapter(captureButtonPositionAdapter);
     captureButtonPositionSpinner.setSelection(captureButtonPositionPreference.get());
     vibrationSwitch.setChecked(vibrationPreference.get());
+    storeCapturesSwitch.setChecked(storeCapturesPreference.get());
 
   }
 
@@ -84,7 +88,7 @@ public class PreferenceFragment extends Fragment {
   }
 
   @OnCheckedChanged(R.id.switch_vibration)
-  void onStoreCapturesChanged() {
+  void onVibrationChanged() {
     boolean newValue = vibrationSwitch.isChecked();
     boolean oldValue = vibrationPreference.get();
 
@@ -95,6 +99,21 @@ public class PreferenceFragment extends Fragment {
       bundle.putString(FirebaseAnalytics.Param.ITEM_ID, String.valueOf(newValue));
       firebaseAnalytics.logEvent(FirebaseEvents.PREFERENCE_CHANGED, bundle);
       vibrationPreference.set(newValue);
+    }
+  }
+
+  @OnCheckedChanged(R.id.switch_store_captures)
+  void onStoreCapturesChanged() {
+    boolean newValue = storeCapturesSwitch.isChecked();
+    boolean oldValue = storeCapturesPreference.get();
+
+    if (newValue != oldValue) {
+      Log.d(TAG, String.format("Updating 'store captures' preference to %s", newValue));
+      Bundle bundle = new Bundle();
+      bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "Store captures");
+      bundle.putString(FirebaseAnalytics.Param.ITEM_ID, String.valueOf(newValue));
+      firebaseAnalytics.logEvent(FirebaseEvents.PREFERENCE_CHANGED, bundle);
+      storeCapturesPreference.set(newValue);
     }
   }
 

@@ -18,4 +18,5 @@ public interface ColorPickerPresenter {
   void saveColor(int currentlySelectedColor, String currentlySelectedColorHex);
   List<KoloroObj> getAllKoloroObjects();
   void saveNote(KoloroObj koloroObj, String inputValue);
+  void removeStoredScreenShot();
 }

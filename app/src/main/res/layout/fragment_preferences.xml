@@ -54,7 +54,6 @@
         android:id="@+id/switch_store_captures"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:enabled="false"
         />
   </LinearLayout>
 </LinearLayout>

@@ -12,7 +12,7 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_centerHorizontal="true"
-      android:layout_marginTop="30dp"
+      android:layout_marginTop="20dp"
       android:textSize="25sp"
       tools:text="#ffffff"
       />
@@ -36,6 +36,7 @@
         style="@style/Widget.AppCompat.Button.Borderless"
         android:backgroundTint="@android:color/white"
         android:drawableStart="@drawable/ic_content_copy_black_24dp"
+        android:textSize="12sp"
         />
 
     <Button
@@ -48,6 +49,7 @@
         style="@style/Widget.AppCompat.Button.Borderless"
         android:backgroundTint="@android:color/white"
         android:drawableStart="@drawable/ic_edit_black_24dp"
+        android:textSize="12sp"
         />
 
 
@@ -60,8 +62,7 @@
       android:layout_centerHorizontal="true"
       android:layout_below="@id/color_item_text"
       android:layout_marginTop="10dp"
-      android:paddingLeft="5dp"
-      android:paddingRight="5dp"
+      android:padding="5dp"
       android:maxLines="2"
       tools:text="YouTube icon red"
       />

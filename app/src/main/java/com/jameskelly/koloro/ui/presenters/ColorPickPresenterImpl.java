@@ -1,11 +1,13 @@
 package com.jameskelly.koloro.ui.presenters;
 
 import android.graphics.Color;
+import android.os.Environment;
 import com.jameskelly.koloro.events.ImageProcessedEvent;
 import com.jameskelly.koloro.model.KoloroObj;
 import com.jameskelly.koloro.repository.KoloroRepository;
 import com.jameskelly.koloro.ui.views.ColorPickerView;
 import io.realm.RealmResults;
+import java.io.File;
 import java.util.List;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -92,4 +94,23 @@ public class ColorPickPresenterImpl implements ColorPickerPresenter {
     repository.updateNote(koloroObj, inputValue);
   }
 
+  @Override public void removeStoredScreenShot() { //move to screencapturemanager?
+    //remove whole koloro dir
+    File galleryRoot = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+    File koloroDir = new File(galleryRoot, "Koloro");
+
+    if (koloroDir.exists()) {
+      delete(koloroDir);
+    }
+  }
+
+  private void delete(File toDelete) {
+    if (toDelete.isDirectory()) {
+      for (File child : toDelete.listFiles()) {
+        delete(child);
+      }
+    }
+
+    toDelete.delete();
+  }
 }

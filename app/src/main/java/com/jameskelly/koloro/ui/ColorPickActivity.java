@@ -36,6 +36,8 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.jameskelly.koloro.KoloroApplication;
 import com.jameskelly.koloro.R;
 import com.jameskelly.koloro.model.KoloroObj;
+import com.jameskelly.koloro.preferences.BooleanPreference;
+import com.jameskelly.koloro.preferences.PreferencesModule;
 import com.jameskelly.koloro.ui.adaptors.ColorRecyclerAdapter;
 import com.jameskelly.koloro.ui.adaptors.ColorRecyclerAdapter.ColorItemListener;
 import com.jameskelly.koloro.ui.presenters.ColorPickerPresenter;
@@ -44,6 +46,7 @@ import com.jameskelly.koloro.util.FirebaseEvents;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 public class ColorPickActivity extends BaseActivity implements ColorPickerView {
 
@@ -60,6 +63,9 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
   @Inject ClipboardManager clipboardManager;
   @Inject ColorPickerPresenter presenter;
   @Inject FirebaseAnalytics firebaseAnalytics;
+
+  @Inject @Named(PreferencesModule.STORE_CAPTURES_IN_GALLERY_KEY)
+  BooleanPreference storeCapturesPreference;
 
   @BindView(R.id.drawer_layout) DrawerLayout drawerLayout;
   @BindView(R.id.color_details_parent) LinearLayout colorDetailsParent;
@@ -143,6 +149,11 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
 
   @Override protected void onStop() {
     presenter.onStop();
+
+    if (!storeCapturesPreference.get()) {
+      presenter.removeStoredScreenShot();
+    }
+
     super.onStop();
   }
 
@@ -167,16 +178,18 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
   }
 
   private void updateColorDetails(int touchX, int touchY) {
-    currentlySelectedColorHex = presenter.generateHexColor(capturedBitmap.getPixel(touchX, touchY));
-    currentlySelectedColor = Color.parseColor(currentlySelectedColorHex);
+    if (capturedBitmap != null) {
+      currentlySelectedColorHex = presenter.generateHexColor(capturedBitmap.getPixel(touchX, touchY));
+      currentlySelectedColor = Color.parseColor(currentlySelectedColorHex);
 
-    GradientDrawable background = (GradientDrawable) colorDetailsLayout.getBackground();
-    background.setColor(currentlySelectedColor);
+      GradientDrawable background = (GradientDrawable) colorDetailsLayout.getBackground();
+      background.setColor(currentlySelectedColor);
 
-    hexText.setText(currentlySelectedColorHex);
-    hexText.setTextColor(presenter.getContrastingTextColor(currentlySelectedColor));
+      hexText.setText(currentlySelectedColorHex);
+      hexText.setTextColor(presenter.getContrastingTextColor(currentlySelectedColor));
 
-    colorDetailsParent.setVisibility(View.VISIBLE);
+      colorDetailsParent.setVisibility(View.VISIBLE);
+    }
   }
 
   @OnTouch(R.id.color_details_layout)
