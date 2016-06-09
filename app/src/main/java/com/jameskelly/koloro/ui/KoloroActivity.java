@@ -36,9 +36,6 @@ import javax.inject.Inject;
 
 public class KoloroActivity extends BaseActivity implements KoloroView {
 
-  private static final int CREATE_SCREEN_CAPTURE = 1255;
-  private static final int OVERLAY_PERMISSION = 1305;
-
   private ColorRecyclerAdapter colorRecyclerAdapter;
 
   @Inject MediaProjectionManager mediaProjectionManager;
@@ -54,23 +51,33 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
   @BindView(R.id.color_list_recycler) RecyclerView colorRecycler;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_koloro);
+
     KoloroApplication.get(this).applicationComponent().inject(this);
-    ButterKnife.bind(this);
 
-    presenter.bindView(this);
+    if (1 == 1 && mediaProjectionManager != null) { //premium quicklaunch and check permission
+      //Intent quickLaunchIntent = new Intent(this, QuickLaunchActivity.class);
+      //startActivity(quickLaunchIntent);
+      //finish();
+      setTheme(R.style.AppTheme_Translucent);
 
-    setupSavedColorList();
+      Intent mediaCaptureIntent = mediaProjectionManager.createScreenCaptureIntent();
+      startActivityForResult(mediaCaptureIntent, CREATE_SCREEN_CAPTURE);
+      super.onCreate(savedInstanceState);
+    } else {
+      setContentView(R.layout.activity_koloro);
+      ButterKnife.bind(this);
+      presenter.bindView(this);
 
-    getSupportFragmentManager().beginTransaction()
-        .replace(R.id.prefs_layout, new PreferenceFragment())
-        .commit();
+      setupSavedColorList();
 
-    MobileAds.initialize(getApplicationContext(), getString(R.string.ad_app_id));
-    AdRequest adRequest = new AdRequest.Builder().build();
-    adView.loadAd(adRequest);
+      getSupportFragmentManager().beginTransaction()
+          .replace(R.id.prefs_layout, new PreferenceFragment())
+          .commit();
 
+      MobileAds.initialize(getApplicationContext(), getString(R.string.ad_app_id));
+      AdRequest adRequest = new AdRequest.Builder().build();
+      adView.loadAd(adRequest);
+    }
   }
 
   void setupSavedColorList() {
@@ -111,11 +118,15 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
         firebaseAnalytics.logEvent(FirebaseEvents.CAPTURE_PERMISSION_DENIED, null);
         //show message to user
       }
+
+      if (1 == 1) { //todo undo
+        finish();
+      }
     }
   }
 
   @Override protected void onStart() {
-    if (!presenter.realmActive()) {
+    if (!presenter.realmActive() && 1 != 1) { //todo undo
       setupSavedColorList();
     }
     super.onStart();

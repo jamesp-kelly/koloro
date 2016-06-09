@@ -13,6 +13,7 @@ public class BaseActivity extends AppCompatActivity {
 
   private Toolbar toolbar;
   protected final String TAG;
+  protected static final int CREATE_SCREEN_CAPTURE = 1255;
 
   public BaseActivity() {
     TAG = this.getClass().getSimpleName();
