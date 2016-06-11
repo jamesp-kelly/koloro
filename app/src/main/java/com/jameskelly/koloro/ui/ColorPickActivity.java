@@ -42,6 +42,7 @@ import com.jameskelly.koloro.ui.adaptors.ColorRecyclerAdapter;
 import com.jameskelly.koloro.ui.adaptors.ColorRecyclerAdapter.ColorItemListener;
 import com.jameskelly.koloro.ui.presenters.ColorPickerPresenter;
 import com.jameskelly.koloro.ui.views.ColorPickerView;
+import com.jameskelly.koloro.ui.views.ZoomRect;
 import com.jameskelly.koloro.util.FirebaseEvents;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -58,6 +59,7 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
   private int currentlySelectedColor;
   private String currentlySelectedColorHex;
   private ColorRecyclerAdapter colorRecyclerAdapter;
+  private boolean zoomEnabled = false;
 
   @Inject Picasso picasso;
   @Inject ClipboardManager clipboardManager;
@@ -75,6 +77,7 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
   @BindView(R.id.screen_capture_image) ImageView screenCaptureImage;
   @BindView(R.id.hex_text) TextView hexText;
   @BindView(R.id.color_list_recycler) RecyclerView colorRecycler;
+  @BindView(R.id.zoom_rect) ZoomRect zoomRect;
 
   public static Intent intent(Context context) {
     return new Intent(context, ColorPickActivity.class);
@@ -136,6 +139,53 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
       firebaseAnalytics.logEvent(FirebaseEvents.COLOR_COPIED, bundle);
     }
   };
+
+  @OnClick(R.id.zoom_button)
+  void onZoomClicked() {
+    if (capturedBitmap != null) {
+
+      zoomEnabled = true;
+
+      zoomRect.setVisibility(View.VISIBLE);
+      zoomRect.bringToFront();
+
+      zoomRect.setZoomRectListener(new ZoomRect.ZoomRectListener() {
+        @Override public void onTouchUp(int startX, int startY, int endX, int endY) {
+          int drawLeft, drawTop, drawRight, drawBottom; //copy, paste, YEAH
+
+          if (startX < endX) {
+            drawLeft = startX;
+            drawRight = endX;
+          } else {
+            drawLeft = endX;
+            drawRight = startX;
+          }
+
+          if (startY < endY) {
+            drawTop = startY;
+            drawBottom = endY;
+          } else {
+            drawTop = endY;
+            drawBottom = startY;
+          }
+
+          capturedBitmap = Bitmap.createBitmap(capturedBitmap, drawLeft, drawTop, drawRight - drawLeft, drawBottom - drawTop);
+          screenCaptureImage.setImageBitmap(capturedBitmap);
+        }
+      });
+
+      //int width = capturedBitmap.getWidth();
+      //int height = capturedBitmap.getHeight();
+      //
+      ////50% zoom
+      //int newWidth = (int)(width*(50.0f/100.0f));
+      //int newHeight = (int)(height*(50.0f/100.0f));
+      //
+      //
+      //capturedBitmap = Bitmap.createBitmap(capturedBitmap, 0, 0, newWidth, newHeight);
+      //screenCaptureImage.setImageBitmap(capturedBitmap);
+    }
+  }
 
   @Override protected void onResume() {
     super.onResume();

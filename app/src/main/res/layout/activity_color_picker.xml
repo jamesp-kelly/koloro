@@ -11,10 +11,28 @@
       android:layout_width="match_parent"
       android:layout_height="match_parent">
 
+    <com.jameskelly.koloro.ui.views.ZoomRect
+        android:id="@+id/zoom_rect"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        />
+
     <ImageView
         android:id="@+id/screen_capture_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        />
+
+    <Button
+        android:id="@+id/zoom_button"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:text="ZOOM"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:background="@android:color/holo_blue_bright"
+        android:visibility="visible"
         />
 
     <LinearLayout
