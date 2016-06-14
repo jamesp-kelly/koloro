@@ -71,6 +71,8 @@ public class ZoomRect extends View {
       case MotionEvent.ACTION_UP:
         listener.onTouchUp(startX, startY, endX, endY);
         startX = startY = endX = endY = 0;
+        this.setVisibility(View.GONE);
+        this.setEnabled(false);
         break;
       default:
         return false;

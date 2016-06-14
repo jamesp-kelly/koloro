@@ -54,7 +54,7 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
 
     KoloroApplication.get(this).applicationComponent().inject(this);
 
-    if (1 == 1 && mediaProjectionManager != null) { //premium quicklaunch and check permission
+    if (1 != 1 && mediaProjectionManager != null) { //premium quicklaunch and check permission
       //Intent quickLaunchIntent = new Intent(this, QuickLaunchActivity.class);
       //startActivity(quickLaunchIntent);
       //finish();
@@ -64,6 +64,7 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
       startActivityForResult(mediaCaptureIntent, CREATE_SCREEN_CAPTURE);
       super.onCreate(savedInstanceState);
     } else {
+      super.onCreate(savedInstanceState);
       setContentView(R.layout.activity_koloro);
       ButterKnife.bind(this);
       presenter.bindView(this);

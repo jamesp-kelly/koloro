@@ -39,6 +39,14 @@ Pellentesque malesuada rutrum imperdiet. Suspendisse efficitur quam consequat le
   <string name="help_picker">One two three four five six</string>
   <string name="help_preferences">One two three four five six</string>
   <string name="help_premium">One two three four five six</string>
+  <string name="help_one_title">Welcome to Koloro 1</string>
+  <string name="help_one_description">This is page one</string>
+  <string name="help_two_title">Welcome to Koloro 2</string>
+  <string name="help_two_description">The overlay will stay displayed over all apps. [capture] to capture the current screen. [x] to cancel</string>
+  <string name="help_three_title">Welcome to Koloro 3</string>
+  <string name="help_three_description">This is page three</string>
+  <string name="help_four_title">Welcome to Koloro 4</string>
+  <string name="help_four_description">This is page four</string>
 
   <string-array name="capture_button_position_array">
     <item>Top right</item>

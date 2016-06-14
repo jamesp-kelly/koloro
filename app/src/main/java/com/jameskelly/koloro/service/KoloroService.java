@@ -199,6 +199,7 @@ public class KoloroService extends Service {
   private ScreenCaptureManager.ImageCaptureListener imageCaptureListener =
       new ScreenCaptureManager.ImageCaptureListener() {
         @Override public void onImageCaptured(Bitmap capturedImage) {
+
           saveBitmapToGallery(capturedImage);
 
           Intent intent = ColorPickActivity.intent(KoloroService.this);
