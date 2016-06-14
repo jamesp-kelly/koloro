@@ -58,11 +58,12 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
       //Intent quickLaunchIntent = new Intent(this, QuickLaunchActivity.class);
       //startActivity(quickLaunchIntent);
       //finish();
+      super.onCreate(savedInstanceState);
       setTheme(R.style.AppTheme_Translucent);
 
       Intent mediaCaptureIntent = mediaProjectionManager.createScreenCaptureIntent();
       startActivityForResult(mediaCaptureIntent, CREATE_SCREEN_CAPTURE);
-      super.onCreate(savedInstanceState);
+
     } else {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.activity_koloro);
@@ -120,16 +121,17 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
         //show message to user
       }
 
-      if (1 == 1) { //todo undo
-        finish();
-      }
+      //if (1 == 1) { //todo undo
+      //  finish();
+      //}
     }
   }
 
   @Override protected void onStart() {
-    if (!presenter.realmActive() && 1 != 1) { //todo undo
-      setupSavedColorList();
-    }
+    //if (!presenter.realmActive() && 1 != 1) { //todo undo
+    //  setupSavedColorList();
+    //}
+    setupSavedColorList();
     super.onStart();
   }
 
