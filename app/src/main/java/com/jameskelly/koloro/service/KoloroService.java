@@ -1,5 +1,6 @@
 package com.jameskelly.koloro.service;
 
+import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -237,6 +238,16 @@ public class KoloroService extends Service {
             finishService();
           }
         });
+  }
+
+  public static boolean isServiceRunning(Context context) {
+    ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+    for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+      if (KoloroService.class.getName().equals(service.service.getClassName())) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private final BroadcastReceiver koloroReciever = new BroadcastReceiver() {

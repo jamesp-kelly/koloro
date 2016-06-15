@@ -114,10 +114,12 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
   @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
     if (requestCode == CREATE_SCREEN_CAPTURE) {
-      if (resultCode == Activity.RESULT_OK) {
+      if (resultCode == Activity.RESULT_OK && !KoloroService.isServiceRunning(this)) {
         Intent serviceIntent = KoloroService.intent(this, resultCode, data);
         firebaseAnalytics.logEvent(FirebaseEvents.CAPTURE_PERMISSION_GRANTED, null);
         startService(serviceIntent);
+      } else if (resultCode == Activity.RESULT_OK) {
+        Toast.makeText(this, R.string.overlay_already_launched_message, Toast.LENGTH_SHORT).show();
       } else {
         Log.d(TAG, "Couldn't get permission to screen capture");
         firebaseAnalytics.logEvent(FirebaseEvents.CAPTURE_PERMISSION_DENIED, null);

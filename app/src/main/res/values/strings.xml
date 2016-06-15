@@ -48,6 +48,7 @@ Pellentesque malesuada rutrum imperdiet. Suspendisse efficitur quam consequat le
   <string name="help_four_title">Welcome to Koloro 4</string>
   <string name="help_four_description">This is page four</string>
   <string name="quick_launch_label">Quick Launch</string>
+  <string name="overlay_already_launched_message">Overlay already launched</string>
 
   <string-array name="capture_button_position_array">
     <item>Top right</item>
