@@ -45,9 +45,7 @@ public class OverlayButtonsLayout extends FrameLayout implements CaptureView {
 
   @OnClick(R.id.captureButton)
   void captureClicked() {
-    captureButtton.setVisibility(INVISIBLE);
-    cancelButton.setVisibility(INVISIBLE);
-
+    setButtonsVisibility(INVISIBLE);
     overlayClickListener.onCaptureClicked();
   }
 
@@ -86,6 +84,7 @@ public class OverlayButtonsLayout extends FrameLayout implements CaptureView {
 
   @Override public void displayCaptureOverlay() {
     setTranslationY(buttonsHeight);
+    setButtonsVisibility(VISIBLE);
     animate().translationY(0).setDuration(ANIM_IN_DURATION).
         setInterpolator(new DecelerateInterpolator());
   }
@@ -95,9 +94,15 @@ public class OverlayButtonsLayout extends FrameLayout implements CaptureView {
         setInterpolator(new DecelerateInterpolator()).withEndAction(
         new Runnable() {
           @Override public void run() {
+            setButtonsVisibility(INVISIBLE);
             overlayClickListener.onCancelClicked();
           }
         });
+  }
+
+  private void setButtonsVisibility(int visibility) {
+    captureButtton.setVisibility(visibility);
+    cancelButton.setVisibility(visibility);
   }
 
   public interface OverlayClickListener {

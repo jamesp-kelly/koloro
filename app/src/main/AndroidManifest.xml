@@ -28,7 +28,8 @@
       </intent-filter>
     </activity>
     <activity android:name=".ui.ColorPickActivity"/>
-    <activity android:name=".ui.HelpActivity" android:parentActivityName=".ui.KoloroActivity"/>
+    <activity android:name=".ui.HelpActivity" android:theme="@style/FullscreenTheme">
+    </activity>
     <activity android:name=".ui.QuickLaunchActivity" android:theme="@style/AppTheme.Translucent"/>
     <service android:name=".service.KoloroService"/>
   </application>
