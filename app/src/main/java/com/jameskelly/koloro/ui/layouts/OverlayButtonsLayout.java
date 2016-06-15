@@ -10,6 +10,7 @@ import butterknife.BindDimen;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnLongClick;
 import com.jameskelly.koloro.R;
 import com.jameskelly.koloro.ui.views.CaptureView;
 
@@ -55,6 +56,13 @@ public class OverlayButtonsLayout extends FrameLayout implements CaptureView {
     hideCaptureOverlay();
   }
 
+  @OnLongClick(R.id.cancelButton)
+  boolean cancelLongClicked() {
+    overlayClickListener.onCancelLongClicked();
+    return false;
+  }
+
+
   @Override public WindowManager.LayoutParams layoutParams(int positionPreference) {
 
     WindowManager.LayoutParams params =
@@ -95,5 +103,6 @@ public class OverlayButtonsLayout extends FrameLayout implements CaptureView {
   public interface OverlayClickListener {
     void onCaptureClicked();
     void onCancelClicked();
+    void onCancelLongClicked();
   }
 }

@@ -50,10 +50,10 @@ public class KoloroService extends Service {
   private ScreenCaptureManager screenCaptureManager;
   private Toast captureToast;
 
-  @Inject @Named(PreferencesModule.SHOW_NOTIFICATION_KEY) BooleanPreference showNotificationPref;
   @Inject @Named(PreferencesModule.CAPTURE_BUTTON_POSITION_KEY)
   IntPreference captureButtonPositionPreference;
   @Inject @Named(PreferencesModule.VIBRATION_KEY) BooleanPreference vibrationPref;
+  @Inject @Named(PreferencesModule.QUICK_LAUNCH_KEY) Boolean quickLaunchActive;
   @Inject WindowManager windowManager;
   @Inject NotificationManager notificationManager;
   @Inject Vibrator vibrator;
@@ -193,6 +193,14 @@ public class KoloroService extends Service {
     @Override public void onCancelClicked() {
       finishService();
       firebaseAnalytics.logEvent(FirebaseEvents.OVERLAY_CANCEL_CLICKED, null);
+    }
+
+    @Override public void onCancelLongClicked() {
+      if (quickLaunchActive) {
+        Intent intent = new Intent(KoloroService.this, KoloroActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_USER_ACTION);
+        startActivity(intent);
+      }
     }
   };
 

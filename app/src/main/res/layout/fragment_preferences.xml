@@ -56,4 +56,20 @@
         android:layout_height="wrap_content"
         />
   </LinearLayout>
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      android:layout_gravity="center_horizontal">
+    <TextView
+        style="@style/PrefsText"
+        android:text="@string/quick_launch_label"
+        />
+    <Switch
+        android:id="@+id/switch_quick_launch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+  </LinearLayout>
 </LinearLayout>

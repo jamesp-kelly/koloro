@@ -27,12 +27,14 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.jameskelly.koloro.KoloroApplication;
 import com.jameskelly.koloro.R;
 import com.jameskelly.koloro.model.KoloroObj;
+import com.jameskelly.koloro.preferences.PreferencesModule;
 import com.jameskelly.koloro.service.KoloroService;
 import com.jameskelly.koloro.ui.adaptors.ColorRecyclerAdapter;
 import com.jameskelly.koloro.ui.presenters.KoloroPresenter;
 import com.jameskelly.koloro.ui.views.KoloroView;
 import com.jameskelly.koloro.util.FirebaseEvents;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 public class KoloroActivity extends BaseActivity implements KoloroView {
 
@@ -42,6 +44,8 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
   @Inject KoloroPresenter presenter;
   @Inject FirebaseAnalytics firebaseAnalytics;
   @Inject ClipboardManager clipboardManager;
+
+  @Inject @Named(PreferencesModule.QUICK_LAUNCH_KEY) Boolean quickLaunchActive;
 
   @BindDimen(R.dimen.prefs_layout_margin_top) int prefsLayoutMarginTop;
   @BindView(R.id.drawer_layout) DrawerLayout drawerLayout;
@@ -53,20 +57,21 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
   @Override protected void onCreate(Bundle savedInstanceState) {
 
     KoloroApplication.get(this).applicationComponent().inject(this);
+    super.onCreate(savedInstanceState);
 
-    if (1 != 1 && mediaProjectionManager != null) { //premium quicklaunch and check permission
-      //Intent quickLaunchIntent = new Intent(this, QuickLaunchActivity.class);
-      //startActivity(quickLaunchIntent);
-      //finish();
-      super.onCreate(savedInstanceState);
+    Intent intent = getIntent();
+
+    if ((intent.getFlags() & Intent.FLAG_ACTIVITY_NO_USER_ACTION) != 0) {
+      quickLaunchActive = false;
+    }
+
+    if (mediaProjectionManager != null && quickLaunchActive) {
       setTheme(R.style.AppTheme_Translucent);
-
       Intent mediaCaptureIntent = mediaProjectionManager.createScreenCaptureIntent();
       startActivityForResult(mediaCaptureIntent, CREATE_SCREEN_CAPTURE);
-
     } else {
-      super.onCreate(savedInstanceState);
       setContentView(R.layout.activity_koloro);
+      getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
       ButterKnife.bind(this);
       presenter.bindView(this);
 
@@ -102,9 +107,7 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
 
   @OnClick(R.id.help_button)
   void onHelpClicked() {
-    //Toast.makeText(this, "This doesn't do anything right now", Toast.LENGTH_SHORT).show();
-    Intent intent = new Intent(this, HelpActivity.class);
-    startActivity(intent);
+    startActivity(new Intent(this, HelpActivity.class));
   }
 
 
@@ -121,17 +124,16 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
         //show message to user
       }
 
-      //if (1 == 1) { //todo undo
-      //  finish();
-      //}
+      if (quickLaunchActive) {
+        finish();
+      }
     }
   }
 
   @Override protected void onStart() {
-    //if (!presenter.realmActive() && 1 != 1) { //todo undo
-    //  setupSavedColorList();
-    //}
-    setupSavedColorList();
+    if (!presenter.realmActive() && !quickLaunchActive) {
+      setupSavedColorList();
+    }
     super.onStart();
   }
 

@@ -67,8 +67,7 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
   @Inject ColorPickerPresenter presenter;
   @Inject FirebaseAnalytics firebaseAnalytics;
 
-  @Inject @Named(PreferencesModule.STORE_CAPTURES_IN_GALLERY_KEY)
-  BooleanPreference storeCapturesPreference;
+  @Inject @Named(PreferencesModule.STORE_CAPTURES_IN_GALLERY_KEY) BooleanPreference galleryPreference;
 
   @BindView(R.id.drawer_layout) DrawerLayout drawerLayout;
   @BindView(R.id.color_details_parent) LinearLayout colorDetailsParent;
@@ -198,7 +197,7 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
   @Override protected void onStop() {
     presenter.onStop();
 
-    if (!storeCapturesPreference.get()) {
+    if (!galleryPreference.get()) {
       presenter.removeStoredScreenShot();
     }
 
