@@ -62,8 +62,19 @@
             android:layout_gravity="center"
             android:layout_marginRight="3dp"
             android:background="@android:color/transparent"
-            android:textSize="25dp"
+            android:textSize="25sp"
+            android:visibility="gone"
             tools:text="#00000"
+            />
+
+        <TextView
+            android:id="@+id/rgb_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@android:color/transparent"
+            android:textSize="20sp"
+            tools:text="#000000"
             />
       </FrameLayout>
 

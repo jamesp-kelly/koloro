@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
@@ -35,7 +34,9 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.jameskelly.koloro.KoloroApplication;
 import com.jameskelly.koloro.R;
+import com.jameskelly.koloro.model.ColorFormat;
 import com.jameskelly.koloro.model.KoloroObj;
+import com.jameskelly.koloro.model.RgbColor;
 import com.jameskelly.koloro.preferences.BooleanPreference;
 import com.jameskelly.koloro.preferences.PreferencesModule;
 import com.jameskelly.koloro.ui.adaptors.ColorRecyclerAdapter;
@@ -59,6 +60,7 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
 
   private int currentlySelectedColor;
   private String currentlySelectedColorHex;
+  private RgbColor currentlySelectedColorRgb;
   private ColorRecyclerAdapter colorRecyclerAdapter;
   private Uri imageUri;
 
@@ -68,6 +70,7 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
   @Inject FirebaseAnalytics firebaseAnalytics;
 
   @Inject @Named(PreferencesModule.STORE_CAPTURES_IN_GALLERY_KEY) BooleanPreference galleryPreference;
+  @Inject @Named(PreferencesModule.COLOR_FORMAT_KEY) int colorFormatPreference;
 
   @BindView(R.id.drawer_layout) DrawerLayout drawerLayout;
   @BindView(R.id.color_details_parent) LinearLayout colorDetailsParent;
@@ -76,6 +79,7 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
   @BindView(R.id.copy_button) Button copyButton;
   @BindView(R.id.screen_capture_image) ImageView screenCaptureImage;
   @BindView(R.id.hex_text) TextView hexText;
+  @BindView(R.id.rgb_text) TextView rgbText;
   @BindView(R.id.color_list_recycler) RecyclerView colorRecycler;
   @BindView(R.id.zoom_rect) ZoomRect zoomRect;
 
@@ -102,8 +106,16 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
 
     colorRecycler.setLayoutManager(new LinearLayoutManager(this));
     colorRecyclerAdapter = new ColorRecyclerAdapter(presenter.getAllKoloroObjects(),
-        colorItemListener, LinearLayoutManager.VERTICAL);
+        colorItemListener, LinearLayoutManager.VERTICAL, colorFormatPreference == ColorFormat.HEX);
     colorRecycler.setAdapter(colorRecyclerAdapter);
+
+    if (colorFormatPreference == ColorFormat.HEX) {
+      rgbText.setVisibility(View.GONE);
+      hexText.setVisibility(View.VISIBLE);
+    } else {
+      rgbText.setVisibility(View.VISIBLE);
+      hexText.setVisibility(View.GONE);
+    }
   }
 
   ColorItemListener colorItemListener = new ColorItemListener() {
@@ -134,13 +146,25 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
           .show();
     }
 
-    @Override public void copyButtonClicked(String hexString) {
-      saveToClipBoard(hexString);
-      Bundle bundle = new Bundle();
-      bundle.putString(FirebaseAnalytics.Param.ITEM_ID, hexString);
-      firebaseAnalytics.logEvent(FirebaseEvents.COLOR_COPIED, bundle);
+    @Override public void copyButtonClicked(KoloroObj koloroObj) {
+      String colorString;
+      if (colorFormatPreference == ColorFormat.HEX) {
+        colorString = koloroObj.getHexString();
+      } else {
+        colorString = koloroObj.getRgbString();
+      }
+      copyColorString(colorString);
     }
   };
+
+  private void copyColorString(String colorString) {
+    ClipData clip = ClipData.newPlainText("Copied text", colorString);
+    clipboardManager.setPrimaryClip(clip);
+    Toast.makeText(this, R.string.copied_clipboard_toast, Toast.LENGTH_SHORT).show();
+    Bundle bundle = new Bundle();
+    bundle.putString(FirebaseAnalytics.Param.ITEM_ID, colorString);
+    firebaseAnalytics.logEvent(FirebaseEvents.COLOR_COPIED, bundle);
+  }
 
   @OnClick(R.id.zoom_button)
   void onZoomClicked() {
@@ -267,14 +291,20 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
 
   private void updateColorDetails(int touchX, int touchY) {
     if (capturedBitmap != null) {
-      currentlySelectedColorHex = presenter.generateHexColor(capturedBitmap.getPixel(touchX, touchY));
-      currentlySelectedColor = Color.parseColor(currentlySelectedColorHex);
+      currentlySelectedColor = capturedBitmap.getPixel(touchX, touchY);
+      currentlySelectedColorHex = presenter.generateHexColor(currentlySelectedColor);
+      currentlySelectedColorRgb = presenter.generateRgbColor(currentlySelectedColor);
+
 
       GradientDrawable background = (GradientDrawable) colorDetailsLayout.getBackground();
       background.setColor(currentlySelectedColor);
 
       hexText.setText(currentlySelectedColorHex);
       hexText.setTextColor(presenter.getContrastingTextColor(currentlySelectedColor));
+
+      rgbText.setText(String.format(KoloroObj.RGB_FORMAT, currentlySelectedColorRgb.getR(),
+          currentlySelectedColorRgb.getG(), currentlySelectedColorRgb.getB()));
+      rgbText.setTextColor(presenter.getContrastingTextColor(currentlySelectedColor));
 
       colorDetailsParent.setVisibility(View.VISIBLE);
     }
@@ -311,18 +341,16 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
 
   @OnClick(R.id.copy_button)
   void onCopyClicked() {
-    String hexString = hexText.getText().toString();
-    saveToClipBoard(hexString);
-    Bundle bundle = new Bundle();
-    bundle.putString(FirebaseAnalytics.Param.ITEM_ID, hexString);
-    firebaseAnalytics.logEvent(FirebaseEvents.COLOR_COPIED, bundle);
+    String colorString;
+    if (colorFormatPreference == ColorFormat.HEX) {
+      colorString = hexText.getText().toString();
+    } else {
+      colorString = rgbText.getText().toString();
+    }
+
+    copyColorString(colorString);
   }
 
-  private void saveToClipBoard(String hexString) {
-    ClipData clip = ClipData.newPlainText("Copied text", hexString);
-    clipboardManager.setPrimaryClip(clip);
-    Toast.makeText(this, R.string.copied_clipboard_toast, Toast.LENGTH_SHORT).show();
-  }
 
   private int getAppropiateOrientation() {
     int orientation = getResources().getConfiguration().orientation;

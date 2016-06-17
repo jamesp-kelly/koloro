@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.os.Environment;
 import com.jameskelly.koloro.events.ImageProcessedEvent;
 import com.jameskelly.koloro.model.KoloroObj;
+import com.jameskelly.koloro.model.RgbColor;
 import com.jameskelly.koloro.repository.KoloroRepository;
 import com.jameskelly.koloro.ui.views.ColorPickerView;
 import io.realm.RealmResults;
@@ -64,6 +65,10 @@ public class ColorPickPresenterImpl implements ColorPickerPresenter {
     int b = Color.blue(color);
 
     return String.format("#%02x%02x%02x", r, g, b);
+  }
+
+  @Override public RgbColor generateRgbColor(int color) {
+    return new RgbColor(Color.red(color), Color.green(color), Color.blue(color));
   }
 
   @Override public int getContrastingTextColor(int backgroundColor) {

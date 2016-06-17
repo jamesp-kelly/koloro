@@ -26,6 +26,7 @@ import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.jameskelly.koloro.KoloroApplication;
 import com.jameskelly.koloro.R;
+import com.jameskelly.koloro.model.ColorFormat;
 import com.jameskelly.koloro.model.KoloroObj;
 import com.jameskelly.koloro.preferences.PreferencesModule;
 import com.jameskelly.koloro.service.KoloroService;
@@ -36,9 +37,10 @@ import com.jameskelly.koloro.util.FirebaseEvents;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-public class KoloroActivity extends BaseActivity implements KoloroView {
+public class KoloroActivity extends BaseActivity implements KoloroView, PreferenceFragment.SpinnerChangeListener {
 
   private ColorRecyclerAdapter colorRecyclerAdapter;
+  private boolean cameFromOverlay = false;
 
   @Inject MediaProjectionManager mediaProjectionManager;
   @Inject KoloroPresenter presenter;
@@ -46,6 +48,7 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
   @Inject ClipboardManager clipboardManager;
 
   @Inject @Named(PreferencesModule.QUICK_LAUNCH_KEY) Boolean quickLaunchActive;
+  @Inject @Named(PreferencesModule.COLOR_FORMAT_KEY) int colorFormat;
 
   @BindDimen(R.dimen.prefs_layout_margin_top) int prefsLayoutMarginTop;
   @BindView(R.id.drawer_layout) DrawerLayout drawerLayout;
@@ -61,11 +64,9 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
 
     Intent intent = getIntent();
 
-    if ((intent.getFlags() & Intent.FLAG_ACTIVITY_NO_USER_ACTION) != 0) {
-      quickLaunchActive = false;
-    }
+    cameFromOverlay = ((intent.getFlags() & Intent.FLAG_ACTIVITY_NO_USER_ACTION) != 0);
 
-    if (mediaProjectionManager != null && quickLaunchActive) {
+    if (mediaProjectionManager != null && quickLaunchActive && !cameFromOverlay) {
       setTheme(R.style.AppTheme_Translucent);
       Intent mediaCaptureIntent = mediaProjectionManager.createScreenCaptureIntent();
       startActivityForResult(mediaCaptureIntent, CREATE_SCREEN_CAPTURE);
@@ -77,13 +78,16 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
 
       setupSavedColorList();
 
+      PreferenceFragment preferenceFragment = new PreferenceFragment();
+
       getSupportFragmentManager().beginTransaction()
-          .replace(R.id.prefs_layout, new PreferenceFragment())
+          .replace(R.id.prefs_layout, preferenceFragment)
           .commit();
 
       MobileAds.initialize(getApplicationContext(), getString(R.string.ad_app_id));
       AdRequest adRequest = new AdRequest.Builder().build();
       adView.loadAd(adRequest);
+      cameFromOverlay = false;
     }
   }
 
@@ -94,7 +98,7 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
 
     colorRecycler.setLayoutManager(new LinearLayoutManager(this));
     colorRecyclerAdapter = new ColorRecyclerAdapter(presenter.getAllKoloroObjects(),
-        colorItemListener, LinearLayoutManager.VERTICAL);
+        colorItemListener, LinearLayoutManager.VERTICAL, (colorFormat == ColorFormat.HEX));
     colorRecycler.setAdapter(colorRecyclerAdapter);
   }
 
@@ -133,7 +137,7 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
   }
 
   @Override protected void onStart() {
-    if (!presenter.realmActive() && !quickLaunchActive) {
+    if (!presenter.realmActive() && (!quickLaunchActive || cameFromOverlay)) {
       setupSavedColorList();
     }
     super.onStart();
@@ -178,8 +182,16 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
           .show();
     }
 
-    @Override public void copyButtonClicked(String hexString) {
-      ClipData clip = ClipData.newPlainText("Copied text", hexString);
+    @Override public void copyButtonClicked(KoloroObj koloroObj) {
+
+      String colorString;
+      if (colorFormat == ColorFormat.HEX) {
+        colorString = koloroObj.getHexString();
+      } else {
+        colorString = koloroObj.getRgbString();
+      }
+
+      ClipData clip = ClipData.newPlainText("Copied text", colorString);
       clipboardManager.setPrimaryClip(clip);
       Toast.makeText(KoloroActivity.this, R.string.copied_clipboard_toast, Toast.LENGTH_SHORT).show();
     }
@@ -187,5 +199,11 @@ public class KoloroActivity extends BaseActivity implements KoloroView {
 
   @Override public void updateColorList() {
     colorRecyclerAdapter.notifyDataSetChanged();
+  }
+
+  @Override public void valueChanged(int newValue) {
+    colorRecyclerAdapter = new ColorRecyclerAdapter(presenter.getAllKoloroObjects(),
+        colorItemListener, LinearLayoutManager.VERTICAL, (newValue == ColorFormat.HEX));
+    colorRecycler.setAdapter(colorRecyclerAdapter);
   }
 }

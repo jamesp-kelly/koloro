@@ -1,6 +1,7 @@
 package com.jameskelly.koloro.repository;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 import com.jameskelly.koloro.model.KoloroObj;
 import io.realm.Realm;
@@ -53,6 +54,9 @@ public class RealmKoloroRepository implements KoloroRepository {
     }
     koloroObj.setId(key);
     koloroObj.setColorInt(colorInt);
+    koloroObj.setRed(Color.red(colorInt));
+    koloroObj.setBlue(Color.blue(colorInt));
+    koloroObj.setGreen(Color.green(colorInt));
     koloroObj.setHexString(hexstring);
     koloroObj.setSavedTimeStamp(System.currentTimeMillis());
     koloroObj.setNote("");

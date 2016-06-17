@@ -29,7 +29,8 @@ import javax.inject.Named;
 public class PreferenceFragment extends Fragment {
 
   private static final String TAG = PreferenceFragment.class.getSimpleName();
-  private SimpleSpinnerAdapter captureButtonPositionAdapter;
+  private SimpleSpinnerAdapter captureButtonPositionAdapter, colorFormatAdapter;
+  private SpinnerChangeListener spinnerChangeListener;
 
 
   @Inject FirebaseAnalytics firebaseAnalytics;
@@ -41,11 +42,15 @@ public class PreferenceFragment extends Fragment {
   BooleanPreference quickLaunchPreference;
   @Inject @Named(PreferencesModule.STORE_CAPTURES_IN_GALLERY_KEY)
   BooleanPreference galleryPreference;
+  @Inject @Named(PreferencesModule.COLOR_FORMAT_KEY)
+  IntPreference colorFormatPreference;
 
   @BindView(R.id.spinner_capture_button_position) Spinner captureButtonPositionSpinner;
   @BindView(R.id.switch_vibration) Switch vibrationSwitch;
   @BindView(R.id.switch_store_captures) Switch storeCapturesSwitch;
   @BindView(R.id.switch_quick_launch) Switch quickLaunchSwitch;
+  @BindView(R.id.spinner_color_format) Spinner colorFormatSpinner;
+
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -67,7 +72,9 @@ public class PreferenceFragment extends Fragment {
     vibrationSwitch.setChecked(vibrationPreference.get());
     storeCapturesSwitch.setChecked(galleryPreference.get());
     quickLaunchSwitch.setChecked(quickLaunchPreference.get());
-
+    colorFormatAdapter = new SimpleSpinnerAdapter(getActivity(), colorFormatValues());
+    colorFormatSpinner.setAdapter(colorFormatAdapter);
+    colorFormatSpinner.setSelection(colorFormatPreference.get());
   }
 
   private List<String> buttonPositionValues() {
@@ -75,8 +82,13 @@ public class PreferenceFragment extends Fragment {
     return Arrays.asList(stringArray);
   }
 
+  private List<String> colorFormatValues() {
+    String[] stringArray = getResources().getStringArray(R.array.color_format_array);
+    return Arrays.asList(stringArray);
+  }
+
   @OnItemSelected(R.id.spinner_capture_button_position)
-  void onCaptureMethodChanged(int position) {
+  void onCapturePositionChanged(int position) {
     int newValue = position;
     int oldValue = captureButtonPositionPreference.get();
 
@@ -88,6 +100,24 @@ public class PreferenceFragment extends Fragment {
       firebaseAnalytics.logEvent(FirebaseEvents.PREFERENCE_CHANGED, bundle);
 
       captureButtonPositionPreference.set(newValue);
+    }
+  }
+
+  @OnItemSelected(R.id.spinner_color_format)
+  void onColorFormatChanged(int position) {
+    int newValue = position;
+    int oldValue = colorFormatPreference.get();
+
+    if (newValue != oldValue) {
+      Log.d(TAG, String.format("Updating 'color format' preference to %s", newValue));
+      Bundle bundle = new Bundle();
+      bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "Color format");
+      bundle.putString(FirebaseAnalytics.Param.ITEM_ID, colorFormatValues().get(position));
+      firebaseAnalytics.logEvent(FirebaseEvents.PREFERENCE_CHANGED, bundle);
+
+      colorFormatPreference.set(newValue);
+
+      ((SpinnerChangeListener)getActivity()).valueChanged(newValue);
     }
   }
 
@@ -134,6 +164,10 @@ public class PreferenceFragment extends Fragment {
       firebaseAnalytics.logEvent(FirebaseEvents.PREFERENCE_CHANGED, bundle);
       quickLaunchPreference.set(newValue);
     }
+  }
+
+  public interface SpinnerChangeListener {
+    void valueChanged(int newValue);
   }
 
 

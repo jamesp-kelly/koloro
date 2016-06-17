@@ -4,6 +4,8 @@ import io.realm.RealmObject;
 
 public class KoloroObj extends RealmObject {
 
+  public static final String RGB_FORMAT = "R:%s G:%s B:%s";
+
   private long id;
   public static final String idField = "id";
 
@@ -19,6 +21,15 @@ public class KoloroObj extends RealmObject {
   private String note;
   public static final String noteField = "noteField";
 
+  private int red;
+  public static final String redField = "redField";
+
+  private int blue;
+  public static final String blueField = "blueField";
+
+  private int green;
+  public static final String greenField = "greenField";
+
   public long getId() {
     return id;
   }
@@ -29,6 +40,10 @@ public class KoloroObj extends RealmObject {
 
   public String getHexString() {
     return hexString;
+  }
+
+  public String getRgbString() {
+    return String.format(RGB_FORMAT, this.red, this.green, this.blue);
   }
 
   public void setHexString(String hexString) {
@@ -57,5 +72,29 @@ public class KoloroObj extends RealmObject {
 
   public void setNote(String note) {
     this.note = note;
+  }
+
+  public int getBlue() {
+    return blue;
+  }
+
+  public void setBlue(int blue) {
+    this.blue = blue;
+  }
+
+  public int getGreen() {
+    return green;
+  }
+
+  public void setGreen(int green) {
+    this.green = green;
+  }
+
+  public int getRed() {
+    return red;
+  }
+
+  public void setRed(int red) {
+    this.red = red;
   }
 }

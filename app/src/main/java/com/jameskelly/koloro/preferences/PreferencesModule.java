@@ -68,4 +68,14 @@ public class PreferencesModule {
     return booleanPreference.get();
   }
 
+  @Provides @Singleton @Named(COLOR_FORMAT_KEY)
+  IntPreference provideColorFormatPreference(SharedPreferences preferences) {
+    return new IntPreference(preferences, COLOR_FORMAT_KEY, DEFAULT_COLOR_FORMAT);
+  }
+
+  @Provides @Named(COLOR_FORMAT_KEY)
+  Integer provideColorFormat(@Named(COLOR_FORMAT_KEY) IntPreference intPreference) {
+    return intPreference.get();
+  }
+
 }

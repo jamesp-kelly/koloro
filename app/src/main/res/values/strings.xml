@@ -49,10 +49,16 @@ Pellentesque malesuada rutrum imperdiet. Suspendisse efficitur quam consequat le
   <string name="help_four_description">This is page four</string>
   <string name="quick_launch_label">Quick Launch</string>
   <string name="overlay_already_launched_message">Overlay already launched</string>
+  <string name="color_format_label">Color format</string>
 
   <string-array name="capture_button_position_array">
     <item>Top right</item>
     <item>Top left</item>
+  </string-array>
+
+  <string-array name="color_format_array">
+    <item>Hex</item>
+    <item>RGB</item>
   </string-array>
 
 

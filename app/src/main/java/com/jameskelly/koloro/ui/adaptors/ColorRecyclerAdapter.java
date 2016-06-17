@@ -19,11 +19,13 @@ public class ColorRecyclerAdapter extends RecyclerView.Adapter<ColorRecyclerAdap
   private List<KoloroObj> koloroObjs;
   private ColorItemListener listener;
   private int orientation;
+  private boolean showHex;
 
-  public ColorRecyclerAdapter(List<KoloroObj> koloroObjs, ColorItemListener listener, int orientation) {
+  public ColorRecyclerAdapter(List<KoloroObj> koloroObjs, ColorItemListener listener, int orientation, boolean showHex) {
     this.koloroObjs = koloroObjs;
     this.listener = listener;
     this.orientation = orientation;
+    this.showHex = showHex;
   }
 
   @Override public ColorViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -41,16 +43,25 @@ public class ColorRecyclerAdapter extends RecyclerView.Adapter<ColorRecyclerAdap
   }
 
   @Override public void onBindViewHolder(ColorViewHolder holder, int position) {
-    holder.colorItemLayout.setBackgroundColor(koloroObjs.get(position).getColorInt());
-    holder.colorItemText.setText(koloroObjs.get(position).getHexString());
-    holder.colorItemNote.setText(koloroObjs.get(position).getNote());
-    listener.colorTextChanged(koloroObjs.get(position).getColorInt(),
+    KoloroObj koloroObj = koloroObjs.get(position);
+    holder.colorItemLayout.setBackgroundColor(koloroObj.getColorInt());
+    if (showHex) {
+      holder.colorItemText.setText(koloroObj.getHexString());
+      holder.colorItemText.setTextSize(25);
+    } else {
+      holder.colorItemText.setText(String.format(KoloroObj.RGB_FORMAT, koloroObj.getRed(),
+          koloroObj.getGreen(), koloroObj.getBlue()));
+      holder.colorItemText.setTextSize(22);
+    }
+    holder.colorItemNote.setText(koloroObj.getNote());
+    listener.colorTextChanged(koloroObj.getColorInt(),
         holder.colorItemText, holder.colorItemNote);
 
-    holder.copyButton.setOnClickListener(v ->
-        listener.copyButtonClicked(koloroObjs.get(position).getHexString()));
+    holder.copyButton.setOnClickListener(v -> {
+      listener.copyButtonClicked(koloroObj);
+    });
 
-    holder.noteButton.setOnClickListener(v -> listener.noteButtonClicked(koloroObjs.get(position)));
+    holder.noteButton.setOnClickListener(v -> listener.noteButtonClicked(koloroObj));
   }
 
   @Override public int getItemCount() {
@@ -75,6 +86,6 @@ public class ColorRecyclerAdapter extends RecyclerView.Adapter<ColorRecyclerAdap
   public interface ColorItemListener {
     void colorTextChanged(int backgroundColor, TextView... affectedViews);
     void noteButtonClicked(KoloroObj koloroObj);
-    void copyButtonClicked(String hexString);
+    void copyButtonClicked(KoloroObj koloroObj);
   }
 }
