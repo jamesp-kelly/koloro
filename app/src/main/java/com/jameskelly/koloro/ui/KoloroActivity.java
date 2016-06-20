@@ -134,7 +134,7 @@ public class KoloroActivity extends BaseActivity implements KoloroView, Preferen
         finish();
       }
     }
-  }
+}
 
   @Override protected void onStart() {
     if (!presenter.realmActive() && (!quickLaunchActive || cameFromOverlay)) {
