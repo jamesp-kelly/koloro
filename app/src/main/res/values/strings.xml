@@ -50,6 +50,7 @@ Pellentesque malesuada rutrum imperdiet. Suspendisse efficitur quam consequat le
   <string name="quick_launch_label">Quick Launch</string>
   <string name="overlay_already_launched_message">Overlay already launched</string>
   <string name="color_format_label">Color format</string>
+  <string name="upgrade_button_text">Activate premium features</string>
 
   <string-array name="capture_button_position_array">
     <item>Top right</item>

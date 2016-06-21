@@ -11,7 +11,7 @@
       android:layout_width="match_parent"
       android:layout_height="match_parent">
 
-    <com.jameskelly.koloro.ui.views.ZoomRect
+    <com.insuleto.koloro.ui.views.ZoomRect
         android:id="@+id/zoom_rect"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

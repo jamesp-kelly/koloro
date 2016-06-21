@@ -1,27 +1,27 @@
 {
   "project_info": {
-    "project_number": "1041857829938",
-    "firebase_url": "https://project-4644753154236458425.firebaseio.com",
-    "project_id": "project-4644753154236458425",
-    "storage_bucket": "project-4644753154236458425.appspot.com"
+    "project_number": "1006165766311",
+    "firebase_url": "https://koloro-1ee9e.firebaseio.com",
+    "project_id": "koloro-1ee9e",
+    "storage_bucket": "koloro-1ee9e.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1041857829938:android:795414e358d2c37a",
+        "mobilesdk_app_id": "1:1006165766311:android:b3794929e4510646",
         "android_client_info": {
-          "package_name": "com.jameskelly.koloro"
+          "package_name": "com.insuleto.koloro"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1041857829938-tegpj4gvlm8plrpf96a13vgtqab54ddk.apps.googleusercontent.com",
+          "client_id": "1006165766311-bla5ub7dhe307kqc9o77sf0pnrbet82b.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBWzshUCbvU21j2xZVp0Q5ayagU2kgKcIM"
+          "current_key": "AIzaSyAoOX5rN0DQb7Zeg5avI-h-cni5J1OkS0w"
         }
       ],
       "services": {
