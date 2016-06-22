@@ -11,6 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -29,6 +30,7 @@ import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnLongClick;
 import butterknife.OnTouch;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -52,13 +54,19 @@ import javax.inject.Named;
 
 public class ColorPickActivity extends BaseActivity implements ColorPickerView {
 
-  //work on this.  similar to s pen. seperate view for zoomed
-
   public static final String SCREEN_CAPTURE_URI = "screen_capture_uri";
+  private static final int VIBRATE_DURATION = 30;
 
-  private Bitmap capturedBitmap;
+  private Bitmap capturedBitmapOriginal;
+  private Bitmap zoomedBitmap;
+  private Bitmap currentlyActiveBitmap;
+
+
   private float parentX, parentY;
   private boolean imageIsZoomed = false;
+  private boolean zoomFillVertical = false;
+  private boolean touchDisabled = false;
+  private boolean touchMoving = false;
 
   private int currentlySelectedColor;
   private String currentlySelectedColorHex;
@@ -70,9 +78,12 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
   @Inject ClipboardManager clipboardManager;
   @Inject ColorPickerPresenter presenter;
   @Inject FirebaseAnalytics firebaseAnalytics;
+  @Inject Vibrator vibrator;
 
   @Inject @Named(PreferencesModule.STORE_CAPTURES_IN_GALLERY_KEY) BooleanPreference galleryPreference;
+  @Inject @Named(PreferencesModule.VIBRATION_KEY) BooleanPreference vibrationPref;
   @Inject @Named(PreferencesModule.COLOR_FORMAT_KEY) int colorFormatPreference;
+
 
   @BindView(R.id.drawer_layout) DrawerLayout drawerLayout;
   @BindView(R.id.color_details_parent) LinearLayout colorDetailsParent;
@@ -80,6 +91,7 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
   @BindView(R.id.save_button) Button saveButton;
   @BindView(R.id.copy_button) Button copyButton;
   @BindView(R.id.screen_capture_image) ImageView screenCaptureImage;
+  @BindView(R.id.zoomed_image) ImageView zoomedImage;
   @BindView(R.id.hex_text) TextView hexText;
   @BindView(R.id.rgb_text) TextView rgbText;
   @BindView(R.id.color_list_recycler) RecyclerView colorRecycler;
@@ -168,43 +180,91 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
     firebaseAnalytics.logEvent(FirebaseEvents.COLOR_COPIED, bundle);
   }
 
-  @OnClick(R.id.zoom_button)
-  void onZoomClicked() {
-    if (capturedBitmap != null) {
-
-      zoomRect.setEnabled(true);
-      zoomRect.setVisibility(View.VISIBLE);
-      zoomRect.bringToFront();
-
-      zoomRect.setZoomRectListener((startX, startY, endX, endY) -> {
-        int drawLeft, drawTop, drawRight, drawBottom; //copy, paste, YEAH
-
-        if (startX < endX) {
-          drawLeft = startX;
-          drawRight = endX;
-        } else {
-          drawLeft = endX;
-          drawRight = startX;
-        }
-
-        if (startY < endY) {
-          drawTop = startY;
-          drawBottom = endY;
-        } else {
-          drawTop = endY;
-          drawBottom = startY;
-        }
-
-        capturedBitmap = Bitmap.createBitmap(capturedBitmap, drawLeft, drawTop, drawRight - drawLeft, drawBottom - drawTop);
-        screenCaptureImage.setImageBitmap(capturedBitmap);
-        imageIsZoomed = true;
-      });
+  @OnLongClick(R.id.screen_capture_image)
+  boolean onZoomLongClick() {
+    if (currentlyActiveBitmap != null) {
+      touchDisabled = true;
+      captureZoomRectangle();
+      vibrate();
+      Toast.makeText(this, "Select area to zoom into", Toast.LENGTH_SHORT).show();
     }
+
+    return true;
+  }
+
+  private void vibrate() {
+    if (vibrationPref.get()) {
+      vibrator.vibrate(VIBRATE_DURATION);
+    }
+  }
+
+  private void captureZoomRectangle() {
+    zoomRect.enable();
+
+    zoomRect.setZoomRectListener((startX, startY, endX, endY) -> {
+      int drawLeft, drawTop, drawRight, drawBottom; //copy, paste, YEAH
+
+      if (startX < endX) {
+        drawLeft = startX;
+        drawRight = endX;
+      } else {
+        drawLeft = endX;
+        drawRight = startX;
+      }
+
+      if (startY < endY) {
+        drawTop = startY;
+        drawBottom = endY;
+      } else {
+        drawTop = endY;
+        drawBottom = startY;
+      }
+
+      int zoomWidth = drawRight - drawLeft;
+      int zoomHeight = drawBottom - drawTop;
+
+      zoomedBitmap = Bitmap.createBitmap(currentlyActiveBitmap, drawLeft, drawTop, zoomWidth, zoomHeight);
+
+      float xRatio = (float)capturedBitmapOriginal.getWidth() / zoomedBitmap.getWidth();
+      float yRatio = (float)capturedBitmapOriginal.getHeight() / zoomedBitmap.getHeight();
+
+      zoomFillVertical = (yRatio <= xRatio);
+
+      if (xRatio < yRatio) {
+        zoomWidth = (int) (zoomWidth * xRatio);
+        zoomHeight = (int) (zoomHeight * xRatio);
+      } else {
+        zoomWidth = (int) (zoomWidth * yRatio);
+        zoomHeight = (int) (zoomHeight * yRatio);
+      }
+
+      zoomedBitmap = Bitmap.createScaledBitmap(zoomedBitmap, zoomWidth, zoomHeight, false);
+      currentlyActiveBitmap = zoomedBitmap;
+      displayZoomedImage();
+      colorDetailsParent.setVisibility(View.VISIBLE);
+    });
+    colorDetailsParent.setVisibility(View.GONE);
+  }
+
+  private void displayZoomedImage() {
+    imageIsZoomed = true;
+    zoomedImage.setImageBitmap(zoomedBitmap);
+    zoomedImage.setVisibility(View.VISIBLE);
+    screenCaptureImage.setEnabled(false);
+    screenCaptureImage.setColorFilter(getResources().getColor(R.color.zoomed_image_background));
+  }
+
+  private void hideZoomedImage() {
+    imageIsZoomed = false;
+    zoomedImage.setImageDrawable(null);
+    zoomedImage.setVisibility(View.GONE);
+    screenCaptureImage.setEnabled(true);
+    screenCaptureImage.setColorFilter(null);
   }
 
   @Override public void onBackPressed() {
     if (imageIsZoomed) {
-      displayCaptureImage(this.imageUri); //revert image
+      hideZoomedImage();
     } else {
       super.onBackPressed();
     }
@@ -242,58 +302,33 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
 
   @OnTouch(R.id.screen_capture_image)
   boolean captureImageTouch(View v, MotionEvent event) {
+    if (!touchDisabled) {
+      int touchX = Math.round(event.getX());
+      int touchY = Math.round(event.getY());
+      updateColorDetails(touchX, touchY);
+    }
+    return false;
+  }
+
+  @OnTouch(R.id.zoomed_image)
+  boolean zoomedImageTouch(View v, MotionEvent event) {
+
+    //todo: handle touch correctly
+    if (event.getAction() == MotionEvent.ACTION_MOVE) {
+      touchMoving = true;
+    } else if (event.getAction() == MotionEvent.ACTION_MOVE) { //nope
+      touchMoving = false;
+    }
 
     int touchX = Math.round(event.getX());
     int touchY = Math.round(event.getY());
-
-    if (imageIsZoomed) {
-      getScaledTouchCoords(touchX, touchY);
-
-    } else { //we dont have to worry about scaling the touch coords
-      updateColorDetails(touchX, touchY);
-    }
-
-
+    updateColorDetails(touchX, touchY);
     return true;
   }
 
-  private void getScaledTouchCoords(int touchX, int touchY) {
-    float xRatio = (float)capturedBitmap.getWidth() / screenCaptureImage.getWidth();
-    float yRatio = (float)capturedBitmap.getHeight() / screenCaptureImage.getHeight();
-
-
-    //need to adjust y if there is vertical whitespace, x if horizontal whitespace
-    int scaledX, scaledY;
-
-    if (xRatio > yRatio) {
-
-      //white space will be vertical
-
-      //int drawnHeight = Math.round(capturedBitmap.getHeight() * xRatio);
-      //int whitespace = screenCaptureImage.getHeight() - drawnHeight;
-      //
-      //
-      //scaledX = Math.round(touchX * xRatio);
-      //scaledY = Math.round((touchY * yRatio) + (whitespace / 2));
-
-    } else {
-      //whitespace will be horizontal
-
-      //int drawnWidth = Math.round(capturedBitmap.getWidth() * yRatio);
-      //int whitespace = screenCaptureImage.getWidth() - drawnWidth;
-      //
-      //scaledX = Math.round((touchX * xRatio) + (whitespace / 2));
-      //scaledY = Math.round(touchY * yRatio);
-    }
-
-    scaledX = Math.round((touchX * xRatio));
-    scaledY = Math.round(touchY * yRatio);
-    updateColorDetails(scaledX, scaledY);
-  }
-
   private void updateColorDetails(int touchX, int touchY) {
-    if (capturedBitmap != null) {
-      currentlySelectedColor = capturedBitmap.getPixel(touchX, touchY);
+    if (currentlyActiveBitmap != null && !imageIsZoomed) {
+      currentlySelectedColor = currentlyActiveBitmap.getPixel(touchX, touchY);
       currentlySelectedColorHex = presenter.generateHexColor(currentlySelectedColor);
       currentlySelectedColorRgb = presenter.generateRgbColor(currentlySelectedColor);
 
@@ -309,6 +344,12 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
       rgbText.setTextColor(presenter.getContrastingTextColor(currentlySelectedColor));
 
       colorDetailsParent.setVisibility(View.VISIBLE);
+    } else {
+      if (zoomFillVertical) {
+        //then we need to adjust touchX
+      } else {
+        //adjust touchY
+      }
     }
   }
 
@@ -375,8 +416,10 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
 
   Target colorPickerTarget = new Target() {
     @Override public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-      capturedBitmap = bitmap;
+      capturedBitmapOriginal = bitmap;
+      currentlyActiveBitmap = capturedBitmapOriginal;
       screenCaptureImage.setImageBitmap(bitmap);
+      //todo; check this after zoom work done
       updateColorDetails(200, 200); //simulate touch to display the color picker
     }
 

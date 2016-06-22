@@ -3,6 +3,7 @@ package com.insuleto.koloro.ui.views;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -19,9 +20,16 @@ public class ZoomRect extends View {
     setFocusable(true);
     setFocusableInTouchMode(true);
     paint = new Paint();
+    paint.setPathEffect(new DashPathEffect(new float[] {10, 10}, 0));
     paint.setColor(Color.BLACK);
     paint.setStyle(Paint.Style.STROKE);
-    paint.setStrokeWidth(15);
+    paint.setStrokeWidth(5);
+  }
+
+  public void enable() {
+    setEnabled(true);
+    setVisibility(View.VISIBLE);
+    bringToFront();
   }
 
 

@@ -12,4 +12,6 @@
   <color name="saved_colors_drawer_background">#5c4e4c4c</color>
   <color name="picker_background_grey">#b0bec5</color>
   <color name="picker_background_grey_opaque">#58b0bec5</color>
+
+  <color name="zoomed_image_background">#c4757575</color>
 </resources>
