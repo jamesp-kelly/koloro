@@ -1,6 +1,5 @@
 package com.insuleto.koloro.ui.adaptors;
 
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -14,58 +13,78 @@ import com.insuleto.koloro.R;
 import com.insuleto.koloro.model.KoloroObj;
 import java.util.List;
 
-public class ColorRecyclerAdapter extends RecyclerView.Adapter<ColorRecyclerAdapter.ColorViewHolder> {
+public class ColorRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
   private List<KoloroObj> koloroObjs;
   private ColorItemListener listener;
-  private int orientation;
   private boolean showHex;
+  private static final int HEADER_POSITION = 0;
+  private static final int TYPE_HEADER = 0;
+  private static final int TYPE_ITEM = 1;
 
-  public ColorRecyclerAdapter(List<KoloroObj> koloroObjs, ColorItemListener listener, int orientation, boolean showHex) {
+  public ColorRecyclerAdapter(List<KoloroObj> koloroObjs, ColorItemListener listener, boolean showHex) {
     this.koloroObjs = koloroObjs;
     this.listener = listener;
-    this.orientation = orientation;
     this.showHex = showHex;
   }
 
-  @Override public ColorViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+  @Override public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     View view;
-
-    if (orientation == LinearLayoutManager.VERTICAL) {
+    if (viewType == TYPE_HEADER) {
       view = LayoutInflater.from(parent.getContext())
           .inflate(R.layout.color_recycler_item_vertical, parent, false);
+      return new ColorHeaderHolder(view);
     } else {
       view = LayoutInflater.from(parent.getContext())
-          .inflate(R.layout.color_recycler_item_horizontal, parent, false);
+          .inflate(R.layout.color_recycler_item_vertical, parent, false);
+      return new ColorViewHolder(view);
     }
-
-    return new ColorViewHolder(view);
   }
 
-  @Override public void onBindViewHolder(ColorViewHolder holder, int position) {
-    KoloroObj koloroObj = koloroObjs.get(position);
-    holder.colorItemLayout.setBackgroundColor(koloroObj.getColorInt());
-    if (showHex) {
-      holder.colorItemText.setText(koloroObj.getHexString());
-      holder.colorItemText.setTextSize(25);
+  @Override public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    if (position != HEADER_POSITION) {
+      ColorViewHolder colorHolder = (ColorViewHolder) holder;
+      KoloroObj koloroObj = koloroObjs.get(position);
+      colorHolder.colorItemLayout.setBackgroundColor(koloroObj.getColorInt());
+      if (showHex) {
+        colorHolder.colorItemText.setText(koloroObj.getHexString());
+        colorHolder.colorItemText.setTextSize(25);
+      } else {
+        colorHolder.colorItemText.setText(
+            String.format(KoloroObj.RGB_FORMAT, koloroObj.getRed(), koloroObj.getGreen(), koloroObj.getBlue()));
+        colorHolder.colorItemText.setTextSize(22);
+      }
+      colorHolder.colorItemNote.setText(koloroObj.getNote());
+      listener.colorTextChanged(koloroObj.getColorInt(), colorHolder.colorItemText, colorHolder.colorItemNote);
+
+      colorHolder.copyButton.setOnClickListener(v -> {
+        listener.copyButtonClicked(koloroObj);
+      });
+
+      colorHolder.noteButton.setOnClickListener(v -> listener.noteButtonClicked(koloroObj));
     } else {
-      holder.colorItemText.setText(String.format(KoloroObj.RGB_FORMAT, koloroObj.getRed(),
-          koloroObj.getGreen(), koloroObj.getBlue()));
-      holder.colorItemText.setTextSize(22);
+
     }
-    holder.colorItemNote.setText(koloroObj.getNote());
-    listener.colorTextChanged(koloroObj.getColorInt(),
-        holder.colorItemText, holder.colorItemNote);
-
-    holder.copyButton.setOnClickListener(v -> {
-      listener.copyButtonClicked(koloroObj);
-    });
-
-    holder.noteButton.setOnClickListener(v -> listener.noteButtonClicked(koloroObj));
   }
 
   @Override public int getItemCount() {
     return koloroObjs.size();
+  }
+
+  @Override public int getItemViewType(int position) {
+    if (position == 0) {
+      return TYPE_HEADER;
+    } else {
+      return TYPE_ITEM;
+    }
+  }
+
+  public static class ColorHeaderHolder extends RecyclerView.ViewHolder {
+
+    public ColorHeaderHolder(View itemView) {
+      super(itemView);
+      ButterKnife.bind(this, itemView);
+    }
   }
 
   public static class ColorViewHolder extends RecyclerView.ViewHolder {

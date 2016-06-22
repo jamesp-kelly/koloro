@@ -137,7 +137,7 @@ public class KoloroActivity extends BaseActivity implements KoloroView, Preferen
 
     colorRecycler.setLayoutManager(new LinearLayoutManager(this));
     colorRecyclerAdapter = new ColorRecyclerAdapter(presenter.getAllKoloroObjects(),
-        colorItemListener, LinearLayoutManager.VERTICAL, (colorFormat == ColorFormat.HEX));
+        colorItemListener, (colorFormat == ColorFormat.HEX));
     colorRecycler.setAdapter(colorRecyclerAdapter);
   }
 
@@ -264,9 +264,8 @@ public class KoloroActivity extends BaseActivity implements KoloroView, Preferen
 
   @Override public void intValueChanged(String preferenceKey, int newValue) {
     if (preferenceKey.equals(PreferencesModule.COLOR_FORMAT_KEY)) {
-      colorRecyclerAdapter =
-          new ColorRecyclerAdapter(presenter.getAllKoloroObjects(), colorItemListener,
-              LinearLayoutManager.VERTICAL, (newValue == ColorFormat.HEX));
+      colorRecyclerAdapter = new ColorRecyclerAdapter(presenter.getAllKoloroObjects(),
+          colorItemListener, (newValue == ColorFormat.HEX));
       colorRecycler.setAdapter(colorRecyclerAdapter);
     }
   }

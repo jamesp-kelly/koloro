@@ -52,6 +52,8 @@ import javax.inject.Named;
 
 public class ColorPickActivity extends BaseActivity implements ColorPickerView {
 
+  //work on this.  similar to s pen. seperate view for zoomed
+
   public static final String SCREEN_CAPTURE_URI = "screen_capture_uri";
 
   private Bitmap capturedBitmap;
@@ -106,7 +108,7 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
 
     colorRecycler.setLayoutManager(new LinearLayoutManager(this));
     colorRecyclerAdapter = new ColorRecyclerAdapter(presenter.getAllKoloroObjects(),
-        colorItemListener, LinearLayoutManager.VERTICAL, colorFormatPreference == ColorFormat.HEX);
+        colorItemListener, colorFormatPreference == ColorFormat.HEX);
     colorRecycler.setAdapter(colorRecyclerAdapter);
 
     if (colorFormatPreference == ColorFormat.HEX) {
@@ -332,7 +334,7 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
 
   @OnClick(R.id.save_button)
   void onSaveClicked() {
-    Toast.makeText(this, "saved", Toast.LENGTH_SHORT).show();
+    Toast.makeText(this, R.string.saved_toast, Toast.LENGTH_SHORT).show();
     presenter.saveColor(currentlySelectedColor, currentlySelectedColorHex);
     Bundle bundle = new Bundle();
     bundle.putString(FirebaseAnalytics.Param.ITEM_ID, currentlySelectedColorHex);

@@ -9,10 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Spinner;
 import android.widget.Switch;
+import android.widget.TextView;
+import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import butterknife.OnItemSelected;
+import butterknife.OnTouch;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.insuleto.koloro.KoloroApplication;
 import com.insuleto.koloro.R;
@@ -30,7 +33,8 @@ public class PreferenceFragment extends Fragment {
 
   private static final String TAG = PreferenceFragment.class.getSimpleName();
   private SimpleSpinnerAdapter captureButtonPositionAdapter, colorFormatAdapter;
-
+  private boolean isPremium = false;
+  Toast toast;
 
   @Inject FirebaseAnalytics firebaseAnalytics;
   @Inject @Named(PreferencesModule.CAPTURE_BUTTON_POSITION_KEY)
@@ -49,6 +53,7 @@ public class PreferenceFragment extends Fragment {
   @BindView(R.id.switch_store_captures) Switch storeCapturesSwitch;
   @BindView(R.id.switch_quick_launch) Switch quickLaunchSwitch;
   @BindView(R.id.spinner_color_format) Spinner colorFormatSpinner;
+  @BindView(R.id.quick_launch_label) TextView quickLaunchText;
 
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,6 +79,8 @@ public class PreferenceFragment extends Fragment {
     colorFormatAdapter = new SimpleSpinnerAdapter(getActivity(), colorFormatValues());
     colorFormatSpinner.setAdapter(colorFormatAdapter);
     colorFormatSpinner.setSelection(colorFormatPreference.get());
+
+    toast = Toast.makeText(getActivity(), "TEsting", Toast.LENGTH_SHORT);
   }
 
   private List<String> buttonPositionValues() {
@@ -120,6 +127,11 @@ public class PreferenceFragment extends Fragment {
 
       ((PreferenceChangeListener)getActivity()).intValueChanged(PreferencesModule.COLOR_FORMAT_KEY, newValue);
     }
+  }
+
+  @Override public void onPause() {
+    super.onPause();
+    toast.cancel();
   }
 
   @OnCheckedChanged(R.id.switch_vibration)
@@ -173,12 +185,40 @@ public class PreferenceFragment extends Fragment {
     }
   }
 
+  @OnTouch(R.id.quick_launch_overlay)
+  boolean onQuickLaunchTouched(){
+    if (!isPremium) {
+      toast.show();
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   public interface PreferenceChangeListener {
     void intValueChanged(String preferenceKey, int newValue);
     void boolValueChanged(String preferenceKey, boolean newValue);
   }
 
   public void updateBillingUI(boolean premiumEnabled) {
-    quickLaunchSwitch.setEnabled(premiumEnabled);
+    isPremium = premiumEnabled;
+    if (!isPremium) {
+
+      disablePreference(PreferencesModule.QUICK_LAUNCH_KEY);
+      //quickLaunchSwitch.setChecked(isPremium);
+      //quickLaunchSwitch.setEnabled(isPremium);
+
+      //none of thise works. set disabled and intercept the touch if premium = false. change drawble manually to look disabled
+
+      //enable overlays
+    }
+  }
+
+  private void disablePreference(String preferenceKey) {
+    if (preferenceKey.equals(PreferencesModule.QUICK_LAUNCH_KEY)) {
+      quickLaunchSwitch.setChecked(false);
+      //quickLaunchText.setTextColor(R.color.colorAccent);
+      quickLaunchText.setEnabled(false);
+    }
   }
 }
