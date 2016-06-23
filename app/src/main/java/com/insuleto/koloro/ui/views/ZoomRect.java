@@ -12,18 +12,26 @@ import android.view.View;
 public class ZoomRect extends View {
 
   private int startX, startY, endX, endY;
-  private Paint paint;
+  private Paint blackPaint;
+  private Paint whitePaint;
   private ZoomRectListener listener;
 
   public ZoomRect(Context context, AttributeSet attrs) {
     super(context, attrs);
     setFocusable(true);
     setFocusableInTouchMode(true);
-    paint = new Paint();
-    paint.setPathEffect(new DashPathEffect(new float[] {10, 10}, 0));
-    paint.setColor(Color.BLACK);
-    paint.setStyle(Paint.Style.STROKE);
-    paint.setStrokeWidth(5);
+    blackPaint = new Paint();
+    blackPaint.setPathEffect(new DashPathEffect(new float[] {20, 20}, 0));
+    blackPaint.setColor(Color.BLACK);
+    blackPaint.setStyle(Paint.Style.STROKE);
+    blackPaint.setStrokeWidth(5);
+
+    whitePaint = new Paint();
+    //whitePaint.setPathEffect(new DashPathEffect(new float[] {10, 20}, 0));
+    whitePaint.setColor(Color.WHITE);
+    whitePaint.setStyle(Paint.Style.STROKE);
+    whitePaint.setStrokeWidth(5);
+
   }
 
   public void enable() {
@@ -59,7 +67,8 @@ public class ZoomRect extends View {
     }
 
     if (drawLeft != 0) {
-      canvas.drawRect(drawLeft, drawTop, drawRight, drawBottom, paint);
+      canvas.drawRect(drawLeft, drawTop, drawRight, drawBottom, whitePaint);
+      canvas.drawRect(drawLeft, drawTop, drawRight, drawBottom, blackPaint);
     }
   }
 

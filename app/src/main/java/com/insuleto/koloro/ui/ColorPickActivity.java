@@ -23,14 +23,12 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnLongClick;
 import butterknife.OnTouch;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -39,10 +37,13 @@ import com.insuleto.koloro.R;
 import com.insuleto.koloro.model.ColorFormat;
 import com.insuleto.koloro.model.KoloroObj;
 import com.insuleto.koloro.model.RgbColor;
+import com.insuleto.koloro.model.TouchPoint;
 import com.insuleto.koloro.preferences.BooleanPreference;
 import com.insuleto.koloro.preferences.PreferencesModule;
 import com.insuleto.koloro.ui.adaptors.ColorRecyclerAdapter;
 import com.insuleto.koloro.ui.adaptors.ColorRecyclerAdapter.ColorItemListener;
+import com.insuleto.koloro.ui.layouts.KoloroImageView;
+import com.insuleto.koloro.ui.layouts.KoloroTouchListener;
 import com.insuleto.koloro.ui.presenters.ColorPickerPresenter;
 import com.insuleto.koloro.ui.views.ColorPickerView;
 import com.insuleto.koloro.ui.views.ZoomRect;
@@ -52,7 +53,8 @@ import com.squareup.picasso.Target;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-public class ColorPickActivity extends BaseActivity implements ColorPickerView {
+public class ColorPickActivity extends BaseActivity implements ColorPickerView,
+    KoloroTouchListener {
 
   public static final String SCREEN_CAPTURE_URI = "screen_capture_uri";
   private static final int VIBRATE_DURATION = 30;
@@ -66,7 +68,8 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
   private boolean imageIsZoomed = false;
   private boolean zoomFillVertical = false;
   private boolean touchDisabled = false;
-  private boolean touchMoving = false;
+
+  private int startX, startY;
 
   private int currentlySelectedColor;
   private String currentlySelectedColorHex;
@@ -90,8 +93,8 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
   @BindView(R.id.color_details_layout) FrameLayout colorDetailsLayout;
   @BindView(R.id.save_button) Button saveButton;
   @BindView(R.id.copy_button) Button copyButton;
-  @BindView(R.id.screen_capture_image) ImageView screenCaptureImage;
-  @BindView(R.id.zoomed_image) ImageView zoomedImage;
+  @BindView(R.id.screen_capture_image) KoloroImageView screenCaptureImage;
+  @BindView(R.id.zoomed_image) KoloroImageView zoomedImage;
   @BindView(R.id.hex_text) TextView hexText;
   @BindView(R.id.rgb_text) TextView rgbText;
   @BindView(R.id.color_list_recycler) RecyclerView colorRecycler;
@@ -117,6 +120,8 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
 
     presenter.bindView(this);
     presenter.setupRealm();
+    screenCaptureImage.setKoloroListener(this);
+    zoomedImage.setKoloroListener(this);
 
     colorRecycler.setLayoutManager(new LinearLayoutManager(this));
     colorRecyclerAdapter = new ColorRecyclerAdapter(presenter.getAllKoloroObjects(),
@@ -180,18 +185,6 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
     firebaseAnalytics.logEvent(FirebaseEvents.COLOR_COPIED, bundle);
   }
 
-  @OnLongClick(R.id.screen_capture_image)
-  boolean onZoomLongClick() {
-    if (currentlyActiveBitmap != null) {
-      touchDisabled = true;
-      captureZoomRectangle();
-      vibrate();
-      Toast.makeText(this, "Select area to zoom into", Toast.LENGTH_SHORT).show();
-    }
-
-    return true;
-  }
-
   private void vibrate() {
     if (vibrationPref.get()) {
       vibrator.vibrate(VIBRATE_DURATION);
@@ -223,6 +216,10 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
       int zoomWidth = drawRight - drawLeft;
       int zoomHeight = drawBottom - drawTop;
 
+      if (zoomWidth <= 5 || zoomHeight <= 5) {
+        return;
+      }
+
       zoomedBitmap = Bitmap.createBitmap(currentlyActiveBitmap, drawLeft, drawTop, zoomWidth, zoomHeight);
 
       float xRatio = (float)capturedBitmapOriginal.getWidth() / zoomedBitmap.getWidth();
@@ -248,22 +245,24 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
 
   private void displayZoomedImage() {
     imageIsZoomed = true;
-    zoomedImage.setImageBitmap(zoomedBitmap);
-    zoomedImage.setVisibility(View.VISIBLE);
-    screenCaptureImage.setEnabled(false);
-    screenCaptureImage.setColorFilter(getResources().getColor(R.color.zoomed_image_background));
+    zoomedImage.enable(zoomedBitmap);
+    screenCaptureImage.disable();
   }
 
   private void hideZoomedImage() {
     imageIsZoomed = false;
-    zoomedImage.setImageDrawable(null);
-    zoomedImage.setVisibility(View.GONE);
-    screenCaptureImage.setEnabled(true);
-    screenCaptureImage.setColorFilter(null);
+    touchDisabled = false;
+    currentlyActiveBitmap = capturedBitmapOriginal;
+
+    zoomedImage.clear();
+    screenCaptureImage.enable();
   }
 
   @Override public void onBackPressed() {
-    if (imageIsZoomed) {
+    if (touchDisabled) {
+      touchDisabled = false;
+      colorDetailsParent.setVisibility(View.VISIBLE);
+    } else if (imageIsZoomed) {
       hideZoomedImage();
     } else {
       super.onBackPressed();
@@ -300,35 +299,25 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
     picasso.load(imageUri).into(colorPickerTarget);
   }
 
-  @OnTouch(R.id.screen_capture_image)
-  boolean captureImageTouch(View v, MotionEvent event) {
-    if (!touchDisabled) {
-      int touchX = Math.round(event.getX());
-      int touchY = Math.round(event.getY());
-      updateColorDetails(touchX, touchY);
-    }
-    return false;
-  }
+  ////@OnTouch(R.id.zoomed_image)
+  //boolean zoomedImageTouch(View v, MotionEvent event) {
+  //
+  //  //todo: handle touch correctly
+  //  if (event.getAction() == MotionEvent.ACTION_MOVE) {
+  //    touchMoving = true;
+  //  } else if (event.getAction() == MotionEvent.ACTION_MOVE) { //nope
+  //    touchMoving = false;
+  //  }
+  //
+  //  int touchX = Math.round(event.getX());
+  //  int touchY = Math.round(event.getY());
+  //  //updateColorDetails(touchX, touchY);
+  //  return true;
+  //}
 
-  @OnTouch(R.id.zoomed_image)
-  boolean zoomedImageTouch(View v, MotionEvent event) {
-
-    //todo: handle touch correctly
-    if (event.getAction() == MotionEvent.ACTION_MOVE) {
-      touchMoving = true;
-    } else if (event.getAction() == MotionEvent.ACTION_MOVE) { //nope
-      touchMoving = false;
-    }
-
-    int touchX = Math.round(event.getX());
-    int touchY = Math.round(event.getY());
-    updateColorDetails(touchX, touchY);
-    return true;
-  }
-
-  private void updateColorDetails(int touchX, int touchY) {
+  private void updateColorDetails(TouchPoint point) {
     if (currentlyActiveBitmap != null && !imageIsZoomed) {
-      currentlySelectedColor = currentlyActiveBitmap.getPixel(touchX, touchY);
+      currentlySelectedColor = currentlyActiveBitmap.getPixel(point.getX(), point.getY());
       currentlySelectedColorHex = presenter.generateHexColor(currentlySelectedColor);
       currentlySelectedColorRgb = presenter.generateRgbColor(currentlySelectedColor);
 
@@ -420,7 +409,7 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
       currentlyActiveBitmap = capturedBitmapOriginal;
       screenCaptureImage.setImageBitmap(bitmap);
       //todo; check this after zoom work done
-      updateColorDetails(200, 200); //simulate touch to display the color picker
+      updateColorDetails(new TouchPoint(200, 200)); //simulate touch to display the color picker
     }
 
     @Override public void onBitmapFailed(Drawable errorDrawable) {
@@ -430,4 +419,16 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView {
     }
   };
 
+  @Override public void onTouchEvent(TouchPoint point) {
+    updateColorDetails(point);
+  }
+
+  @Override public void onLongTouchEvent() {
+    if (currentlyActiveBitmap != null) {
+      touchDisabled = true;
+      captureZoomRectangle();
+      vibrate();
+      Toast.makeText(this, "Select area to zoom into", Toast.LENGTH_SHORT).show();
+    }
+  }
 }

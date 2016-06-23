@@ -18,13 +18,13 @@
         android:visibility="gone"
         />
 
-    <ImageView
+    <com.insuleto.koloro.ui.layouts.KoloroImageView
         android:id="@+id/screen_capture_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />
 
-    <ImageView
+    <com.insuleto.koloro.ui.layouts.KoloroImageView
         android:id="@+id/zoomed_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
