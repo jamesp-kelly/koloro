@@ -47,6 +47,8 @@ public class PreferenceFragment extends Fragment {
   BooleanPreference galleryPreference;
   @Inject @Named(PreferencesModule.COLOR_FORMAT_KEY)
   IntPreference colorFormatPreference;
+  @Inject @Named(PreferencesModule.ZOOM_ENABLED_KEY)
+  BooleanPreference zoomEnabledPreference;
 
   @BindView(R.id.spinner_capture_button_position) Spinner captureButtonPositionSpinner;
   @BindView(R.id.switch_vibration) Switch vibrationSwitch;
@@ -54,6 +56,8 @@ public class PreferenceFragment extends Fragment {
   @BindView(R.id.switch_quick_launch) Switch quickLaunchSwitch;
   @BindView(R.id.spinner_color_format) Spinner colorFormatSpinner;
   @BindView(R.id.quick_launch_label) TextView quickLaunchText;
+  @BindView(R.id.switch_zoom_enabled) Switch zoomEnabledSwitch;
+  @BindView(R.id.zoom_enabled_label) TextView zoomEnabledText;
 
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,6 +83,7 @@ public class PreferenceFragment extends Fragment {
     colorFormatAdapter = new SimpleSpinnerAdapter(getActivity(), colorFormatValues());
     colorFormatSpinner.setAdapter(colorFormatAdapter);
     colorFormatSpinner.setSelection(colorFormatPreference.get());
+    zoomEnabledSwitch.setChecked(zoomEnabledPreference.get());
 
     toast = Toast.makeText(getActivity(), "TEsting", Toast.LENGTH_SHORT);
   }
@@ -185,6 +190,23 @@ public class PreferenceFragment extends Fragment {
     }
   }
 
+  @OnCheckedChanged(R.id.switch_zoom_enabled)
+  void zoomEnabledChanged() {
+    boolean newValue = zoomEnabledSwitch.isChecked();
+    boolean oldValue = zoomEnabledPreference.get();
+
+    if (newValue != oldValue) {
+      Log.d(TAG, String.format("Updating 'zoom enabled' preference to %s", newValue));
+      Bundle bundle = new Bundle();
+      bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "Zoom Enabled");
+      bundle.putString(FirebaseAnalytics.Param.ITEM_ID, String.valueOf(newValue));
+      firebaseAnalytics.logEvent(FirebaseEvents.PREFERENCE_CHANGED, bundle);
+      zoomEnabledPreference.set(newValue);
+
+      ((PreferenceChangeListener)getActivity()).boolValueChanged(PreferencesModule.ZOOM_ENABLED_KEY, newValue);
+    }
+  }
+
   @OnTouch(R.id.quick_launch_overlay)
   boolean onQuickLaunchTouched(){
     if (!isPremium) {
@@ -219,6 +241,9 @@ public class PreferenceFragment extends Fragment {
       quickLaunchSwitch.setChecked(false);
       //quickLaunchText.setTextColor(R.color.colorAccent);
       quickLaunchText.setEnabled(false);
+    } else {
+      zoomEnabledSwitch.setChecked(false);
+      zoomEnabledText.setEnabled(false);
     }
   }
 }

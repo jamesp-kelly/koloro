@@ -21,6 +21,8 @@ public class PreferencesModule {
   private static final boolean DEFAULT_QUICK_LAUNCH = false;
   public static final String COLOR_FORMAT_KEY = "color_format";
   public static final int DEFAULT_COLOR_FORMAT = 0;
+  public static final String ZOOM_ENABLED_KEY = "zoom_enabled";
+  public static final boolean DEFAULT_ZOOM_ENABLED = true;
 
   @Provides @Singleton
   SharedPreferences provideSharedPreferences(Application app) {
@@ -76,6 +78,16 @@ public class PreferencesModule {
   @Provides @Named(COLOR_FORMAT_KEY)
   Integer provideColorFormat(@Named(COLOR_FORMAT_KEY) IntPreference intPreference) {
     return intPreference.get();
+  }
+
+  @Provides @Singleton @Named(ZOOM_ENABLED_KEY)
+  BooleanPreference provideZoomEnabledPreference(SharedPreferences preferences) {
+    return new BooleanPreference(preferences, ZOOM_ENABLED_KEY, DEFAULT_ZOOM_ENABLED);
+  }
+
+  @Provides @Named(ZOOM_ENABLED_KEY)
+  Boolean provideZoomEnabled(@Named(ZOOM_ENABLED_KEY) BooleanPreference booleanPreference) {
+    return booleanPreference.get();
   }
 
 }

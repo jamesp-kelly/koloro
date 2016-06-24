@@ -18,10 +18,7 @@ public class KoloroImageView extends ImageView implements View.OnTouchListener {
 
   private KoloroTouchListener koloroTouchListener;
   private Context context;
-  private TouchPoint startTouchPoint;
-  private TouchPoint currentTouchPoint;
-  private long touchStartedTime;
-  private boolean currentlyMoving = false;
+  private boolean twoFingersDown = false;
   private Handler handler;
 
   public KoloroImageView(Context context) {
@@ -64,28 +61,36 @@ public class KoloroImageView extends ImageView implements View.OnTouchListener {
   }
 
   @Override public boolean onTouch(View v, MotionEvent event) {
-    if (event.getAction() == MotionEvent.ACTION_DOWN) {
-      currentlyMoving = false;
-      touchStartedTime = System.currentTimeMillis();
-      startTouchPoint = new TouchPoint(Math.round(event.getX()), Math.round(event.getY()));
-      koloroTouchListener.onTouchEvent(startTouchPoint);
 
-      handler.postDelayed(() -> {
-        if (startTouchPoint != null && !currentlyMoving) {
-          koloroTouchListener.onLongTouchEvent();
+    switch (event.getAction() & MotionEvent.ACTION_MASK) {
+      case MotionEvent.ACTION_DOWN: {
+        if (!twoFingersDown) {
+          koloroTouchListener.onTouchEvent(
+              new TouchPoint(Math.round(event.getX()), Math.round(event.getY())));
         }
-      }, LONG_CLICK_CHECK_DURATION);
-
-    } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-      currentTouchPoint = new TouchPoint(Math.round(event.getX()), Math.round(event.getY()));
-      if (currentTouchPoint.distanceFrom(startTouchPoint) > DISTANCE_THRESHOLD) {
-        currentlyMoving = true;
-        koloroTouchListener.onTouchEvent(currentTouchPoint);
+        break;
       }
-    } else if (event.getAction() == MotionEvent.ACTION_UP) {
-      currentlyMoving = false;
-      touchStartedTime = 0;
-      startTouchPoint = null;
+      case MotionEvent.ACTION_POINTER_DOWN: {
+        twoFingersDown = true;
+        handler.postDelayed(() -> {
+          if (twoFingersDown) {
+            koloroTouchListener.onLongTouchEvent();
+          }
+        }, LONG_CLICK_CHECK_DURATION);
+        break;
+      }
+      case MotionEvent.ACTION_MOVE: {
+        if (!twoFingersDown) {
+          koloroTouchListener.onTouchEvent(new TouchPoint(Math.round(event.getX()), Math.round(event.getY())));
+        }
+        break;
+      }
+      case MotionEvent.ACTION_POINTER_UP: {
+        if (event.getPointerCount() == 2) {
+          twoFingersDown = false;
+        }
+        break;
+      }
     }
 
     return true;

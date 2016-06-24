@@ -271,7 +271,6 @@ public class KoloroActivity extends BaseActivity implements KoloroView, Preferen
   }
 
   @Override public void boolValueChanged(String preferenceKey, boolean newValue) {
-
   }
 
   private String getPublicApplicationKey() {

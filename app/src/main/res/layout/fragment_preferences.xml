@@ -103,6 +103,34 @@
     </LinearLayout>
   </RelativeLayout>
 
+  <RelativeLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      >
+    <FrameLayout
+        android:id="@+id/zoom_enabled_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        />
+    <LinearLayout
+        android:id="@+id/zoom_enabled_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal">
+      <TextView
+          android:id="@+id/zoom_enabled_label"
+          style="@style/PrefsText"
+          android:text="@string/zoom_enabled_label"
+          />
+      <Switch
+          android:id="@+id/switch_zoom_enabled"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          />
+    </LinearLayout>
+  </RelativeLayout>
+
 
 
 </LinearLayout>

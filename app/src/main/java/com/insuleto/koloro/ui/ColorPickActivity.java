@@ -86,6 +86,7 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView,
   @Inject @Named(PreferencesModule.STORE_CAPTURES_IN_GALLERY_KEY) BooleanPreference galleryPreference;
   @Inject @Named(PreferencesModule.VIBRATION_KEY) BooleanPreference vibrationPref;
   @Inject @Named(PreferencesModule.COLOR_FORMAT_KEY) int colorFormatPreference;
+  @Inject @Named(PreferencesModule.ZOOM_ENABLED_KEY) boolean zoomEnabledPreference;
 
 
   @BindView(R.id.drawer_layout) DrawerLayout drawerLayout;
@@ -238,6 +239,7 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView,
       zoomedBitmap = Bitmap.createScaledBitmap(zoomedBitmap, zoomWidth, zoomHeight, false);
       currentlyActiveBitmap = zoomedBitmap;
       displayZoomedImage();
+      touchDisabled = false;
       colorDetailsParent.setVisibility(View.VISIBLE);
     });
     colorDetailsParent.setVisibility(View.GONE);
@@ -424,7 +426,7 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView,
   }
 
   @Override public void onLongTouchEvent() {
-    if (currentlyActiveBitmap != null) {
+    if (zoomEnabledPreference && currentlyActiveBitmap != null) {
       touchDisabled = true;
       captureZoomRectangle();
       vibrate();

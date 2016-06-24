@@ -52,6 +52,7 @@ Pellentesque malesuada rutrum imperdiet. Suspendisse efficitur quam consequat le
   <string name="color_format_label">Color format</string>
   <string name="upgrade_button_text">Activate premium features</string>
   <string name="saved_toast">Saved</string>
+  <string name="zoom_enabled_label">Zoom Enabled</string>
 
   <string-array name="capture_button_position_array">
     <item>Top right</item>
