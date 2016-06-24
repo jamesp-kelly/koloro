@@ -17,7 +17,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
@@ -57,20 +56,15 @@ import javax.inject.Named;
 public class ColorPickActivity extends BaseActivity implements ColorPickerView,
     KoloroTouchListener {
 
-  public static final String SCREEN_CAPTURE_URI = "screen_capture_uri";
   private static final int VIBRATE_DURATION = 30;
 
   private Bitmap capturedBitmapOriginal;
   private Bitmap zoomedBitmap;
   private Bitmap currentlyActiveBitmap;
 
-
   private float parentX, parentY;
   private boolean imageIsZoomed = false;
-  private boolean zoomFillVertical = false;
   private boolean touchDisabled = false;
-
-  private int startX, startY;
 
   private int currentlySelectedColor;
   private String currentlySelectedColorHex;
@@ -303,8 +297,8 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView,
     picasso.load(imageUri).into(colorPickerTarget);
   }
 
-  private void updateColorDetails(TouchPoint point) { //todo next
-    if (currentlyActiveBitmap != null && !imageIsZoomed) {
+  private void updateColorDetails(TouchPoint point) {
+    if (currentlyActiveBitmap != null) {
       currentlySelectedColor = currentlyActiveBitmap.getPixel(point.getX(), point.getY());
       currentlySelectedColorHex = presenter.generateHexColor(currentlySelectedColor);
       currentlySelectedColorRgb = presenter.generateRgbColor(currentlySelectedColor);
@@ -321,12 +315,6 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView,
       rgbText.setTextColor(presenter.getContrastingTextColor(currentlySelectedColor));
 
       colorDetailsParent.setVisibility(View.VISIBLE);
-    } else {
-      if (zoomFillVertical) {
-        //then we need to adjust touchX
-      } else {
-        //adjust touchY
-      }
     }
   }
 
@@ -396,7 +384,6 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView,
       capturedBitmapOriginal = bitmap;
       currentlyActiveBitmap = capturedBitmapOriginal;
       screenCaptureImage.setImageBitmap(bitmap);
-      //todo; check this after zoom work done
       updateColorDetails(new TouchPoint(200, 200)); //simulate touch to display the color picker
     }
 
@@ -416,7 +403,7 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView,
       touchDisabled = true;
       captureZoomRectangle();
       vibrate();
-      Toast.makeText(this, "Select area to zoom into", Toast.LENGTH_SHORT).show();
+      Toast.makeText(this, "Select area to zoom into", Toast.LENGTH_SHORT).show(); //todo maybe snackbar?
     }
   }
 }
