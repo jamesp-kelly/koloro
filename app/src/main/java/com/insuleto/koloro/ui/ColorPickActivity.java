@@ -17,6 +17,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
@@ -263,6 +264,7 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView,
   @Override public void onBackPressed() {
     if (touchDisabled) {
       touchDisabled = false;
+      zoomRect.disable();
       colorDetailsParent.setVisibility(View.VISIBLE);
     } else if (imageIsZoomed) {
       hideZoomedImage();
@@ -301,23 +303,7 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView,
     picasso.load(imageUri).into(colorPickerTarget);
   }
 
-  ////@OnTouch(R.id.zoomed_image)
-  //boolean zoomedImageTouch(View v, MotionEvent event) {
-  //
-  //  //todo: handle touch correctly
-  //  if (event.getAction() == MotionEvent.ACTION_MOVE) {
-  //    touchMoving = true;
-  //  } else if (event.getAction() == MotionEvent.ACTION_MOVE) { //nope
-  //    touchMoving = false;
-  //  }
-  //
-  //  int touchX = Math.round(event.getX());
-  //  int touchY = Math.round(event.getY());
-  //  //updateColorDetails(touchX, touchY);
-  //  return true;
-  //}
-
-  private void updateColorDetails(TouchPoint point) {
+  private void updateColorDetails(TouchPoint point) { //todo next
     if (currentlyActiveBitmap != null && !imageIsZoomed) {
       currentlySelectedColor = currentlyActiveBitmap.getPixel(point.getX(), point.getY());
       currentlySelectedColorHex = presenter.generateHexColor(currentlySelectedColor);

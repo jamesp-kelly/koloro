@@ -40,6 +40,11 @@ public class ZoomRect extends View {
     bringToFront();
   }
 
+  public void disable() {
+    setEnabled(false);
+    setVisibility(GONE);
+  }
+
 
   public void setZoomRectListener(ZoomRectListener listener) {
     this.listener = listener;

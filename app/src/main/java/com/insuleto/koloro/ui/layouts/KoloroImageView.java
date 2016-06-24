@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -18,7 +19,7 @@ public class KoloroImageView extends ImageView implements View.OnTouchListener {
 
   private KoloroTouchListener koloroTouchListener;
   private Context context;
-  private boolean twoFingersDown = false;
+  private boolean twoFingersDown, zoomSelected = false;
   private Handler handler;
 
   public KoloroImageView(Context context) {
@@ -65,6 +66,7 @@ public class KoloroImageView extends ImageView implements View.OnTouchListener {
     switch (event.getAction() & MotionEvent.ACTION_MASK) {
       case MotionEvent.ACTION_DOWN: {
         if (!twoFingersDown) {
+          Log.i("TEST", "getting color");
           koloroTouchListener.onTouchEvent(
               new TouchPoint(Math.round(event.getX()), Math.round(event.getY())));
         }
@@ -74,13 +76,14 @@ public class KoloroImageView extends ImageView implements View.OnTouchListener {
         twoFingersDown = true;
         handler.postDelayed(() -> {
           if (twoFingersDown) {
+            zoomSelected = true;
             koloroTouchListener.onLongTouchEvent();
           }
         }, LONG_CLICK_CHECK_DURATION);
         break;
       }
       case MotionEvent.ACTION_MOVE: {
-        if (!twoFingersDown) {
+        if (!twoFingersDown && !zoomSelected) {
           koloroTouchListener.onTouchEvent(new TouchPoint(Math.round(event.getX()), Math.round(event.getY())));
         }
         break;
@@ -89,6 +92,10 @@ public class KoloroImageView extends ImageView implements View.OnTouchListener {
         if (event.getPointerCount() == 2) {
           twoFingersDown = false;
         }
+        break;
+      }
+      case MotionEvent.ACTION_UP: {
+        zoomSelected = false;
         break;
       }
     }
