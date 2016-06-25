@@ -221,8 +221,6 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView,
       float xRatio = (float)capturedBitmapOriginal.getWidth() / zoomedBitmap.getWidth();
       float yRatio = (float)capturedBitmapOriginal.getHeight() / zoomedBitmap.getHeight();
 
-      zoomFillVertical = (yRatio <= xRatio);
-
       if (xRatio < yRatio) {
         zoomWidth = (int) (zoomWidth * xRatio);
         zoomHeight = (int) (zoomHeight * xRatio);

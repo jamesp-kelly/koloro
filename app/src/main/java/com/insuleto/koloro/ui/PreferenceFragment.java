@@ -14,6 +14,7 @@ import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
+import butterknife.OnClick;
 import butterknife.OnItemSelected;
 import butterknife.OnTouch;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -24,6 +25,7 @@ import com.insuleto.koloro.preferences.IntPreference;
 import com.insuleto.koloro.preferences.PreferencesModule;
 import com.insuleto.koloro.preferences.SimpleSpinnerAdapter;
 import com.insuleto.koloro.util.FirebaseEvents;
+import it.sephiroth.android.library.tooltip.Tooltip;
 import java.util.Arrays;
 import java.util.List;
 import javax.inject.Inject;
@@ -207,6 +209,26 @@ public class PreferenceFragment extends Fragment {
     }
   }
 
+  @OnClick(R.id.tooltip_quick_launch)
+  void onClickTipQuickLaunch(View v) {
+    displayTooltip(v, R.string.tooltip_quick_launch);
+  }
+
+  @OnClick(R.id.tooltip_zoom_enabled)
+  void onClickZoomEnabled(View v) {
+    displayTooltip(v, R.string.tooltip_enable_zoom);
+  }
+
+  @OnClick(R.id.tooltip_retain_screenshots)
+  void onClickRetainScreenshots(View v) {
+    displayTooltip(v, R.string.tooltip_retain_screenshots);
+  }
+
+  @OnClick(R.id.tooltip_vibration)
+  void onClickTooltipVibration(View v) {
+    displayTooltip(v, R.string.tooltip_retain_screenshots);
+  }
+
   @OnTouch(R.id.quick_launch_overlay)
   boolean onQuickLaunchTouched(){
     if (!isPremium) {
@@ -215,6 +237,22 @@ public class PreferenceFragment extends Fragment {
     } else {
       return false;
     }
+  }
+
+  private void displayTooltip(View view, int messageRes) {
+    Tooltip.make(getActivity(),
+        new Tooltip.Builder(101)
+            .anchor(view, Tooltip.Gravity.TOP)
+            .closePolicy(new Tooltip.ClosePolicy()
+                .insidePolicy(true, false)
+                .outsidePolicy(true, false), 3000)
+            .activateDelay(800)
+            .showDelay(300)
+            .text(getText(messageRes))
+            .withOverlay(false)
+            .maxWidth(500)
+            .withArrow(true)
+            .build()).show();
   }
 
   public interface PreferenceChangeListener {

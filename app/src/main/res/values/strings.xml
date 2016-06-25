@@ -4,7 +4,7 @@
   <string name="show_notification_label">Show notification</string>
   <string name="capture_button_visible_label">Capture button visible</string>
   <string name="start_capture_button">Start Overlay</string>
-  <string name="store_captures_label">Store screen captures in device gallery</string>
+  <string name="store_captures_label">Retain screenshots</string>
   <string name="notification_title">Koloro: Ready to capture screen</string>
   <string name="notification_text">Use overlay buttons to continue</string>
   <string name="notification_ticker">Overlay started</string>
@@ -15,7 +15,7 @@
   <string name="cancel_overlay_description">Close overlay</string>
   <string name="capture_screen_description">Capture screen</string>
   <string name="copied_clipboard_toast">Copied to clipboard</string>
-  <string name="screen_capture_toast">Capturing screen. Please wait...</string>
+  <string name="screen_capture_toast">Capturing screen. Please wait…</string>
   <string name="save_button">Save</string>
   <string name="note_button">Note</string>
   <string name="cancel_button">Cancel</string>
@@ -53,6 +53,10 @@ Pellentesque malesuada rutrum imperdiet. Suspendisse efficitur quam consequat le
   <string name="upgrade_button_text">Activate premium features</string>
   <string name="saved_toast">Saved</string>
   <string name="zoom_enabled_label">Zoom Enabled</string>
+
+  <string name="tooltip_quick_launch">This is explaing quick launch preference</string>
+  <string name="tooltip_enable_zoom">This is explaing zoom preference</string>
+  <string name="tooltip_retain_screenshots">If active, all screenshots taken will be saved to your device gallery</string>
 
   <string-array name="capture_button_position_array">
     <item>Top right</item>

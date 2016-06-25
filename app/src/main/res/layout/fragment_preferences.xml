@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
 
-  <LinearLayout
+  <RelativeLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:orientation="horizontal"
       android:layout_gravity="center_horizontal">
     <TextView
         style="@style/PrefsText"
@@ -17,51 +17,74 @@
         android:id="@+id/spinner_capture_button_position"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        tools:layout_width="150dp"
+        android:layout_alignParentRight="true"
         android:popupBackground="@color/colorPrimary"
         android:gravity="end"
         />
-  </LinearLayout>
+  </RelativeLayout>
 
-  <LinearLayout
+  <RelativeLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:orientation="horizontal"
       android:layout_gravity="center_horizontal"
       >
 
     <TextView
+        android:id="@+id/vibration_label"
         style="@style/PrefsText"
         android:text="@string/vibration_label"/>
+
+    <ImageView
+        android:id="@+id/tooltip_vibration"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_toRightOf="@id/vibration_label"
+        android:src="@drawable/ic_help_black_24dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginLeft="5dp"
+        />
 
     <Switch
         android:id="@+id/switch_vibration"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        />
 
 
-  </LinearLayout>
+  </RelativeLayout>
 
-  <LinearLayout
+  <RelativeLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:orientation="horizontal"
       android:layout_gravity="center_horizontal">
     <TextView
+        android:id="@+id/retain_screenshots_label"
         style="@style/PrefsText"
         android:text="@string/store_captures_label"
+        />
+    <ImageView
+        android:id="@+id/tooltip_retain_screenshots"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_toRightOf="@+id/retain_screenshots_label"
+        android:src="@drawable/ic_help_black_24dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginLeft="5dp"
         />
     <Switch
         android:id="@+id/switch_store_captures"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
         />
-  </LinearLayout>
+  </RelativeLayout>
 
 
-  <LinearLayout
+  <RelativeLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:orientation="horizontal"
       android:layout_gravity="center_horizontal">
     <TextView
         style="@style/PrefsText"
@@ -70,10 +93,12 @@
         android:id="@+id/spinner_color_format"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        tools:layout_width="150dp"
+        android:layout_alignParentRight="true"
         android:popupBackground="@color/colorPrimary"
         android:gravity="end"
         />
-  </LinearLayout>
+  </RelativeLayout>
 
   <RelativeLayout
       android:layout_width="match_parent"
@@ -84,24 +109,33 @@
         android:layout_width="match_parent"
         android:layout_height="30dp"
         />
-    <LinearLayout
-        android:id="@+id/quick_launch_group"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="center_horizontal">
-      <TextView
-          android:id="@+id/quick_launch_label"
-          style="@style/PrefsText"
-          android:text="@string/quick_launch_label"
-          />
-      <Switch
-          android:id="@+id/switch_quick_launch"
-          android:layout_width="wrap_content"
+      <RelativeLayout
+          android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          />
-    </LinearLayout>
+          >
+        <TextView
+            android:id="@+id/quick_launch_label"
+            style="@style/PrefsText"
+            android:text="@string/quick_launch_label"
+            />
+        <ImageView
+            android:id="@+id/tooltip_quick_launch"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@drawable/ic_help_black_24dp"
+            android:layout_toRightOf="@id/quick_launch_label"
+            android:layout_marginTop="2dp"
+            android:layout_marginLeft="5dp"
+            />
+        <Switch
+            android:id="@+id/switch_quick_launch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            />
+      </RelativeLayout>
   </RelativeLayout>
+
 
   <RelativeLayout
       android:layout_width="match_parent"
@@ -112,23 +146,32 @@
         android:layout_width="match_parent"
         android:layout_height="30dp"
         />
-    <LinearLayout
-        android:id="@+id/zoom_enabled_group"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="center_horizontal">
+        >
       <TextView
           android:id="@+id/zoom_enabled_label"
           style="@style/PrefsText"
           android:text="@string/zoom_enabled_label"
           />
+      <ImageView
+          android:id="@+id/tooltip_zoom_enabled"
+          android:layout_width="16dp"
+          android:layout_height="16dp"
+          android:src="@drawable/ic_help_black_24dp"
+          android:layout_toRightOf="@id/zoom_enabled_label"
+          android:layout_marginTop="2dp"
+          android:layout_marginLeft="5dp"
+          />
       <Switch
           android:id="@+id/switch_zoom_enabled"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          />
-    </LinearLayout>
+          android:layout_alignParentRight="true"
+        />
+    </RelativeLayout>
+
   </RelativeLayout>
 
 
