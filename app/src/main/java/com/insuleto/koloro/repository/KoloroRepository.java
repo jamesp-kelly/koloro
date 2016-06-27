@@ -9,6 +9,7 @@ public interface KoloroRepository {
 
   KoloroObj createKoloroObj(int colorInt, String hexstring);
   void updateNote(KoloroObj koloroObj, String note);
+  void deleteAllKoloroObjects();
   void setupConnection();
   void closeConnection();
 }

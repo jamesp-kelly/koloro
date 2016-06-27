@@ -256,6 +256,18 @@ public class KoloroActivity extends BaseActivity implements KoloroView, Preferen
       clipboardManager.setPrimaryClip(clip);
       Toast.makeText(KoloroActivity.this, R.string.copied_clipboard_toast, Toast.LENGTH_SHORT).show();
     }
+
+    @Override public void preferencesMenuItemClicked() {
+      Toast.makeText(KoloroActivity.this, "Already there...", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override public void shareMenuItemClicked() {
+      Toast.makeText(KoloroActivity.this, "test", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override public void clearMenuItemClicked() {
+      presenter.removeAllKoloroObjects();
+    }
   };
 
   @Override public void updateColorList() {

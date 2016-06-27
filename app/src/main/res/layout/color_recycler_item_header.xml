@@ -1,15 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="50dp"
+    android:layout_height="?android:attr/actionBarSize"
     android:background="@color/colorPrimary">
 
   <TextView
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:textColor="@color/colorAccent"
-      android:text="TESTING HEADER"
+      android:id="@+id/saved_colors_header"
+      android:layout_width="0dp"
+      android:layout_weight="1"
+      android:layout_height="match_parent"
+      android:textColor="@android:color/white"
+      android:layout_gravity="center"
+      android:gravity="center"
+      android:text="@string/saved_colors"
+      />
+
+  <ImageButton
+      android:id="@+id/saved_colors_overflow"
+      android:layout_width="24dp"
+      android:layout_height="match_parent"
+      android:src="@drawable/ic_more_vert_white_24dp"
+      android:background="@android:color/transparent"
+      android:layout_marginRight="5dp"
       />
 
 </LinearLayout>

@@ -19,6 +19,7 @@ public interface ColorPickerPresenter {
   int getContrastingTextColor(int backgroundColor);
   void saveColor(int currentlySelectedColor, String currentlySelectedColorHex);
   List<KoloroObj> getAllKoloroObjects();
+  void removeAllKoloroObjects();
   void saveNote(KoloroObj koloroObj, String inputValue);
   void removeStoredScreenShot();
 }

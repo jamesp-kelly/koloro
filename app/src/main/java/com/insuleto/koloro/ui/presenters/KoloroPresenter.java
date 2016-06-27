@@ -14,4 +14,5 @@ public interface KoloroPresenter {
   int getContrastingTextColor(int backgroundColor);
   void saveNote(KoloroObj koloroObj, String inputValue);
   boolean realmActive();
+  void removeAllKoloroObjects();
 }

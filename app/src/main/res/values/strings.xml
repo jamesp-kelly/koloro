@@ -57,6 +57,10 @@ Pellentesque malesuada rutrum imperdiet. Suspendisse efficitur quam consequat le
   <string name="tooltip_quick_launch">This is explaing quick launch preference</string>
   <string name="tooltip_enable_zoom">This is explaing zoom preference</string>
   <string name="tooltip_retain_screenshots">If active, all screenshots taken will be saved to your device gallery</string>
+  <string name="saved_colors">SAVED COLORS</string>
+  <string name="menu_item_preferences">Preferences</string>
+  <string name="menu_item_share">Share saved colors</string>
+  <string name="menu_item_clear">Clear saved colors</string>
 
   <string-array name="capture_button_position_array">
     <item>Top right</item>

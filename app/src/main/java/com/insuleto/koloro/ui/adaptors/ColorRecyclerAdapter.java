@@ -1,10 +1,12 @@
 package com.insuleto.koloro.ui.adaptors;
 
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import butterknife.BindView;
@@ -32,7 +34,7 @@ public class ColorRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     View view;
     if (viewType == TYPE_HEADER) {
       view = LayoutInflater.from(parent.getContext())
-          .inflate(R.layout.color_recycler_item_vertical, parent, false);
+          .inflate(R.layout.color_recycler_item_header, parent, false);
       return new ColorHeaderHolder(view);
     } else {
       view = LayoutInflater.from(parent.getContext())
@@ -41,10 +43,11 @@ public class ColorRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
   }
 
+  @SuppressWarnings("ConstantConditions")
   @Override public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
     if (position != HEADER_POSITION) {
       ColorViewHolder colorHolder = (ColorViewHolder) holder;
-      KoloroObj koloroObj = koloroObjs.get(position);
+      KoloroObj koloroObj = koloroObjs.get(position - 1);
       colorHolder.colorItemLayout.setBackgroundColor(koloroObj.getColorInt());
       if (showHex) {
         colorHolder.colorItemText.setText(koloroObj.getHexString());
@@ -64,11 +67,37 @@ public class ColorRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
       colorHolder.noteButton.setOnClickListener(v -> listener.noteButtonClicked(koloroObj));
     } else {
 
+      ColorHeaderHolder colorHeaderHolder = (ColorHeaderHolder) holder;
+      PopupMenu popupMenu = new PopupMenu(colorHeaderHolder.savedColorsOverflow.getContext(),
+          colorHeaderHolder.savedColorsOverflow);
+      popupMenu.inflate(R.menu.drawer_menu);
+
+      colorHeaderHolder.savedColorsOverflow.setOnClickListener(v -> {
+        popupMenu.show();
+      });
+
+      popupMenu.setOnMenuItemClickListener(item -> {
+        switch (item.getItemId()) {
+          case R.id.menu_item_preferences: {
+            listener.preferencesMenuItemClicked();
+            break;
+          }
+          case R.id.menu_item_share: {
+            listener.shareMenuItemClicked();
+            break;
+          }
+          case R.id.menu_item_clear: {
+            listener.clearMenuItemClicked();
+            break;
+          }
+        }
+        return true;
+      });
     }
   }
 
   @Override public int getItemCount() {
-    return koloroObjs.size();
+    return koloroObjs.size() + 1;
   }
 
   @Override public int getItemViewType(int position) {
@@ -80,6 +109,7 @@ public class ColorRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
   }
 
   public static class ColorHeaderHolder extends RecyclerView.ViewHolder {
+    @BindView(R.id.saved_colors_overflow) ImageButton savedColorsOverflow;
 
     public ColorHeaderHolder(View itemView) {
       super(itemView);
@@ -88,7 +118,6 @@ public class ColorRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
   }
 
   public static class ColorViewHolder extends RecyclerView.ViewHolder {
-
     @BindView(R.id.color_item_frame) RelativeLayout colorItemLayout;
     @BindView(R.id.color_item_text) TextView colorItemText;
     @BindView(R.id.color_item_note) TextView colorItemNote;
@@ -106,5 +135,8 @@ public class ColorRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     void colorTextChanged(int backgroundColor, TextView... affectedViews);
     void noteButtonClicked(KoloroObj koloroObj);
     void copyButtonClicked(KoloroObj koloroObj);
+    void preferencesMenuItemClicked();
+    void shareMenuItemClicked();
+    void clearMenuItemClicked();
   }
 }

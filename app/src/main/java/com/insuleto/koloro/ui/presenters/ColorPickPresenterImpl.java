@@ -51,6 +51,11 @@ public class ColorPickPresenterImpl implements ColorPickerPresenter {
     return koloroObjects;
   }
 
+  @Override public void removeAllKoloroObjects() {
+    repository.deleteAllKoloroObjects();
+    view.updateColorList();
+  }
+
   @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
   @Override public void onImageProcessedEventReceived(ImageProcessedEvent event) {
     if (event.isSuccess() && event.getImageUri() != null) {

@@ -81,4 +81,10 @@ public class RealmKoloroRepository implements KoloroRepository {
     koloroObj.setNote(note);
     realm.commitTransaction();
   }
+
+  @Override public void deleteAllKoloroObjects() {
+    realm.beginTransaction();
+    realm.deleteAll();
+    realm.commitTransaction();
+  }
 }

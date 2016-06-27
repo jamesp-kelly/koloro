@@ -69,4 +69,9 @@ public class KoloroPresenterImpl implements KoloroPresenter {
   @Override public boolean realmActive() {
     return (koloroObjects != null && koloroObjects.isValid());
   }
+
+  @Override public void removeAllKoloroObjects() {
+    repository.deleteAllKoloroObjects();
+    view.updateColorList();
+  }
 }

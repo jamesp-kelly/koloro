@@ -170,6 +170,18 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView,
       }
       copyColorString(colorString);
     }
+
+    @Override public void preferencesMenuItemClicked() {
+      startActivity(new Intent(ColorPickActivity.this, KoloroActivity.class));
+    }
+
+    @Override public void shareMenuItemClicked() {
+      Toast.makeText(ColorPickActivity.this, "share", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override public void clearMenuItemClicked() {
+      presenter.removeAllKoloroObjects();
+    }
   };
 
   private void copyColorString(String colorString) {
