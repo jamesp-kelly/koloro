@@ -1,5 +1,6 @@
 package com.insuleto.koloro.ui.adaptors;
 
+import android.content.Context;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -13,10 +14,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.insuleto.koloro.R;
 import com.insuleto.koloro.model.KoloroObj;
+import com.insuleto.koloro.ui.KoloroActivity;
 import java.util.List;
 
 public class ColorRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+  private Context context;
   private List<KoloroObj> koloroObjs;
   private ColorItemListener listener;
   private boolean showHex;
@@ -24,7 +27,8 @@ public class ColorRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
   private static final int TYPE_HEADER = 0;
   private static final int TYPE_ITEM = 1;
 
-  public ColorRecyclerAdapter(List<KoloroObj> koloroObjs, ColorItemListener listener, boolean showHex) {
+  public ColorRecyclerAdapter(Context context, List<KoloroObj> koloroObjs, ColorItemListener listener, boolean showHex) {
+    this.context = context;
     this.koloroObjs = koloroObjs;
     this.listener = listener;
     this.showHex = showHex;
@@ -68,10 +72,11 @@ public class ColorRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     } else {
 
       ColorHeaderHolder colorHeaderHolder = (ColorHeaderHolder) holder;
-      PopupMenu popupMenu = new PopupMenu(colorHeaderHolder.savedColorsOverflow.getContext(),
-          colorHeaderHolder.savedColorsOverflow);
+      PopupMenu popupMenu = new PopupMenu(context, colorHeaderHolder.savedColorsOverflow);
       popupMenu.inflate(R.menu.drawer_menu);
-
+      if (context instanceof KoloroActivity) {
+        popupMenu.getMenu().findItem(R.id.menu_item_preferences).setVisible(false);
+      }
       colorHeaderHolder.savedColorsOverflow.setOnClickListener(v -> {
         popupMenu.show();
       });

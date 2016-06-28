@@ -120,7 +120,7 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView,
     zoomedImage.setKoloroListener(this);
 
     colorRecycler.setLayoutManager(new LinearLayoutManager(this));
-    colorRecyclerAdapter = new ColorRecyclerAdapter(presenter.getAllKoloroObjects(),
+    colorRecyclerAdapter = new ColorRecyclerAdapter(this, presenter.getAllKoloroObjects(),
         colorItemListener, colorFormatPreference == ColorFormat.HEX);
     colorRecycler.setAdapter(colorRecyclerAdapter);
 

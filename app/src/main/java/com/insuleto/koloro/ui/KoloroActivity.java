@@ -136,7 +136,7 @@ public class KoloroActivity extends BaseActivity implements KoloroView, Preferen
     }
 
     colorRecycler.setLayoutManager(new LinearLayoutManager(this));
-    colorRecyclerAdapter = new ColorRecyclerAdapter(presenter.getAllKoloroObjects(),
+    colorRecyclerAdapter = new ColorRecyclerAdapter(this, presenter.getAllKoloroObjects(),
         colorItemListener, (colorFormat == ColorFormat.HEX));
     colorRecycler.setAdapter(colorRecyclerAdapter);
   }
@@ -211,7 +211,6 @@ public class KoloroActivity extends BaseActivity implements KoloroView, Preferen
       billingHelper.disposeWhenFinished();
       billingHelper = null;
     }
-
   }
 
   //todo: move recycler to a fragment or custom view
@@ -276,7 +275,7 @@ public class KoloroActivity extends BaseActivity implements KoloroView, Preferen
 
   @Override public void intValueChanged(String preferenceKey, int newValue) {
     if (preferenceKey.equals(PreferencesModule.COLOR_FORMAT_KEY)) {
-      colorRecyclerAdapter = new ColorRecyclerAdapter(presenter.getAllKoloroObjects(),
+      colorRecyclerAdapter = new ColorRecyclerAdapter(this, presenter.getAllKoloroObjects(),
           colorItemListener, (newValue == ColorFormat.HEX));
       colorRecycler.setAdapter(colorRecyclerAdapter);
     }
