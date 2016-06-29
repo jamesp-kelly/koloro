@@ -24,6 +24,9 @@ public class PreferencesModule {
   public static final String ZOOM_ENABLED_KEY = "zoom_enabled";
   public static final boolean DEFAULT_ZOOM_ENABLED = true;
 
+  public static final String PREMIUM_ENABLED_KEY = "premium_enabled";
+  public static final boolean DEFAULT_PREMIUM_ENABLED = false;
+
   @Provides @Singleton
   SharedPreferences provideSharedPreferences(Application app) {
     return PreferenceManager.getDefaultSharedPreferences(app.getApplicationContext());
@@ -89,5 +92,17 @@ public class PreferencesModule {
   Boolean provideZoomEnabled(@Named(ZOOM_ENABLED_KEY) BooleanPreference booleanPreference) {
     return booleanPreference.get();
   }
+
+  @Provides @Singleton @Named(PREMIUM_ENABLED_KEY)
+  BooleanPreference providePremiumEnabledPreference(SharedPreferences preferences) {
+    return new BooleanPreference(preferences, PREMIUM_ENABLED_KEY, DEFAULT_PREMIUM_ENABLED);
+  }
+
+  @Provides @Named(PREMIUM_ENABLED_KEY)
+  Boolean providePremiumEnabled(@Named(PREMIUM_ENABLED_KEY) BooleanPreference booleanPreference) {
+    return booleanPreference.get();
+  }
+
+
 
 }

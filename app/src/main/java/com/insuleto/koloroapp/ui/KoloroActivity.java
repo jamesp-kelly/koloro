@@ -32,6 +32,7 @@ import com.insuleto.koloroapp.R;
 import com.insuleto.koloroapp.model.ColorFormat;
 import com.insuleto.koloroapp.model.InAppBilling;
 import com.insuleto.koloroapp.model.KoloroObj;
+import com.insuleto.koloroapp.preferences.BooleanPreference;
 import com.insuleto.koloroapp.preferences.PreferencesModule;
 import com.insuleto.koloroapp.service.KoloroService;
 import com.insuleto.koloroapp.ui.adaptors.ColorRecyclerAdapter;
@@ -64,6 +65,8 @@ public class KoloroActivity extends BaseActivity implements KoloroView, Preferen
   @Inject @Named(PreferencesModule.QUICK_LAUNCH_KEY) Boolean quickLaunchActive;
   @Inject @Named(PreferencesModule.COLOR_FORMAT_KEY) int colorFormat;
 
+  @Inject @Named(PreferencesModule.PREMIUM_ENABLED_KEY) BooleanPreference premiumEnabledPreference;
+
   @BindDimen(R.dimen.prefs_layout_margin_top) int prefsLayoutMarginTop;
   @BindView(R.id.drawer_layout) DrawerLayout drawerLayout;
   @BindView(R.id.prefs_layout) ViewGroup prefsLayout;
@@ -94,12 +97,11 @@ public class KoloroActivity extends BaseActivity implements KoloroView, Preferen
       setupSavedColorList();
       cameFromOverlay = false;
 
-
       billingHelper = new IabHelper(this, getPublicApplicationKey());
       billingHelper.enableDebugLogging(true);
 
       billingHelper.startSetup(result -> {
-        Log.d(TAG, "Billing setup finished");
+        Log.d(TAG, "onIabSetupFinished");
 
         if (billingHelper != null && result.isSuccess()) {
           billingBroadcastReceiver = new IabBroadcastReceiver(KoloroActivity.this);
@@ -113,8 +115,6 @@ public class KoloroActivity extends BaseActivity implements KoloroView, Preferen
         } else if (result.isFailure()) {
           Log.e(TAG, "Billing setup result failed: " + result);
         }
-
-        Log.d(TAG, "Problem setting up billing");
       });
 
       preferenceFragment = new PreferenceFragment();
@@ -181,6 +181,8 @@ public class KoloroActivity extends BaseActivity implements KoloroView, Preferen
       if (quickLaunchActive) {
         finish();
       }
+    } else if (requestCode == InAppBilling.PREMIUM_RC) {
+      billingHelper.handleActivityResult(InAppBilling.PREMIUM_RC, resultCode, data);
     }
 }
 
@@ -285,16 +287,17 @@ public class KoloroActivity extends BaseActivity implements KoloroView, Preferen
   }
 
   private String getPublicApplicationKey() {
-    return String.format("%s%s%s%s",
-        "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwCTe2rX85BpEVPANRG8i3crVC+OckrD9cxWnpPKGr7ZN33en5xKo6vL/lUMF2n3Woudy5swXJq0rsAKci",
-        "WwBX9YPNKn56mjlBpZrb7wc79jIgLATga4brxbFzfgcwZB7NLi8NhOC1uczO5uhlx02LcgdpBMCYtiU2SbVu643H1sAEanFHU/q/8k3uIcIaHsWUDACZ1LBubmPdP",
-        "sR1ED0M7OiUEe7GiT9jP9Gc4s9heTCNo6pdKE6Jkj514PRTwpBOy8NrcRtakgVl8mGC2TRtOSjeeM5wN6LXfahufyTJOfC/mm7R6UyWli/B+GQNeIS4B5iP0hWrLA",
-        "GMn2jYczFywIDAQAB");
+    //return String.format("%s%s%s%s",
+    //    "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwCTe2rX85BpEVPANRG8i3crVC+OckrD9cxWnpPKGr7ZN33en5xKo6vL/lUMF2n3Woudy5swXJq0rsAKci",
+    //    "WwBX9YPNKn56mjlBpZrb7wc79jIgLATga4brxbFzfgcwZB7NLi8NhOC1uczO5uhlx02LcgdpBMCYtiU2SbVu643H1sAEanFHU/q/8k3uIcIaHsWUDACZ1LBubmPdP",
+    //    "sR1ED0M7OiUEe7GiT9jP9Gc4s9heTCNo6pdKE6Jkj514PRTwpBOy8NrcRtakgVl8mGC2TRtOSjeeM5wN6LXfahufyTJOfC/mm7R6UyWli/B+GQNeIS4B5iP0hWrLA",
+    //    "GMn2jYczFywIDAQAB");
+
+    return "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwCTe2rX85BpEVPANRG8i3crVC+OckrD9cxWnpPKGr7ZN33en5xKo6vL/lUMF2n3Woudy5swXJq0rsAKciWwBX9YPNKn56mjlBpZrb7wc79jIgLATga4brxbFzfgcwZB7NLi8NhOC1uczO5uhlx02LcgdpBMCYtiU2SbVu643H1sAEanFHU/q/8k3uIcIaHsWUDACZ1LBubmPdPsR1ED0M7OiUEe7GiT9jP9Gc4s9heTCNo6pdKE6Jkj514PRTwpBOy8NrcRtakgVl8mGC2TRtOSjeeM5wN6LXfahufyTJOfC/mm7R6UyWli/B+GQNeIS4B5iP0hWrLAGMn2jYczFywIDAQAB";
   }
 
   @Override public void receivedBroadcast() {
-    Log.d(TAG, "Recieved broadcast. Checking inventory");
-
+    Log.d(TAG, "Received broadcast. Checking inventory");
     try {
       billingHelper.queryInventoryAsync(inventoryCheckFinishedListener);
     } catch (IabHelper.IabAsyncInProgressException e) {
@@ -309,15 +312,33 @@ public class KoloroActivity extends BaseActivity implements KoloroView, Preferen
 
         Purchase premiumPurchase = inv.getPurchase(InAppBilling.TEST_PURCHASED);
         isPremium = (premiumPurchase != null && verifyDeveloperPayload(premiumPurchase));
+        Log.i(TAG, "inventoryCheckFinishedListener isPremium = " + isPremium);
 
-        upgradeButton.setVisibility(isPremium ? View.GONE : View.VISIBLE);
-        preferenceFragment.updateBillingUI(isPremium);
+        if (isPremium != premiumEnabledPreference.get()) {
+          premiumEnabledPreference.set(isPremium);
+        }
+
+        //TODO: REMOVE TEST CONSUME CODE
+        //if (isPremium) { //consume purchase so can test again
+        //  try {
+        //    billingHelper.consumeAsync(premiumPurchase, new IabHelper.OnConsumeFinishedListener() {
+        //      @Override public void onConsumeFinished(Purchase purchase, IabResult result) {
+        //        Toast.makeText(KoloroActivity.this, "consumed test purchase", Toast.LENGTH_SHORT).show();
+        //        isPremium = false;
+        //      }
+        //    });
+        //  } catch (IabHelper.IabAsyncInProgressException e) {
+        //    e.printStackTrace();
+        //  }
+        //}
+        //TODO END TEST CODE
 
 
       } else if (result.isFailure()) {
         Log.e(TAG, "Inventory check failed: " + result);
       }
 
+      premiumEnabledPreference.set(isPremium);
       updateUiForPremium();
     }
   };
@@ -325,6 +346,7 @@ public class KoloroActivity extends BaseActivity implements KoloroView, Preferen
 
   IabHelper.OnIabPurchaseFinishedListener purchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
     @Override public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
+      Log.d(TAG, "onIabPurchaseFinished");
       if (billingHelper != null && result.isSuccess()) {
         if (purchase.getSku().equals(InAppBilling.TEST_PURCHASED)) {
           Toast.makeText(KoloroActivity.this, "You have upgraded to premium", Toast.LENGTH_SHORT).show();
@@ -332,7 +354,10 @@ public class KoloroActivity extends BaseActivity implements KoloroView, Preferen
         }
       } else if (result.isFailure()) {
         Log.e(TAG, "Error purchasing: " + result);
+        Toast.makeText(KoloroActivity.this, "Error purchasing", Toast.LENGTH_SHORT).show();
       }
+
+      premiumEnabledPreference.set(isPremium);
 
       updateUiForPremium();
     }

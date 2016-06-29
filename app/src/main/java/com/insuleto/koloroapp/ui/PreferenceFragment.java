@@ -16,7 +16,6 @@ import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import butterknife.OnItemSelected;
-import butterknife.OnTouch;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.insuleto.koloroapp.KoloroApplication;
 import com.insuleto.koloroapp.R;
@@ -34,9 +33,7 @@ import javax.inject.Named;
 public class PreferenceFragment extends Fragment {
 
   private static final String TAG = PreferenceFragment.class.getSimpleName();
-  private SimpleSpinnerAdapter captureButtonPositionAdapter, colorFormatAdapter;
-  private boolean isPremium = false;
-  Toast toast;
+  //private boolean isPremium = false;
 
   @Inject FirebaseAnalytics firebaseAnalytics;
   @Inject @Named(PreferencesModule.CAPTURE_BUTTON_POSITION_KEY)
@@ -52,11 +49,15 @@ public class PreferenceFragment extends Fragment {
   @Inject @Named(PreferencesModule.ZOOM_ENABLED_KEY)
   BooleanPreference zoomEnabledPreference;
 
+  @Inject @Named(PreferencesModule.PREMIUM_ENABLED_KEY) BooleanPreference premiumEnabledPref;
+
+
   @BindView(R.id.spinner_capture_button_position) Spinner captureButtonPositionSpinner;
   @BindView(R.id.switch_vibration) Switch vibrationSwitch;
   @BindView(R.id.switch_store_captures) Switch storeCapturesSwitch;
-  @BindView(R.id.switch_quick_launch) Switch quickLaunchSwitch;
   @BindView(R.id.spinner_color_format) Spinner colorFormatSpinner;
+
+  @BindView(R.id.switch_quick_launch) Switch quickLaunchSwitch;
   @BindView(R.id.quick_launch_label) TextView quickLaunchText;
   @BindView(R.id.switch_zoom_enabled) Switch zoomEnabledSwitch;
   @BindView(R.id.zoom_enabled_label) TextView zoomEnabledText;
@@ -76,18 +77,18 @@ public class PreferenceFragment extends Fragment {
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     ButterKnife.bind(this, view);
 
-    captureButtonPositionAdapter = new SimpleSpinnerAdapter(getActivity(), buttonPositionValues());
+    SimpleSpinnerAdapter captureButtonPositionAdapter = new SimpleSpinnerAdapter(getActivity(), buttonPositionValues());
     captureButtonPositionSpinner.setAdapter(captureButtonPositionAdapter);
     captureButtonPositionSpinner.setSelection(captureButtonPositionPreference.get());
     vibrationSwitch.setChecked(vibrationPreference.get());
     storeCapturesSwitch.setChecked(galleryPreference.get());
-    quickLaunchSwitch.setChecked(quickLaunchPreference.get());
-    colorFormatAdapter = new SimpleSpinnerAdapter(getActivity(), colorFormatValues());
+
+    SimpleSpinnerAdapter colorFormatAdapter = new SimpleSpinnerAdapter(getActivity(), colorFormatValues());
     colorFormatSpinner.setAdapter(colorFormatAdapter);
     colorFormatSpinner.setSelection(colorFormatPreference.get());
-    zoomEnabledSwitch.setChecked(zoomEnabledPreference.get());
 
-    toast = Toast.makeText(getActivity(), "TEsting", Toast.LENGTH_SHORT);
+    zoomEnabledSwitch.setChecked(premiumEnabledPref.get() && zoomEnabledPreference.get());
+    quickLaunchSwitch.setChecked(premiumEnabledPref.get() && quickLaunchPreference.get());
   }
 
   private List<String> buttonPositionValues() {
@@ -138,7 +139,6 @@ public class PreferenceFragment extends Fragment {
 
   @Override public void onPause() {
     super.onPause();
-    toast.cancel();
   }
 
   @OnCheckedChanged(R.id.switch_vibration)
@@ -176,36 +176,50 @@ public class PreferenceFragment extends Fragment {
   }
 
   @OnCheckedChanged(R.id.switch_quick_launch)
-  void onQuickLaunchChanged() {
-    boolean newValue = quickLaunchSwitch.isChecked();
+  void onQuickLaunchChanged(boolean checked) {
+    if (!premiumEnabledPref.get()) {
+      if (checked) {
+        quickLaunchSwitch.setChecked(false);
+        Toast.makeText(getActivity(), "Quick Launch is a Premium feature", Toast.LENGTH_SHORT).show();
+      }
+      return;
+    }
+
     boolean oldValue = quickLaunchPreference.get();
 
-    if (newValue != oldValue) {
-      Log.d(TAG, String.format("Updating 'quick launch' preference to %s", newValue));
+    if (checked != oldValue) {
+      Log.d(TAG, String.format("Updating 'quick launch' preference to %s", checked));
       Bundle bundle = new Bundle();
       bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "Quick Launch");
-      bundle.putString(FirebaseAnalytics.Param.ITEM_ID, String.valueOf(newValue));
+      bundle.putString(FirebaseAnalytics.Param.ITEM_ID, String.valueOf(checked));
       firebaseAnalytics.logEvent(FirebaseEvents.PREFERENCE_CHANGED, bundle);
-      quickLaunchPreference.set(newValue);
+      quickLaunchPreference.set(checked);
 
-      ((PreferenceChangeListener)getActivity()).boolValueChanged(PreferencesModule.QUICK_LAUNCH_KEY, newValue);
+      ((PreferenceChangeListener)getActivity()).boolValueChanged(PreferencesModule.QUICK_LAUNCH_KEY, checked);
     }
   }
 
   @OnCheckedChanged(R.id.switch_zoom_enabled)
-  void zoomEnabledChanged() {
-    boolean newValue = zoomEnabledSwitch.isChecked();
+  void zoomEnabledChanged(boolean checked) {
+    if (!premiumEnabledPref.get()) {
+      if (checked) {
+        zoomEnabledSwitch.setChecked(false);
+        Toast.makeText(getActivity(), "Zoom is aPremium feature", Toast.LENGTH_SHORT).show();
+      }
+      return;
+    }
+
     boolean oldValue = zoomEnabledPreference.get();
 
-    if (newValue != oldValue) {
-      Log.d(TAG, String.format("Updating 'zoom enabled' preference to %s", newValue));
+    if (checked != oldValue) {
+      Log.d(TAG, String.format("Updating 'zoom enabled' preference to %s", checked));
       Bundle bundle = new Bundle();
       bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "Zoom Enabled");
-      bundle.putString(FirebaseAnalytics.Param.ITEM_ID, String.valueOf(newValue));
+      bundle.putString(FirebaseAnalytics.Param.ITEM_ID, String.valueOf(checked));
       firebaseAnalytics.logEvent(FirebaseEvents.PREFERENCE_CHANGED, bundle);
-      zoomEnabledPreference.set(newValue);
+      zoomEnabledPreference.set(checked);
 
-      ((PreferenceChangeListener)getActivity()).boolValueChanged(PreferencesModule.ZOOM_ENABLED_KEY, newValue);
+      ((PreferenceChangeListener)getActivity()).boolValueChanged(PreferencesModule.ZOOM_ENABLED_KEY, checked);
     }
   }
 
@@ -229,15 +243,6 @@ public class PreferenceFragment extends Fragment {
     displayTooltip(v, R.string.tooltip_retain_screenshots);
   }
 
-  @OnTouch(R.id.quick_launch_overlay)
-  boolean onQuickLaunchTouched(){
-    if (!isPremium) {
-      toast.show();
-      return true;
-    } else {
-      return false;
-    }
-  }
 
   private void displayTooltip(View view, int messageRes) {
     Tooltip.make(getActivity(),
@@ -261,27 +266,30 @@ public class PreferenceFragment extends Fragment {
   }
 
   public void updateBillingUI(boolean premiumEnabled) {
-    isPremium = premiumEnabled;
-    if (!isPremium) {
-
-      disablePreference(PreferencesModule.QUICK_LAUNCH_KEY);
-      //quickLaunchSwitch.setChecked(isPremium);
-      //quickLaunchSwitch.setEnabled(isPremium);
-
-      //none of thise works. set disabled and intercept the touch if premium = false. change drawble manually to look disabled
-
-      //enable overlays
-    }
+    //isPremium = premiumEnabled;
+    updatePreference(PreferencesModule.QUICK_LAUNCH_KEY);
+    updatePreference(PreferencesModule.ZOOM_ENABLED_KEY);
   }
 
-  private void disablePreference(String preferenceKey) {
-    if (preferenceKey.equals(PreferencesModule.QUICK_LAUNCH_KEY)) {
-      quickLaunchSwitch.setChecked(false);
-      //quickLaunchText.setTextColor(R.color.colorAccent);
-      quickLaunchText.setEnabled(false);
-    } else {
-      zoomEnabledSwitch.setChecked(false);
-      zoomEnabledText.setEnabled(false);
+  private void updatePreference(String preferenceKey) {
+    boolean premiumEnabled = premiumEnabledPref.get();
+    Log.i("KoloroActivity", "updatePreference: premiumEnabled: " + premiumEnabled);
+
+
+    switch (preferenceKey) {
+      case PreferencesModule.QUICK_LAUNCH_KEY: {
+        quickLaunchSwitch.setChecked(premiumEnabled && quickLaunchPreference.get());
+        quickLaunchText.setTextColor(getResources().getColor(
+            premiumEnabled ? android.R.color.black : R.color.text_disabled));
+        break;
+      }
+      case PreferencesModule.ZOOM_ENABLED_KEY: {
+        zoomEnabledSwitch.setChecked(premiumEnabled && zoomEnabledPreference.get());
+        Log.i("KoloroActivity", "zoom enabled setting to - " + (premiumEnabled && zoomEnabledPreference.get()));
+        zoomEnabledText.setTextColor(getResources().getColor(
+            premiumEnabled ? android.R.color.black :R.color.text_disabled));
+        break;
+      }
     }
   }
 }
