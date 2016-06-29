@@ -36,6 +36,37 @@
           "status": 2
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1006165766311:android:2e4f36402a85ddb2",
+        "android_client_info": {
+          "package_name": "com.insuleto.koloroapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1006165766311-bla5ub7dhe307kqc9o77sf0pnrbet82b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAoOX5rN0DQb7Zeg5avI-h-cni5J1OkS0w"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
     }
   ],
   "configuration_version": "1"

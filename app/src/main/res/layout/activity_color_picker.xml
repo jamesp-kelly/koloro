@@ -11,20 +11,20 @@
       android:layout_width="match_parent"
       android:layout_height="match_parent">
 
-    <com.insuleto.koloro.ui.views.ZoomRect
+    <com.insuleto.koloroapp.ui.views.ZoomRect
         android:id="@+id/zoom_rect"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
         />
 
-    <com.insuleto.koloro.ui.layouts.KoloroImageView
+    <com.insuleto.koloroapp.ui.layouts.KoloroImageView
         android:id="@+id/screen_capture_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />
 
-    <com.insuleto.koloro.ui.layouts.KoloroImageView
+    <com.insuleto.koloroapp.ui.layouts.KoloroImageView
         android:id="@+id/zoomed_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
