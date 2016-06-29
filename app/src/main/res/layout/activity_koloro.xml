@@ -90,18 +90,18 @@
               android:background="@android:color/white"
               />
 
-
           <Button
               android:id="@+id/upgrade_button"
               android:layout_width="match_parent"
               android:layout_height="40dp"
               android:layout_marginTop="10dp"
+              android:layout_marginBottom="10dp"
               android:text="@string/upgrade_button_text"
               android:background="@android:color/white"
               android:gravity="center"
               android:drawableLeft="@drawable/ic_shop_black_24dp"
               android:padding="12dp"
-              /> <!-- no shadow? -->
+              />
         </LinearLayout>
       </ScrollView>
     </RelativeLayout>

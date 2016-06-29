@@ -319,18 +319,18 @@ public class KoloroActivity extends BaseActivity implements KoloroView, Preferen
         }
 
         //TODO: REMOVE TEST CONSUME CODE
-        //if (isPremium) { //consume purchase so can test again
-        //  try {
-        //    billingHelper.consumeAsync(premiumPurchase, new IabHelper.OnConsumeFinishedListener() {
-        //      @Override public void onConsumeFinished(Purchase purchase, IabResult result) {
-        //        Toast.makeText(KoloroActivity.this, "consumed test purchase", Toast.LENGTH_SHORT).show();
-        //        isPremium = false;
-        //      }
-        //    });
-        //  } catch (IabHelper.IabAsyncInProgressException e) {
-        //    e.printStackTrace();
-        //  }
-        //}
+        if (isPremium) { //consume purchase so can test again
+          try {
+            billingHelper.consumeAsync(premiumPurchase, new IabHelper.OnConsumeFinishedListener() {
+              @Override public void onConsumeFinished(Purchase purchase, IabResult result) {
+                Toast.makeText(KoloroActivity.this, "consumed test purchase", Toast.LENGTH_SHORT).show();
+                isPremium = false;
+              }
+            });
+          } catch (IabHelper.IabAsyncInProgressException e) {
+            e.printStackTrace();
+          }
+        }
         //TODO END TEST CODE
 
 
