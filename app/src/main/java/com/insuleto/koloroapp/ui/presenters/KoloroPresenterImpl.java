@@ -26,7 +26,7 @@ public class KoloroPresenterImpl implements KoloroPresenter {
   }
 
   @Override public void setupRealm() {
-    repository.setupConnection();
+    //todo delete
   }
 
   @Override public void bindView(KoloroView view) {

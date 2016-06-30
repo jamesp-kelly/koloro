@@ -64,7 +64,6 @@ public class KoloroActivity extends BaseActivity implements KoloroView, Preferen
 
   @Inject @Named(PreferencesModule.QUICK_LAUNCH_KEY) Boolean quickLaunchActive;
   @Inject @Named(PreferencesModule.COLOR_FORMAT_KEY) int colorFormat;
-
   @Inject @Named(PreferencesModule.PREMIUM_ENABLED_KEY) BooleanPreference premiumEnabledPreference;
 
   @BindDimen(R.dimen.prefs_layout_margin_top) int prefsLayoutMarginTop;

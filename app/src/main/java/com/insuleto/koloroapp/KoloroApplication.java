@@ -2,10 +2,14 @@ package com.insuleto.koloroapp;
 
 import android.app.Application;
 import android.content.Context;
+import com.insuleto.koloroapp.repository.KoloroRepository;
+import javax.inject.Inject;
 
 public class KoloroApplication extends Application {
 
   private ApplicationComponent applicationComponent;
+
+  @Inject KoloroRepository koloroRepository;
 
   public static KoloroApplication get(Context context) {
     return (KoloroApplication) context.getApplicationContext();
@@ -16,6 +20,8 @@ public class KoloroApplication extends Application {
 
     applicationComponent = prepareApplicationComponent().build();
     applicationComponent.inject(this);
+
+    koloroRepository.setupConnection(this);
   }
 
   protected com.insuleto.koloroapp.DaggerApplicationComponent.Builder prepareApplicationComponent() {

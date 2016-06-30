@@ -1,8 +1,60 @@
 package com.insuleto.koloroapp.model;
 
+import io.realm.Realm;
 import io.realm.RealmObject;
 
 public class KoloroObj extends RealmObject {
+
+  public static class Builder {
+    private long id;
+    private String hexString;
+    private int colorInt;
+    private long savedTimeStamp;
+    private String note;
+    private int red;
+    private int green;
+    private int blue;
+
+    private KoloroObj koloroObj;
+    private Realm realm;
+
+    public Builder(long id) {
+      this.id = id;
+    }
+
+    public KoloroObj build() {
+      realm = Realm.getDefaultInstance();
+      koloroObj = realm.createObject(KoloroObj.class);
+      return koloroObj.constructFromBuilder(this);
+    }
+
+    public Builder hexString(String hexString) {
+      this.hexString = hexString;
+      return this;
+    }
+
+    public Builder colorInt(int colorInt) {
+      this.colorInt = colorInt;
+      return this;
+    }
+
+    public Builder savedTimeStamp(long savedTimeStamp) {
+      this.savedTimeStamp = savedTimeStamp;
+      return this;
+    }
+
+    public Builder note(String note) {
+      this.note = note;
+      return this;
+    }
+
+    public Builder colorValues(int red, int green, int blue) {
+      this.red = red;
+      this.green = green;
+      this.blue = blue;
+      return this;
+    }
+  }
 
   public static final String RGB_FORMAT = "R:%s G:%s B:%s";
 
@@ -18,7 +70,7 @@ public class KoloroObj extends RealmObject {
   private long savedTimeStamp;
   public static final String savedTimeStampField = "savedTimeStamp";
 
-  private String note;
+  private String note; //non final. user can set note
   public static final String noteField = "noteField";
 
   private int red;
@@ -30,12 +82,21 @@ public class KoloroObj extends RealmObject {
   private int green;
   public static final String greenField = "greenField";
 
-  public long getId() {
-    return id;
+  public KoloroObj constructFromBuilder(Builder builder) {
+    this.id = builder.id;
+    this.hexString = builder.hexString;
+    this.colorInt = builder.colorInt;
+    this.savedTimeStamp = builder.savedTimeStamp;
+    this.note = builder.note;
+    this.red = builder.red;
+    this.green = builder.green;
+    this.blue = builder.blue;
+
+    return this;
   }
 
-  public void setId(long id) {
-    this.id = id;
+  public long getId() {
+    return id;
   }
 
   public String getHexString() {
@@ -46,24 +107,12 @@ public class KoloroObj extends RealmObject {
     return String.format(RGB_FORMAT, this.red, this.green, this.blue);
   }
 
-  public void setHexString(String hexString) {
-    this.hexString = hexString;
-  }
-
   public int getColorInt() {
     return colorInt;
   }
 
-  public void setColorInt(int colorInt) {
-    this.colorInt = colorInt;
-  }
-
   public long getSavedTimeStamp() {
     return savedTimeStamp;
-  }
-
-  public void setSavedTimeStamp(long savedTimeStamp) {
-    this.savedTimeStamp = savedTimeStamp;
   }
 
   public String getNote() {
@@ -74,27 +123,16 @@ public class KoloroObj extends RealmObject {
     this.note = note;
   }
 
-  public int getBlue() {
-    return blue;
-  }
-
-  public void setBlue(int blue) {
-    this.blue = blue;
+  public int getRed() {
+    return red;
   }
 
   public int getGreen() {
     return green;
   }
 
-  public void setGreen(int green) {
-    this.green = green;
+  public int getBlue() {
+    return blue;
   }
 
-  public int getRed() {
-    return red;
-  }
-
-  public void setRed(int red) {
-    this.red = red;
-  }
 }

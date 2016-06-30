@@ -68,7 +68,7 @@ public class ApplicationModule {
 
   @Provides @Singleton
   public KoloroRepository provideKoloroRepository() {
-    return new RealmKoloroRepository(application.getApplicationContext());
+    return new RealmKoloroRepository();
   }
 
   @Provides @Singleton

@@ -42,7 +42,8 @@ public class ColorPickPresenterImpl implements ColorPickerPresenter {
   }
 
   @Override public void setupRealm() {
-    repository.setupConnection();
+    //todo delete
+    //repository.setupConnection();
   }
 
   @Override public List<KoloroObj> getAllKoloroObjects() {
