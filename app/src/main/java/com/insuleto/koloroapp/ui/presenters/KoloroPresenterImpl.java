@@ -39,7 +39,11 @@ public class KoloroPresenterImpl implements KoloroPresenter {
 
   @Override public List<KoloroObj> getAllKoloroObjects() {
     koloroObjects = repository.getAllKoloroObjs();
-    koloroObjects.addChangeListener(() -> view.updateColorList());
+    koloroObjects.addChangeListener(() -> {
+      if (view != null) {
+        view.updateColorList();
+      }
+    });
     return koloroObjects;
   }
 

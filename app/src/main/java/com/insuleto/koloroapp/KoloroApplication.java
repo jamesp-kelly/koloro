@@ -18,11 +18,19 @@ public class KoloroApplication extends Application {
   @Override public void onCreate() {
     super.onCreate();
 
+    //LeakCanary.install(this);
+
     applicationComponent = prepareApplicationComponent().build();
     applicationComponent.inject(this);
 
     koloroRepository.setupConnection(this);
   }
+
+  //public void mustDie(Object object) {
+  //  if (refWatcher != null) {
+  //    refWatcher.watch(object);
+  //  }
+  //}
 
   protected com.insuleto.koloroapp.DaggerApplicationComponent.Builder prepareApplicationComponent() {
     return com.insuleto.koloroapp.DaggerApplicationComponent.builder()

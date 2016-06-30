@@ -3,7 +3,7 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="?android:attr/actionBarSize"
-    android:background="@color/colorPrimary">
+    android:background="@drawable/color_recycler_header_background">
 
   <TextView
       android:id="@+id/saved_colors_header"
