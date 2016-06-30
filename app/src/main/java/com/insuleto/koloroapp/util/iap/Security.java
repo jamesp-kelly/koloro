@@ -54,16 +54,16 @@ public class Security {
      */
     public static boolean verifyPurchase(String base64PublicKey, String signedData, String signature) {
 
-      return true; //todo CHANGE BACK!!!!!!
+      //return true; //todo CHANGE BACK!!!!!!
 
-        //if (TextUtils.isEmpty(signedData) || TextUtils.isEmpty(base64PublicKey) ||
-        //        TextUtils.isEmpty(signature)) {
-        //    Log.e(TAG, "Purchase verification failed: missing data.");
-        //    return false;
-        //}
-        //
-        //PublicKey key = Security.generatePublicKey(base64PublicKey);
-        //return Security.verify(key, signedData, signature);
+        if (TextUtils.isEmpty(signedData) || TextUtils.isEmpty(base64PublicKey) ||
+                TextUtils.isEmpty(signature)) {
+            Log.e(TAG, "Purchase verification failed: missing data.");
+            return false;
+        }
+
+        PublicKey key = Security.generatePublicKey(base64PublicKey);
+        return Security.verify(key, signedData, signature);
     }
 
     /**

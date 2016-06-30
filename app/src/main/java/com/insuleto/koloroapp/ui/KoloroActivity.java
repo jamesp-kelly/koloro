@@ -155,7 +155,7 @@ public class KoloroActivity extends BaseActivity implements KoloroView, Preferen
   @OnClick(R.id.upgrade_button)
   void onUpgradeClicked() {
     try {
-      billingHelper.launchPurchaseFlow(this, InAppBilling.TEST_PURCHASED, InAppBilling.PREMIUM_RC,
+      billingHelper.launchPurchaseFlow(this, InAppBilling.SKU_PREMIUM, InAppBilling.PREMIUM_RC,
           purchaseFinishedListener);
     } catch (IabHelper.IabAsyncInProgressException e) {
       Log.e(TAG, "Error launching purchase flow.Another async operation is progress.");
@@ -309,7 +309,7 @@ public class KoloroActivity extends BaseActivity implements KoloroView, Preferen
       if (billingHelper != null && result.isSuccess()) {
         Log.d(TAG, "Inventory check successful");
 
-        Purchase premiumPurchase = inv.getPurchase(InAppBilling.TEST_PURCHASED);
+        Purchase premiumPurchase = inv.getPurchase(InAppBilling.SKU_PREMIUM);
         isPremium = (premiumPurchase != null && verifyDeveloperPayload(premiumPurchase));
         Log.i(TAG, "inventoryCheckFinishedListener isPremium = " + isPremium);
 
@@ -318,18 +318,18 @@ public class KoloroActivity extends BaseActivity implements KoloroView, Preferen
         }
 
         //TODO: REMOVE TEST CONSUME CODE
-        if (isPremium) { //consume purchase so can test again
-          try {
-            billingHelper.consumeAsync(premiumPurchase, new IabHelper.OnConsumeFinishedListener() {
-              @Override public void onConsumeFinished(Purchase purchase, IabResult result) {
-                Toast.makeText(KoloroActivity.this, "consumed test purchase", Toast.LENGTH_SHORT).show();
-                isPremium = false;
-              }
-            });
-          } catch (IabHelper.IabAsyncInProgressException e) {
-            e.printStackTrace();
-          }
-        }
+        //if (isPremium) { //consume purchase so can test again
+        //  try {
+        //    billingHelper.consumeAsync(premiumPurchase, new IabHelper.OnConsumeFinishedListener() {
+        //      @Override public void onConsumeFinished(Purchase purchase, IabResult result) {
+        //        Toast.makeText(KoloroActivity.this, "consumed test purchase", Toast.LENGTH_SHORT).show();
+        //        isPremium = false;
+        //      }
+        //    });
+        //  } catch (IabHelper.IabAsyncInProgressException e) {
+        //    e.printStackTrace();
+        //  }
+        //}
         //TODO END TEST CODE
 
 
@@ -347,7 +347,7 @@ public class KoloroActivity extends BaseActivity implements KoloroView, Preferen
     @Override public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
       Log.d(TAG, "onIabPurchaseFinished");
       if (billingHelper != null && result.isSuccess()) {
-        if (purchase.getSku().equals(InAppBilling.TEST_PURCHASED)) {
+        if (purchase.getSku().equals(InAppBilling.SKU_PREMIUM)) {
           Toast.makeText(KoloroActivity.this, "You have upgraded to premium", Toast.LENGTH_SHORT).show();
           isPremium = true;
         }
