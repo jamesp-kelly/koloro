@@ -14,14 +14,6 @@ public class RealmKoloroRepository implements KoloroRepository {
   private static final String TAG = RealmKoloroRepository.class.getSimpleName();
   private static final int MAX_SIZE = 50;
 
-  //private Context context;
-  //private Realm realm;
-  //private RealmConfiguration realmConfiguration;
-
-  //public RealmKoloroRepository(Context context) {
-  //  this.context = context;
-  //}
-
   @Override public void setupConnection(Context context) {
     RealmConfiguration realmConfiguration = new RealmConfiguration.Builder(context).build();
     Realm.setDefaultConfiguration(realmConfiguration);
@@ -52,7 +44,7 @@ public class RealmKoloroRepository implements KoloroRepository {
     int key;
     try {
       key = realm.where(KoloroObj.class).max(KoloroObj.idField).intValue() + 1;
-    } catch (ArrayIndexOutOfBoundsException ex) {
+    } catch (Exception ex) {
       key = 0;
     }
 

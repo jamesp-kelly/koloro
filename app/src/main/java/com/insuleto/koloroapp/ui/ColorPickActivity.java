@@ -277,11 +277,6 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView,
     }
   }
 
-  @Override protected void onResume() {
-    super.onResume();
-    screenCaptureImage.setImageDrawable(null);
-  }
-
   @Override protected void onStart() {
     super.onStart();
     presenter.onStart();
@@ -289,15 +284,14 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView,
 
   @Override protected void onStop() {
     presenter.onStop();
-
-    if (!galleryPreference.get()) {
-      presenter.removeStoredScreenShot();
-    }
-
     super.onStop();
   }
 
   @Override protected void onDestroy() {
+    if (!galleryPreference.get()) {
+      presenter.removeStoredScreenShot();
+    }
+
     presenter.unbindView(this);
     super.onDestroy();
   }

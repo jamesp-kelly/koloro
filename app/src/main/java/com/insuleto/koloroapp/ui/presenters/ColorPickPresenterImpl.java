@@ -67,6 +67,8 @@ public class ColorPickPresenterImpl implements ColorPickerPresenter {
       event.getCaptureToast().cancel();
       view.displayCaptureImage(event.getImageUri());
     }
+
+    EventBus.getDefault().removeStickyEvent(event);
   }
 
   @Override public String generateHexColor(int color) {
