@@ -1,11 +1,9 @@
 package com.insuleto.koloroapp.ui;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -13,7 +11,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.util.Log;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
@@ -30,31 +27,24 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.insuleto.koloroapp.KoloroApplication;
 import com.insuleto.koloroapp.R;
 import com.insuleto.koloroapp.model.ColorFormat;
-import com.insuleto.koloroapp.model.InAppBilling;
 import com.insuleto.koloroapp.model.KoloroObj;
-import com.insuleto.koloroapp.preferences.BooleanPreference;
 import com.insuleto.koloroapp.preferences.PreferencesModule;
 import com.insuleto.koloroapp.service.KoloroService;
 import com.insuleto.koloroapp.ui.adaptors.ColorRecyclerAdapter;
 import com.insuleto.koloroapp.ui.presenters.KoloroPresenter;
 import com.insuleto.koloroapp.ui.views.KoloroView;
 import com.insuleto.koloroapp.util.FirebaseEvents;
-import com.insuleto.koloroapp.util.iap.IabBroadcastReceiver;
-import com.insuleto.koloroapp.util.iap.IabHelper;
-import com.insuleto.koloroapp.util.iap.IabResult;
-import com.insuleto.koloroapp.util.iap.Inventory;
-import com.insuleto.koloroapp.util.iap.Purchase;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-public class KoloroActivity extends BaseActivity implements KoloroView, PreferenceFragment.PreferenceChangeListener,
-    IabBroadcastReceiver.IabBroadcastListener {
+public class KoloroActivity extends BaseActivity implements KoloroView, PreferenceFragment.PreferenceChangeListener
+{
 
   private ColorRecyclerAdapter colorRecyclerAdapter;
   private boolean cameFromOverlay = false;
-  private boolean isPremium = false;
-  private IabHelper billingHelper;
-  private BroadcastReceiver billingBroadcastReceiver;
+  //private boolean isPremium = false;
+  //private IabHelper billingHelper;
+  //private BroadcastReceiver billingBroadcastReceiver;
   private PreferenceFragment preferenceFragment;
 
   @Inject MediaProjectionManager mediaProjectionManager;
@@ -64,7 +54,7 @@ public class KoloroActivity extends BaseActivity implements KoloroView, Preferen
 
   @Inject @Named(PreferencesModule.QUICK_LAUNCH_KEY) Boolean quickLaunchActive;
   @Inject @Named(PreferencesModule.COLOR_FORMAT_KEY) int colorFormat;
-  @Inject @Named(PreferencesModule.PREMIUM_ENABLED_KEY) BooleanPreference premiumEnabledPreference;
+  //@Inject @Named(PreferencesModule.PREMIUM_ENABLED_KEY) BooleanPreference premiumEnabledPreference;
 
   @BindDimen(R.dimen.prefs_layout_margin_top) int prefsLayoutMarginTop;
   @BindView(R.id.drawer_layout) DrawerLayout drawerLayout;
@@ -72,7 +62,7 @@ public class KoloroActivity extends BaseActivity implements KoloroView, Preferen
   @BindView(R.id.start_capture) Button startCaptureButton;
   @BindView(R.id.adView) AdView adView;
   @BindView(R.id.color_list_recycler) RecyclerView colorRecycler;
-  @BindView(R.id.upgrade_button) Button upgradeButton;
+  //@BindView(R.id.upgrade_button) Button upgradeButton;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
 
@@ -96,25 +86,25 @@ public class KoloroActivity extends BaseActivity implements KoloroView, Preferen
       setupSavedColorList();
       cameFromOverlay = false;
 
-      billingHelper = new IabHelper(this, getPublicApplicationKey());
-      billingHelper.enableDebugLogging(true);
-
-      billingHelper.startSetup(result -> {
-        Log.d(TAG, "onIabSetupFinished");
-
-        if (billingHelper != null && result.isSuccess()) {
-          billingBroadcastReceiver = new IabBroadcastReceiver(KoloroActivity.this);
-          registerReceiver(billingBroadcastReceiver, new IntentFilter(IabBroadcastReceiver.ACTION));
-
-          try {
-            billingHelper.queryInventoryAsync(inventoryCheckFinishedListener);
-          } catch (IabHelper.IabAsyncInProgressException e) {
-            Log.e(TAG, "Error checking inventory. Another async operation is progress");
-          }
-        } else if (result.isFailure()) {
-          Log.e(TAG, "Billing setup result failed: " + result);
-        }
-      });
+      //billingHelper = new IabHelper(this, getPublicApplicationKey());
+      //billingHelper.enableDebugLogging(true);
+      //
+      //billingHelper.startSetup(result -> {
+      //  Log.d(TAG, "onIabSetupFinished");
+      //
+      //  if (billingHelper != null && result.isSuccess()) {
+      //    billingBroadcastReceiver = new IabBroadcastReceiver(KoloroActivity.this);
+      //    registerReceiver(billingBroadcastReceiver, new IntentFilter(IabBroadcastReceiver.ACTION));
+      //
+      //    try {
+      //      billingHelper.queryInventoryAsync(inventoryCheckFinishedListener);
+      //    } catch (IabHelper.IabAsyncInProgressException e) {
+      //      Log.e(TAG, "Error checking inventory. Another async operation is progress");
+      //    }
+      //  } else if (result.isFailure()) {
+      //    Log.e(TAG, "Billing setup result failed: " + result);
+      //  }
+      //});
 
       preferenceFragment = new PreferenceFragment();
 
@@ -154,12 +144,12 @@ public class KoloroActivity extends BaseActivity implements KoloroView, Preferen
 
   @OnClick(R.id.upgrade_button)
   void onUpgradeClicked() {
-    try {
-      billingHelper.launchPurchaseFlow(this, InAppBilling.SKU_PREMIUM, InAppBilling.PREMIUM_RC,
-          purchaseFinishedListener);
-    } catch (IabHelper.IabAsyncInProgressException e) {
-      Log.e(TAG, "Error launching purchase flow.Another async operation is progress.");
-    }
+    //try {
+    //  billingHelper.launchPurchaseFlow(this, InAppBilling.SKU_PREMIUM, InAppBilling.PREMIUM_RC,
+    //      purchaseFinishedListener);
+    //} catch (IabHelper.IabAsyncInProgressException e) {
+    //  Log.e(TAG, "Error launching purchase flow.Another async operation is progress.");
+    //}
   }
 
   @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -180,9 +170,9 @@ public class KoloroActivity extends BaseActivity implements KoloroView, Preferen
       if (quickLaunchActive) {
         finish();
       }
-    } else if (requestCode == InAppBilling.PREMIUM_RC) {
-      billingHelper.handleActivityResult(InAppBilling.PREMIUM_RC, resultCode, data);
-    }
+    } //else if (requestCode == InAppBilling.PREMIUM_RC) {
+      //billingHelper.handleActivityResult(InAppBilling.PREMIUM_RC, resultCode, data);
+    //}
 }
 
   @Override protected void onStart() {
@@ -204,14 +194,14 @@ public class KoloroActivity extends BaseActivity implements KoloroView, Preferen
       presenter.unbindView(this);
     }
 
-    if (billingBroadcastReceiver != null) {
-      unregisterReceiver(billingBroadcastReceiver);
-    }
+    //if (billingBroadcastReceiver != null) {
+    //  unregisterReceiver(billingBroadcastReceiver);
+    //}
 
-    if (billingHelper != null) {
-      billingHelper.disposeWhenFinished();
-      billingHelper = null;
-    }
+    //if (billingHelper != null) {
+    //  billingHelper.disposeWhenFinished();
+    //  billingHelper = null;
+    //}
   }
 
   //todo: move recycler to a fragment or custom view
@@ -295,104 +285,104 @@ public class KoloroActivity extends BaseActivity implements KoloroView, Preferen
     return "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwCTe2rX85BpEVPANRG8i3crVC+OckrD9cxWnpPKGr7ZN33en5xKo6vL/lUMF2n3Woudy5swXJq0rsAKciWwBX9YPNKn56mjlBpZrb7wc79jIgLATga4brxbFzfgcwZB7NLi8NhOC1uczO5uhlx02LcgdpBMCYtiU2SbVu643H1sAEanFHU/q/8k3uIcIaHsWUDACZ1LBubmPdPsR1ED0M7OiUEe7GiT9jP9Gc4s9heTCNo6pdKE6Jkj514PRTwpBOy8NrcRtakgVl8mGC2TRtOSjeeM5wN6LXfahufyTJOfC/mm7R6UyWli/B+GQNeIS4B5iP0hWrLAGMn2jYczFywIDAQAB";
   }
 
-  @Override public void receivedBroadcast() {
-    Log.d(TAG, "Received broadcast. Checking inventory");
-    try {
-      billingHelper.queryInventoryAsync(inventoryCheckFinishedListener);
-    } catch (IabHelper.IabAsyncInProgressException e) {
-      Log.e(TAG, "Error checking inventory. Another async operation in progress");
-    }
-  }
+  //@Override public void receivedBroadcast() {
+  //  Log.d(TAG, "Received broadcast. Checking inventory");
+  //  try {
+  //    billingHelper.queryInventoryAsync(inventoryCheckFinishedListener);
+  //  } catch (IabHelper.IabAsyncInProgressException e) {
+  //    Log.e(TAG, "Error checking inventory. Another async operation in progress");
+  //  }
+  //}
 
-  IabHelper.QueryInventoryFinishedListener inventoryCheckFinishedListener = new IabHelper.QueryInventoryFinishedListener() {
-    @Override public void onQueryInventoryFinished(IabResult result, Inventory inv) {
-      if (billingHelper != null && result.isSuccess()) {
-        Log.d(TAG, "Inventory check successful");
+  //IabHelper.QueryInventoryFinishedListener inventoryCheckFinishedListener = new IabHelper.QueryInventoryFinishedListener() {
+  //  @Override public void onQueryInventoryFinished(IabResult result, Inventory inv) {
+  //    if (billingHelper != null && result.isSuccess()) {
+  //      Log.d(TAG, "Inventory check successful");
+  //
+  //      Purchase premiumPurchase = inv.getPurchase(InAppBilling.SKU_PREMIUM);
+  //      isPremium = (premiumPurchase != null && verifyDeveloperPayload(premiumPurchase));
+  //      Log.i(TAG, "inventoryCheckFinishedListener isPremium = " + isPremium);
+  //
+  //      if (isPremium != premiumEnabledPreference.get()) {
+  //        premiumEnabledPreference.set(isPremium);
+  //      }
+  //
+  //      //TODO: REMOVE TEST CONSUME CODE
+  //      //if (isPremium) { //consume purchase so can test again
+  //      //  try {
+  //      //    billingHelper.consumeAsync(premiumPurchase, new IabHelper.OnConsumeFinishedListener() {
+  //      //      @Override public void onConsumeFinished(Purchase purchase, IabResult result) {
+  //      //        Toast.makeText(KoloroActivity.this, "consumed test purchase", Toast.LENGTH_SHORT).show();
+  //      //        isPremium = false;
+  //      //      }
+  //      //    });
+  //      //  } catch (IabHelper.IabAsyncInProgressException e) {
+  //      //    e.printStackTrace();
+  //      //  }
+  //      //}
+  //      //TODO END TEST CODE
+  //
+  //
+  //    } else if (result.isFailure()) {
+  //      Log.e(TAG, "Inventory check failed: " + result);
+  //    }
+  //
+  //    premiumEnabledPreference.set(isPremium);
+  //    updateUiForPremium();
+  //  }
+  //};
 
-        Purchase premiumPurchase = inv.getPurchase(InAppBilling.SKU_PREMIUM);
-        isPremium = (premiumPurchase != null && verifyDeveloperPayload(premiumPurchase));
-        Log.i(TAG, "inventoryCheckFinishedListener isPremium = " + isPremium);
 
-        if (isPremium != premiumEnabledPreference.get()) {
-          premiumEnabledPreference.set(isPremium);
-        }
+  //IabHelper.OnIabPurchaseFinishedListener purchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
+  //  @Override public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
+  //    Log.d(TAG, "onIabPurchaseFinished");
+  //    if (billingHelper != null && result.isSuccess()) {
+  //      if (purchase.getSku().equals(InAppBilling.SKU_PREMIUM)) {
+  //        Toast.makeText(KoloroActivity.this, "You have upgraded to premium", Toast.LENGTH_SHORT).show();
+  //        isPremium = true;
+  //      }
+  //    } else if (result.isFailure()) {
+  //      Log.e(TAG, "Error purchasing: " + result);
+  //      Toast.makeText(KoloroActivity.this, "Error purchasing", Toast.LENGTH_SHORT).show();
+  //    }
+  //
+  //    premiumEnabledPreference.set(isPremium);
+  //
+  //    updateUiForPremium();
+  //  }
+  //};
 
-        //TODO: REMOVE TEST CONSUME CODE
-        //if (isPremium) { //consume purchase so can test again
-        //  try {
-        //    billingHelper.consumeAsync(premiumPurchase, new IabHelper.OnConsumeFinishedListener() {
-        //      @Override public void onConsumeFinished(Purchase purchase, IabResult result) {
-        //        Toast.makeText(KoloroActivity.this, "consumed test purchase", Toast.LENGTH_SHORT).show();
-        //        isPremium = false;
-        //      }
-        //    });
-        //  } catch (IabHelper.IabAsyncInProgressException e) {
-        //    e.printStackTrace();
-        //  }
-        //}
-        //TODO END TEST CODE
+  //private void updateUiForPremium() {
+  //  upgradeButton.setVisibility(isPremium ? View.GONE : View.VISIBLE);
+  //  preferenceFragment.updateBillingUI(isPremium);
+  //}
 
-
-      } else if (result.isFailure()) {
-        Log.e(TAG, "Inventory check failed: " + result);
-      }
-
-      premiumEnabledPreference.set(isPremium);
-      updateUiForPremium();
-    }
-  };
-
-
-  IabHelper.OnIabPurchaseFinishedListener purchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
-    @Override public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
-      Log.d(TAG, "onIabPurchaseFinished");
-      if (billingHelper != null && result.isSuccess()) {
-        if (purchase.getSku().equals(InAppBilling.SKU_PREMIUM)) {
-          Toast.makeText(KoloroActivity.this, "You have upgraded to premium", Toast.LENGTH_SHORT).show();
-          isPremium = true;
-        }
-      } else if (result.isFailure()) {
-        Log.e(TAG, "Error purchasing: " + result);
-        Toast.makeText(KoloroActivity.this, "Error purchasing", Toast.LENGTH_SHORT).show();
-      }
-
-      premiumEnabledPreference.set(isPremium);
-
-      updateUiForPremium();
-    }
-  };
-
-  private void updateUiForPremium() {
-    upgradeButton.setVisibility(isPremium ? View.GONE : View.VISIBLE);
-    preferenceFragment.updateBillingUI(isPremium);
-  }
-
-  boolean verifyDeveloperPayload(Purchase p) {
-    String payload = p.getDeveloperPayload();
-
-        /*
-         * TODO: verify that the developer payload of the purchase is correct. It will be
-         * the same one that you sent when initiating the purchase.
-         *
-         * WARNING: Locally generating a random string when starting a purchase and
-         * verifying it here might seem like a good approach, but this will fail in the
-         * case where the user purchases an item on one device and then uses your app on
-         * a different device, because on the other device you will not have access to the
-         * random string you originally generated.
-         *
-         * So a good developer payload has these characteristics:
-         *
-         * 1. If two different users purchase an item, the payload is different between them,
-         *    so that one user's purchase can't be replayed to another user.
-         *
-         * 2. The payload must be such that you can verify it even when the app wasn't the
-         *    one who initiated the purchase flow (so that items purchased by the user on
-         *    one device work on other devices owned by the user).
-         *
-         * Using your own server to store and verify developer payloads across app
-         * installations is recommended.
-         */
-
-    return true;
-  }
+  //boolean verifyDeveloperPayload(Purchase p) {
+  //  String payload = p.getDeveloperPayload();
+  //
+  //      /*
+  //       * TODO: verify that the developer payload of the purchase is correct. It will be
+  //       * the same one that you sent when initiating the purchase.
+  //       *
+  //       * WARNING: Locally generating a random string when starting a purchase and
+  //       * verifying it here might seem like a good approach, but this will fail in the
+  //       * case where the user purchases an item on one device and then uses your app on
+  //       * a different device, because on the other device you will not have access to the
+  //       * random string you originally generated.
+  //       *
+  //       * So a good developer payload has these characteristics:
+  //       *
+  //       * 1. If two different users purchase an item, the payload is different between them,
+  //       *    so that one user's purchase can't be replayed to another user.
+  //       *
+  //       * 2. The payload must be such that you can verify it even when the app wasn't the
+  //       *    one who initiated the purchase flow (so that items purchased by the user on
+  //       *    one device work on other devices owned by the user).
+  //       *
+  //       * Using your own server to store and verify developer payloads across app
+  //       * installations is recommended.
+  //       */
+  //
+  //  return true;
+  //}
 }
