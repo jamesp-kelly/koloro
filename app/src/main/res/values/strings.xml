@@ -55,15 +55,15 @@ Pellentesque malesuada rutrum imperdiet. Suspendisse efficitur quam consequat le
   <string name="zoom_enabled_label">Zoom Enabled</string>
 
   <string name="tooltip_quick_launch">Quick Launch will launch the Koloro overlay without the home screen...</string>
-  <string name="tooltip_enable_zoom">Long touch on the captured screen to activate zoom. Draw rectangle around area you want to zoom in to.</string>
+  <string name="tooltip_enable_zoom">When active, hold two fingers on the captured image to activate zoom, then select the area to zoom.</string>
   <string name="tooltip_retain_screenshots">When enabled, screenshots taken with Koloro will be saved to your device gallery</string>
-
-
 
   <string name="saved_colors">SAVED COLORS</string>
   <string name="menu_item_preferences">Preferences</string>
   <string name="menu_item_share">Share saved colors</string>
   <string name="menu_item_clear">Clear saved colors</string>
+  <string name="zoom_toast_text">Select area to zoom into</string>
+  <string name="copied_text_toast">Copied text</string>
 
   <string-array name="capture_button_position_array">
     <item>Top right</item>

@@ -185,7 +185,7 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView,
   };
 
   private void copyColorString(String colorString) {
-    ClipData clip = ClipData.newPlainText("Copied text", colorString);
+    ClipData clip = ClipData.newPlainText(getString(R.string.copied_text_toast), colorString);
     clipboardManager.setPrimaryClip(clip);
     Toast.makeText(this, R.string.copied_clipboard_toast, Toast.LENGTH_SHORT).show();
     Bundle bundle = new Bundle();
@@ -307,7 +307,6 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView,
       currentlySelectedColorHex = presenter.generateHexColor(currentlySelectedColor);
       currentlySelectedColorRgb = presenter.generateRgbColor(currentlySelectedColor);
 
-
       GradientDrawable background = (GradientDrawable) colorDetailsLayout.getBackground();
       background.setColor(currentlySelectedColor);
 
@@ -407,7 +406,7 @@ public class ColorPickActivity extends BaseActivity implements ColorPickerView,
       touchDisabled = true;
       captureZoomRectangle();
       vibrate();
-      Toast.makeText(this, "Select area to zoom into", Toast.LENGTH_SHORT).show(); //todo maybe snackbar?
+      Toast.makeText(this, R.string.zoom_toast_text, Toast.LENGTH_LONG).show();
     }
   }
 }
