@@ -176,7 +176,7 @@ public class PreferenceFragment extends Fragment {
     }
   }
 
-  @OnCheckedChanged(R.id.switch_quick_launch)
+  //@OnCheckedChanged(R.id.switch_quick_launch)
   void onQuickLaunchChanged(boolean checked) {
     boolean oldValue = quickLaunchPreference.get();
 
