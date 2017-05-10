@@ -225,7 +225,7 @@ public class PreferenceFragment extends Fragment {
 
   @OnClick(R.id.tooltip_vibration)
   void onClickTooltipVibration(View v) {
-    displayTooltip(v, R.string.tooltip_retain_screenshots);
+    displayTooltip(v, R.string.tooltop_vibration);
   }
 
 
